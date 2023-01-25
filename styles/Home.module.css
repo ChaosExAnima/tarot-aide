@@ -41,7 +41,7 @@
 	line-height: 1.5;
 }
 
-.description :is(li, label) {
+.description label {
 	cursor: pointer;
 }
 

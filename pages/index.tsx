@@ -25,13 +25,39 @@ export default function Home() {
 				<div className={styles.description}>
 					<p>Stuff to do:</p>
 					<ul>
-						<ListItem>Figure out base functionality</ListItem>
+						<ListItem checked>
+							Figure out base functionality
+						</ListItem>
 						<ListItem>Pick a damn front end library</ListItem>
 						<ListItem>Lay out pages w/ mock data</ListItem>
 						<ListItem>Figure out storage</ListItem>
 						<ListItem>Upload stuff</ListItem>
 						<ListItem>Wire 'er up</ListItem>
 						<ListItem>Docker deployment</ListItem>
+					</ul>
+					<p>Ideas:</p>
+					<ul>
+						<li>Upload cards of deck</li>
+						<li>Store text w/ references</li>
+						<li>Landing page is fast jump to card</li>
+						<li>
+							Card has picture of chosen deck w/ available text
+						</li>
+						<li>Tagging system</li>
+						<li>Make site super responsive, mobile first even</li>
+						<li>Inspo: Numenera character app</li>
+						<li>
+							UI should feel <em>ethereal</em>
+						</li>
+						<li>Swap between decks</li>
+						<li>Make UI change color throughout day?</li>
+						<li>
+							See about using filter animations, make images turn
+							to mist or some shit
+						</li>
+						<li>
+							<em>Detect corners?</em>
+						</li>
 					</ul>
 				</div>
 			</main>
