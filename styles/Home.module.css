@@ -41,6 +41,15 @@
 	line-height: 1.5;
 }
 
+.description :is(li, label) {
+	cursor: pointer;
+}
+
+.description li:hover>label {
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+}
+
 .code {
 	font-weight: 700;
 	font-family: var(--font-mono);

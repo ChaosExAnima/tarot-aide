@@ -43,13 +43,20 @@ function ListItem({
 	children,
 	...inputProps
 }: PropsWithChildren<HTMLProps<HTMLInputElement>>) {
+	const id = (children?.toString() ?? 'no-id')
+		.toLowerCase()
+		.replaceAll(/[^a-z0-9]+/g, '-');
 	return (
 		<li>
-			<label>
-				<input type="checkbox" name="" value="1" {...inputProps} />
-				&nbsp;
-				{children}
-			</label>
+			<input
+				type="checkbox"
+				name={id}
+				id={id}
+				value="1"
+				{...inputProps}
+			/>
+			&nbsp;
+			<label htmlFor={id}>{children}</label>
 		</li>
 	);
 }
