@@ -41,11 +41,11 @@
 	line-height: 1.5;
 }
 
-.description label {
+.description input:enabled~label {
 	cursor: pointer;
 }
 
-.description li:hover>label {
+.description li:hover>input:enabled~label {
 	text-decoration: underline;
 	text-underline-offset: 0.25em;
 }

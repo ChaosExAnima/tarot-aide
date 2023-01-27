@@ -25,7 +25,7 @@ export default function Home() {
 				<div className={styles.description}>
 					<p>Stuff to do:</p>
 					<ul>
-						<ListItem checked>
+						<ListItem checked disabled>
 							Figure out base functionality
 						</ListItem>
 						<ListItem>Pick a damn front end library</ListItem>
