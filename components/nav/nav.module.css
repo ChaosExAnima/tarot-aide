@@ -1,5 +1,7 @@
 .nav {
 	background-color: var(--component-bg);
+	border-radius: var(--border-radius);
+	font-family: var(--font-mono);
 }
 
 .nav>ul {

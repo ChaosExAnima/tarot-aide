@@ -1,10 +1,4 @@
 :root {
-	--max-width: 1100px;
-	--border-radius: 12px;
-	--font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-		'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-		'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-
 	--foreground-rgb: 0, 0, 0;
 	--background-start-rgb: 214, 219, 220;
 	--background-end-rgb: 255, 255, 255;
@@ -19,6 +13,13 @@
 	--c-primary-4: #e6b1f1;
 	--c-text-light: #f2e9f4;
 	--c-text-dark: var(--c-primary-0);
+
+	--max-width: 1100px;
+	--gap-size: 1rem;
+	--border-radius: 1rem;
+	--font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+		'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+		'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
 	--component-bg: var(--c-primary-1);
 	--component-text: var(--c-text-light);
@@ -53,7 +54,8 @@ body {
 			transparent,
 			rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 	min-height: 100vh;
-	padding: 6em;
+	max-width: var(--max-width);
+	margin: 6em auto;
 }
 
 a {
