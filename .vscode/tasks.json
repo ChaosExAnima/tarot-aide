@@ -6,6 +6,12 @@
 			"script": "dev",
 			"problemMatcher": [],
 			"label": "Next.js Dev"
+		},
+		{
+			"type": "npm",
+			"script": "storybook",
+			"problemMatcher": [],
+			"label": "Start Storybook Server"
 		}
 	]
 }

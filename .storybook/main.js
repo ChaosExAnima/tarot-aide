@@ -7,8 +7,8 @@ module.exports = {
 		'storybook-dark-mode',
 		'storybook-addon-swc',
 	],
-	framework: '@storybook/react',
-	core: {
-		builder: '@storybook/builder-webpack5',
+	framework: {
+		name: '@storybook/nextjs',
+		options: {},
 	},
 };

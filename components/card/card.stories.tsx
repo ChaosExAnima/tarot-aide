@@ -1,6 +1,6 @@
 import Card, { CardProps } from './index';
 
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 
 export default {
 	title: 'Card',
@@ -12,7 +12,7 @@ export default {
 			defaultValue: 'red',
 		},
 	},
-} satisfies ComponentMeta<typeof Card>;
+} satisfies Meta<typeof Card>;
 
 export function Primary(args: CardProps) {
 	return <Card {...args} />;
