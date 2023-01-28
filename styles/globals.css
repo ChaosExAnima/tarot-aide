@@ -11,6 +11,17 @@
 
 	--callout-rgb: 238, 240, 241;
 	--callout-border-rgb: 172, 175, 176;
+
+	--c-primary-0: #0c0e13;
+	--c-primary-1: #2b2b55;
+	--c-primary-2: #593ea3;
+	--c-primary-3: #a66bd6;
+	--c-primary-4: #e6b1f1;
+	--c-text-light: #f2e9f4;
+	--c-text-dark: var(--c-primary-0);
+
+	--component-bg: var(--c-primary-1);
+	--component-text: var(--c-text-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,10 +48,12 @@ body {
 }
 
 body {
-	color: rgb(var(--foreground-rgb));
+	color: var(--component-text);
 	background: linear-gradient(to bottom,
 			transparent,
 			rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+	min-height: 100vh;
+	padding: 6em;
 }
 
 a {
