@@ -1,10 +1,9 @@
 import Head from 'next/head';
-import Image from 'next/image';
-import { Inter } from '@next/font/google';
 import styles from 'styles/Home.module.css';
-import { HTMLProps, PropsWithChildren, ReactHTMLElement } from 'react';
 
-const inter = Inter({ subsets: ['latin'] });
+import Card from 'components/card';
+
+import type { HTMLProps, PropsWithChildren } from 'react';
 
 export default function Home() {
 	return (
@@ -32,7 +31,7 @@ export default function Home() {
 						<ListItem>Lay out pages w/ mock data</ListItem>
 						<ListItem>Figure out storage</ListItem>
 						<ListItem>Upload stuff</ListItem>
-						<ListItem>Wire 'er up</ListItem>
+						<ListItem>Wire &apos;er up</ListItem>
 						<ListItem>Docker deployment</ListItem>
 					</ul>
 					<p>Ideas:</p>
