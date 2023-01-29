@@ -12,13 +12,14 @@ export default function Page({
 	title,
 	children,
 }: PropsWithChildren<PageProps>) {
+	let pageTitle = 'Tarot Aide';
+	if (title) {
+		pageTitle = `${title} - ${pageTitle}`;
+	}
 	return (
 		<>
 			<Head>
-				<title>
-					{title && `${title} - `}
-					Tarot Aide
-				</title>
+				<title>{pageTitle}</title>
 				<meta
 					name="description"
 					content="Tarot Aide - A helpful customizable reference for tarot readings"
