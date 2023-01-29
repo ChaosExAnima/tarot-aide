@@ -21,6 +21,7 @@ export function PlainCard({ card }: CardProps) {
 					alt={`Art of ${card.name}`}
 					width={300}
 					height={550}
+					className={classes.image}
 				/>
 			)}
 			<figcaption className={classes.caption}>

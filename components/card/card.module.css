@@ -3,6 +3,10 @@
 	position: relative;
 }
 
+.image {
+	display: block;
+}
+
 .caption {
 	position: absolute;
 	top: 0;
@@ -15,8 +19,7 @@
 }
 
 .name {
-	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
-		sans-serif;
+	font-family: var(--font-header);
 	display: block;
 	font-size: 1.5em;
 	font-weight: bold;

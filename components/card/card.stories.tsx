@@ -6,11 +6,7 @@ export default {
 	title: 'Card',
 	component: Card,
 	argTypes: {
-		color: {
-			options: ['red', 'blue'],
-			control: { type: 'radio' },
-			defaultValue: 'red',
-		},
+		card: {},
 	},
 } satisfies Meta<typeof Card>;
 
