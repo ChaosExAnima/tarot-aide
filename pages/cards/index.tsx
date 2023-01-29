@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import { Fragment } from 'react';
 
+import Card from 'components/card';
 import Page from 'components/page';
 import {
 	AllInSuite,
@@ -10,6 +11,8 @@ import {
 } from 'lib/constants';
 import { displayCase } from 'lib/text';
 
+import classes from './cards.module.css';
+
 export default function CardPage() {
 	return (
 		<Page title="Cards">
@@ -17,14 +20,14 @@ export default function CardPage() {
 			<h2>Major Arcana</h2>
 			<CardList cards={AllMajorArcana} />
 			{AllSuites.map((suite) => (
-				<>
+				<Fragment key={suite}>
 					<h2>The Suite of {displayCase(suite)}</h2>
 					<CardList
 						cards={AllInSuite.map(
 							(card) => `${card} of ${suite}` satisfies MinorCard
 						)}
 					/>
-				</>
+				</Fragment>
 			))}
 		</Page>
 	);
@@ -35,10 +38,15 @@ interface CardListProps {
 }
 function CardList({ cards }: CardListProps) {
 	return (
-		<ol>
+		<ol className={classes.cardWrapper}>
 			{cards.map((card) => (
 				<li key={card}>
-					<Link href={`/cards/${card}`}>{displayCase(card)}</Link>
+					<Card
+						card={{
+							name: card,
+							image: `https://picsum.photos/seed/${card}/300/550.webp?blur`,
+						}}
+					/>
 				</li>
 			))}
 		</ol>

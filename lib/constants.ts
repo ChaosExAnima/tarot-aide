@@ -22,6 +22,7 @@ export const AllMajorArcana = [
 	'judgement',
 	'world',
 ] as const;
+export const MajorSuite = 'major' as const;
 export type MajorCard = (typeof AllMajorArcana)[number];
 
 export const AllNumberCards = [
