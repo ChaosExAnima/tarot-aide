@@ -1,5 +1,6 @@
 import Page from 'components/page';
 import { AllCards, CardName } from 'lib/constants';
+import { displayCase } from 'lib/text';
 
 import type {
 	GetStaticPathsResult,
@@ -19,7 +20,11 @@ interface CardPageProps {
 }
 
 export default function CardPage({ card }: CardPageProps) {
-	return <Page title={card?.name}>{card?.name ?? 'Loading...'}</Page>;
+	return (
+		<Page title={displayCase(card?.name)}>
+			{displayCase(card?.name) ?? 'Loading...'}
+		</Page>
+	);
 }
 
 export async function getStaticProps(

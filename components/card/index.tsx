@@ -1,13 +1,9 @@
 import type { PropsWithChildren } from 'react';
 
 export interface CardProps {
-	color: 'blue' | 'red';
+	title: string;
 }
 
-export default function Card({ color }: PropsWithChildren<CardProps>) {
-	return (
-		<div className={color} style={{ color }}>
-			{color.toUpperCase()}!
-		</div>
-	);
+export default function Card({ title }: PropsWithChildren<CardProps>) {
+	return <div>{title}</div>;
 }

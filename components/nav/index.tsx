@@ -6,11 +6,14 @@ import classes from './nav.module.css';
 interface NavItem {
 	label: string;
 	path: string;
+	exact?: boolean;
 }
 
 export const NavList: NavItem[] = [
-	{ label: 'Home', path: '/' },
+	{ label: 'Home', path: '/', exact: true },
 	{ label: 'Tasks', path: '/tasks' },
+	{ label: 'Cards', path: '/cards' },
+	{ label: 'Decks', path: '/decks' },
 ];
 
 export default function Nav() {
@@ -31,8 +34,8 @@ export default function Nav() {
 }
 
 type NavItemProps = NavItem & { curPath: string };
-function NavItem({ label, path, curPath }: NavItemProps) {
-	if (curPath === path) {
+function NavItem({ label, path, exact, curPath }: NavItemProps) {
+	if ((exact && curPath === path) || (!exact && curPath.startsWith(path))) {
 		return <li aria-current>{label}</li>;
 	}
 	return (
