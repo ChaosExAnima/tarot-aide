@@ -1,15 +1,19 @@
-import Card, { CardProps } from './index';
+import Card from './index';
 
-import type { Meta } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
 	title: 'Card',
 	component: Card,
-	argTypes: {
-		card: {},
-	},
 } satisfies Meta<typeof Card>;
+type Story = StoryObj<typeof Card>;
 
-export function Primary(args: CardProps) {
-	return <Card {...args} />;
-}
+export const Primary: Story = {
+	args: {
+		link: false,
+		card: {
+			name: 'Test Card',
+			image: 'https://picsum.photos/seed/storybook/300/550.webp?blur',
+		},
+	},
+};

@@ -1,6 +1,8 @@
 .card {
 	display: block;
 	position: relative;
+	max-width: 300px;
+	max-height: 550px;
 }
 
 .image {
