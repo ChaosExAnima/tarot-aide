@@ -3,6 +3,8 @@
 	position: relative;
 	max-width: 300px;
 	max-height: 550px;
+	border-radius: var(--border-radius);
+	overflow: hidden;
 }
 
 .image {
