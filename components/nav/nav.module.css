@@ -1,15 +1,14 @@
 .nav {
 	background-color: var(--component-bg);
 	border-radius: var(--border-radius);
-	font-family: var(--font-mono);
 }
 
-.nav>ul {
+.nav > ul {
 	display: flex;
 	list-style-type: none;
 }
 
-.nav :is(a, [aria-current=true]) {
+.nav :is(a, [aria-current='true']) {
 	padding: 1em;
 }
 
@@ -17,6 +16,6 @@
 	display: block;
 }
 
-.nav li[aria-current=true] {
+.nav li[aria-current='true'] {
 	color: var(--c-primary-3);
 }
