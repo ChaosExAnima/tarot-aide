@@ -1,5 +1,4 @@
-import { StorybookConfig } from '@storybook/nextjs';
-import path from 'path';
+import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
 	stories: ['../components/**/*.stories.*'],
@@ -17,16 +16,6 @@ const config: StorybookConfig = {
 	core: {
 		disableTelemetry: true,
 	},
-	// webpack(config, options) {
-	// 	if (!config.resolve) {
-	// 		config.resolve = {};
-	// 	}
-	// 	config.resolve.alias = {
-	// 		lib: path.resolve(__dirname, '../lib'),
-	// 		styles: path.resolve(__dirname, '../styles'),
-	// 	};
-	// 	return config;
-	// },
 };
 
 export default config;
