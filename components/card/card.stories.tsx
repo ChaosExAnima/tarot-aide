@@ -15,5 +15,7 @@ export const Primary: Story = {
 			name: 'Test Card',
 			image: 'https://picsum.photos/seed/storybook/300/550.webp?blur',
 		},
+		width: 300,
+		height: 550,
 	},
 };
