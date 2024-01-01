@@ -38,3 +38,5 @@ export interface MinorTarotCard extends TarotCard {
 }
 
 export type CardMap = Map<CardName, TarotCard>;
+
+export type Nullable<T> = T | null;
