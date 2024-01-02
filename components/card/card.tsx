@@ -6,7 +6,7 @@ import { displayCase } from 'lib/text';
 
 import classes from './card.module.css';
 
-import type { GenericCard } from 'lib/types';
+import type { GenericCard } from 'lib/cards/types';
 
 export interface CardProps {
 	card: GenericCard;

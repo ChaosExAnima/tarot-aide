@@ -1,5 +1,5 @@
 import Page from 'components/page';
-import { AllCards, CardName } from 'lib/constants';
+import { AllCards, CardName } from 'lib/cards/constants';
 import { displayCase } from 'lib/text';
 
 import type {

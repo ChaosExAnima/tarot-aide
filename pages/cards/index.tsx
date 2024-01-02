@@ -8,7 +8,7 @@ import {
 	AllSuites,
 	CardName,
 	MinorCard,
-} from 'lib/constants';
+} from 'lib/cards/constants';
 import { displayCase } from 'lib/text';
 
 import classes from './cards.module.css';
