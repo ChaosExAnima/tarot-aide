@@ -7,7 +7,7 @@ import 'styles/globals.css';
 export default function App({ Component, pageProps }: AppProps) {
 	return (
 		<NextUIProvider>
-			<main className="dark text-foreground bg-background">
+			<main>
 				<Component {...pageProps} />
 			</main>
 		</NextUIProvider>
