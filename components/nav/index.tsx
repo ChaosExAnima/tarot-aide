@@ -12,6 +12,7 @@ interface NavItem {
 export const NavList: NavItem[] = [
 	{ label: 'Home', path: '/', exact: true },
 	{ label: 'Tasks', path: '/tasks' },
+	{ label: 'Spreads', path: '/spreads' },
 	{ label: 'Cards', path: '/cards' },
 	{ label: 'Decks', path: '/decks' },
 ];
