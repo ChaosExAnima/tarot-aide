@@ -1,7 +1,5 @@
-import Link from 'next/link';
+import { Link, Navbar, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-
-import classes from './nav.module.css';
 
 interface NavItem {
 	label: string;
@@ -20,17 +18,20 @@ export const NavList: NavItem[] = [
 export default function Nav() {
 	const router = useRouter();
 	return (
-		<nav className={classes.nav}>
-			<ul>
+		<Navbar>
+			<NavbarContent className="hidden sm:flex gap-4" justify="center">
 				{NavList.map((item) => (
-					<NavItem
-						{...item}
+					<NavbarItem
 						key={item.path}
-						curPath={router.pathname}
-					/>
+						isActive={item.path === router.pathname}
+					>
+						<Link href={item.path} color="primary">
+							{item.label}
+						</Link>
+					</NavbarItem>
 				))}
-			</ul>
-		</nav>
+			</NavbarContent>
+		</Navbar>
 	);
 }
 
