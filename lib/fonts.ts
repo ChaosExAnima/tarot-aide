@@ -1,4 +1,4 @@
-import { Merienda, Playfair_Display } from '@next/font/google';
+import { Merienda, Playfair_Display } from 'next/font/google';
 
 export const merienda = Merienda({
 	subsets: ['latin'],
