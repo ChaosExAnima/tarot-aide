@@ -1,7 +1,5 @@
 import { NextUIProvider } from '@nextui-org/react';
 
-import { merienda, playfair } from 'lib/fonts';
-
 import type { AppProps } from 'next/app';
 
 import 'styles/globals.css';
@@ -9,13 +7,9 @@ import 'styles/globals.css';
 export default function App({ Component, pageProps }: AppProps) {
 	return (
 		<NextUIProvider>
-			<style jsx global>{`
-				:root {
-					--font-header: ${merienda.style.fontFamily};
-					--font-body: ${playfair.style.fontFamily};
-				}
-			`}</style>
-			<Component {...pageProps} />
+			<main className="dark text-foreground bg-background">
+				<Component {...pageProps} />
+			</main>
 		</NextUIProvider>
 	);
 }
