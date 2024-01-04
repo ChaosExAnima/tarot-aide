@@ -2,17 +2,13 @@ import React from 'react';
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
-import { ExistingSpread, PatternSpread } from 'lib/spreads/types';
+import { ExistingSpread } from 'lib/spreads/types';
 
-const spreads: ExistingSpread[] = [
-	{ id: '1', date: new Date(2024, 0, 1), positions: [] },
-	{ id: '2', date: new Date(2024, 0, 2), positions: [] },
-	{ id: '3', date: new Date(2024, 0, 3), positions: [] },
-	{ id: '4', date: new Date(2024, 0, 4), positions: [] },
-	{ id: '5', date: new Date(2024, 0, 5), positions: [] },
-];
-
-const patterns: PatternSpread[] = [];
+const spreads: ExistingSpread[] = Array.from(Array(5).keys()).map((index) => ({
+	id: `2024-01-0${index + 1}`,
+	date: new Date(2024, 0, index + 1).toDateString(),
+	positions: [],
+}));
 
 export default function SpreadsPage() {
 	return (
@@ -24,7 +20,7 @@ export default function SpreadsPage() {
 					className="text-slate-900"
 					color="secondary"
 				>
-					{spread.date.toDateString()}
+					{spread.date}
 				</ButtonLink>
 			))}
 			<ButtonLink href="/spreads/new">New Spread</ButtonLink>
