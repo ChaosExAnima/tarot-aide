@@ -1,10 +1,9 @@
-import { Card, CardBody, Divider } from '@nextui-org/react';
+import { Button, Divider, Link } from '@nextui-org/react';
 import {
 	GetStaticPathsResult,
 	GetStaticPropsContext,
 	GetStaticPropsResult,
 } from 'next';
-import { useRouter } from 'next/router';
 
 import Page from 'components/page';
 import {
@@ -55,23 +54,17 @@ function SuitCard({
 	card: AnyCardWithoutSuit;
 	suit: SuitWithMajor;
 }) {
-	const router = useRouter();
 	const isMajor = suit === MajorSuit;
 	return (
-		<Card
-			className="grow"
-			isPressable
-			shadow="sm"
-			onPress={() =>
-				router.push(`/cards/${isMajor ? card : `${card}-of-${suit}`}`)
-			}
+		<Button
+			as={Link}
+			href={`/cards/${isMajor ? card : `${card}-of-${suit}`}`}
+			key={suit}
+			className="flex font-bold text-lg text-center grow h-full"
+			color="primary"
 		>
-			<CardBody>
-				<h2 className="text-lg text-center font-semibold">
-					{displayCase(card)}
-				</h2>
-			</CardBody>
-		</Card>
+			{displayCase(card)}
+		</Button>
 	);
 }
 
