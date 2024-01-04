@@ -22,7 +22,7 @@ export const NavList: NavItem[] = [
 export default function Nav() {
 	const router = useRouter();
 	return (
-		<Navbar>
+		<Navbar isBordered>
 			<NavbarContent>
 				{NavList.map((item) => (
 					<NavbarItem

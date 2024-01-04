@@ -1,5 +1,12 @@
 import Page from 'components/page';
-import { AllCards, CardName } from 'lib/cards/constants';
+import {
+	AllCards,
+	AnyCard,
+	MajorCard,
+	MinorCardWithoutSuite,
+	SuiteWithMajor,
+} from 'lib/cards/constants';
+import { getCardAndSuitFromName, isCard } from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
 import type {
@@ -9,13 +16,14 @@ import type {
 } from 'next';
 
 type CardPageContext = {
-	card: CardName;
+	card: string;
 };
 
 interface CardPageProps {
 	card: {
-		name: string;
-		suit?: 'swords' | 'pentacles' | 'cups' | 'wands';
+		name: AnyCard;
+		card: MajorCard | MinorCardWithoutSuite;
+		suit: SuiteWithMajor;
 	};
 }
 
@@ -28,10 +36,11 @@ export default function CardPage({ card }: CardPageProps) {
 }
 
 export async function getStaticProps(
-	context: GetStaticPropsContext<CardPageContext>
+	context: GetStaticPropsContext<CardPageContext>,
 ): Promise<GetStaticPropsResult<CardPageProps>> {
-	const { card } = context.params ?? {};
-	if (!card) {
+	const { card: cardName } = context.params ?? {};
+	const card = cardName?.replaceAll('-', ' ');
+	if (!card || !isCard(card)) {
 		return {
 			notFound: true,
 		};
@@ -40,6 +49,7 @@ export async function getStaticProps(
 		props: {
 			card: {
 				name: card,
+				...getCardAndSuitFromName(card),
 			},
 		},
 	};
@@ -49,7 +59,9 @@ export async function getStaticPaths(): Promise<
 	GetStaticPathsResult<CardPageContext>
 > {
 	return {
-		paths: AllCards.map((card) => ({ params: { card } })),
+		paths: AllCards.map((card) => ({
+			params: { card: card.replaceAll(' ', '-') },
+		})),
 		fallback: true,
 	};
 }

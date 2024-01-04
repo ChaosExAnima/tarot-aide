@@ -6,7 +6,7 @@ import {
 	AllInSuite,
 	AllMajorArcana,
 	AllSuites,
-	CardName,
+	AnyCard,
 	MinorCard,
 } from 'lib/cards/constants';
 import { displayCase } from 'lib/text';
@@ -24,7 +24,7 @@ export default function CardPage() {
 					<h2>The Suite of {displayCase(suite)}</h2>
 					<CardList
 						cards={AllInSuite.map(
-							(card) => `${card} of ${suite}` satisfies MinorCard
+							(card) => `${card} of ${suite}` satisfies MinorCard,
 						)}
 					/>
 				</Fragment>
@@ -34,7 +34,7 @@ export default function CardPage() {
 }
 
 interface CardListProps {
-	cards: readonly CardName[];
+	cards: readonly AnyCard[];
 }
 function CardList({ cards }: CardListProps) {
 	return (
