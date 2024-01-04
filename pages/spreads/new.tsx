@@ -1,4 +1,5 @@
 import { Button, Card, CardHeader, Input } from '@nextui-org/react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
@@ -18,6 +19,10 @@ export default function NewSpreadPage() {
 	const addCard = (card: TarotCard) => {
 		setCards((positions) => [...positions, card.name]);
 		clear();
+	};
+	const router = useRouter();
+	const save = () => {
+		router.push('/spreads/2020-01-01-1');
 	};
 	return (
 		<Page>
@@ -46,7 +51,11 @@ export default function NewSpreadPage() {
 					</Card>
 				))}
 			</section>
-			{cards.length > 0 && <Button color="success">Start Writing</Button>}
+			{cards.length > 0 && (
+				<Button color="success" onPress={save}>
+					Start Writing
+				</Button>
+			)}
 			<CardPicker color="primary" onPick={addCard} disabledCards={cards}>
 				Add Card
 			</CardPicker>

@@ -1,4 +1,4 @@
-import { GenericCard } from 'lib/cards/types';
+import { GenericCard, TarotCard } from 'lib/cards/types';
 import { Audio, Photo } from 'lib/types';
 
 export interface SpreadPosition {
@@ -23,8 +23,19 @@ export interface PatternSpread extends GenericSpread {
 
 export interface ExistingSpread extends GenericSpread {
 	id: string;
-	date: Date;
+	date: string;
+	name?: string;
+	description?: string;
 	notes?: string;
 	image?: Photo;
 	audio?: Audio;
 }
+
+export type TarotSpreadPosition = Omit<SpreadPosition, 'card'> & {
+	card: TarotCard;
+};
+
+export type TarotSpreadOnly<Spread extends GenericSpread = PatternSpread> =
+	Omit<Spread, 'positions'> & {
+		positions: TarotSpreadPosition[];
+	};

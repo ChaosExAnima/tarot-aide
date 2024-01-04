@@ -23,22 +23,22 @@ export interface GenericCard {
 	image?: string;
 }
 
-export interface TarotCard extends GenericCard {
+export interface BaseTarotCard extends GenericCard {
 	name: AnyCard;
-	shortName?: MinorCardWithoutSuit;
-	suit: SuitWithMajor;
+	suit?: SuitWithMajor;
 }
 
-export interface MajorTarotCard extends TarotCard {
+export interface MajorTarotCard extends BaseTarotCard {
 	name: MajorCard;
-	shortName: undefined;
-	suit: typeof MajorSuit;
+	suit?: typeof MajorSuit;
 }
 
-export interface MinorTarotCard extends TarotCard {
+export interface MinorTarotCard extends BaseTarotCard {
 	name: MinorCard;
 	shortName: MinorCardWithoutSuit;
 	suit: Suit;
 }
+
+export type TarotCard = MajorTarotCard | MinorTarotCard;
 
 export type CardMap = Map<AnyCard, TarotCard>;
