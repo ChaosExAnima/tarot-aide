@@ -1,4 +1,10 @@
-import { Link, Navbar, NavbarContent, NavbarItem } from '@nextui-org/react';
+import {
+	Input,
+	Link,
+	Navbar,
+	NavbarContent,
+	NavbarItem,
+} from '@nextui-org/react';
 import { useRouter } from 'next/router';
 
 interface NavItem {
@@ -9,17 +15,15 @@ interface NavItem {
 
 export const NavList: NavItem[] = [
 	{ label: 'Home', path: '/', exact: true },
-	{ label: 'Tasks', path: '/tasks' },
 	{ label: 'Spreads', path: '/spreads' },
 	{ label: 'Cards', path: '/cards' },
-	{ label: 'Decks', path: '/decks' },
 ];
 
 export default function Nav() {
 	const router = useRouter();
 	return (
 		<Navbar>
-			<NavbarContent className="hidden sm:flex gap-4" justify="center">
+			<NavbarContent>
 				{NavList.map((item) => (
 					<NavbarItem
 						key={item.path}
@@ -30,6 +34,20 @@ export default function Nav() {
 						</Link>
 					</NavbarItem>
 				))}
+			</NavbarContent>
+			<NavbarContent as="div" justify="end">
+				<Input
+					classNames={{
+						base: 'max-w-full sm:max-w-[10rem] h-10',
+						mainWrapper: 'h-full',
+						input: 'text-small',
+						inputWrapper:
+							'h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20',
+					}}
+					placeholder="Search"
+					size="sm"
+					type="search"
+				/>
 			</NavbarContent>
 		</Navbar>
 	);
