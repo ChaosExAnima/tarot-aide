@@ -1,4 +1,12 @@
-import { Button, ButtonProps, Card, CardBody } from '@nextui-org/react';
+import {
+	Button,
+	ButtonProps,
+	Modal,
+	ModalBody,
+	ModalContent,
+	useDisclosure,
+} from '@nextui-org/react';
+import { clsx } from 'clsx';
 import { ReactNode, useState } from 'react';
 
 import { AllSuitsWithMajor, AnyCard, SuitWithMajor } from 'lib/cards/constants';
@@ -18,55 +26,68 @@ export default function CardPicker({
 	disabledCards,
 	...props
 }: CardPickerProps) {
-	const [showing, setShowing] = useState(false);
+	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 	const [suit, setSuit] = useState<null | SuitWithMajor>(null);
 	const toggleShowing = () => {
-		setShowing((showing) => !showing);
+		onOpen();
 		setSuit(null);
 	};
 	const select = (card: TarotCard) => {
 		onPick(card);
-		setShowing(false);
+		onClose();
 		setSuit(null);
 	};
-	if (!showing) {
-		return (
-			<Button {...props} onClick={toggleShowing}>
-				{children}
-			</Button>
-		);
-	}
 	return (
 		<>
-			<Card>
-				<CardBody
-					className={`grid ${
-						!suit ? 'grid-cols-1' : 'grid-cols-3'
-					} gap-4 w-full my-2`}
-				>
-					{!suit &&
-						AllSuitsWithMajor.map((suitName) => (
-							<Button
-								key={suitName}
-								onClick={() => setSuit(suitName)}
-							>
-								{displayCase(suitName)}
-							</Button>
-						))}
-					{suit &&
-						getCardsFromSuit(suit).map((card) => (
-							<Button
-								key={card.name}
-								onClick={() => select(card)}
-								disabled={disabledCards?.includes(card.name)}
-								fullWidth
-							>
-								{displayCase(card.name)}
-							</Button>
-						))}
-				</CardBody>
-			</Card>
-			<Button onClick={toggleShowing}>{children}</Button>
+			<Modal
+				isOpen={isOpen}
+				onOpenChange={onOpenChange}
+				placement="top-center"
+				backdrop="blur"
+				classNames={{
+					wrapper: 'top-10',
+				}}
+				hideCloseButton
+			>
+				<ModalContent>
+					<ModalBody
+						className={clsx(
+							'grid',
+							!suit ? 'grid-cols-1' : 'grid-cols-3',
+							'gap-4 p-4',
+						)}
+					>
+						{!suit &&
+							AllSuitsWithMajor.map((suitName) => (
+								<Button
+									key={suitName}
+									onClick={() => setSuit(suitName)}
+								>
+									{displayCase(suitName)}
+								</Button>
+							))}
+						{suit &&
+							getCardsFromSuit(suit).map((card) => {
+								const disabled = disabledCards?.includes(
+									card.name,
+								);
+								return (
+									<Button
+										fullWidth
+										key={card.name}
+										onClick={() => select(card)}
+										isDisabled={disabled}
+									>
+										{displayCase(card.name)}
+									</Button>
+								);
+							})}
+					</ModalBody>
+				</ModalContent>
+			</Modal>
+			<Button {...props} onPress={toggleShowing}>
+				{children}
+			</Button>
 		</>
 	);
 }
