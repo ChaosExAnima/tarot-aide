@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
 import Page from 'components/page';
+import Upload from 'components/upload';
 import { AnyCard } from 'lib/cards/constants';
 import { TarotCard } from 'lib/cards/types';
 import { displayCase } from 'lib/text';
@@ -35,9 +36,7 @@ export default function NewSpreadPage() {
 				value={date}
 				onChange={(e) => setDate(e.target.value)}
 			/>
-			<Button fullWidth color="primary">
-				Upload
-			</Button>
+			<Upload />
 			<section className="grid grid-cols-2 gap-4 grow">
 				{cards.map((card) => (
 					<Card key={card} className="h-full">
