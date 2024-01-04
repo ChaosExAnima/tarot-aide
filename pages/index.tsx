@@ -2,7 +2,7 @@ import { Card, CardBody } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 
 import Page from 'components/page';
-import { AllSuitesWithMajor } from 'lib/cards/constants';
+import { AllSuitsWithMajor } from 'lib/cards/constants';
 import { displayCase } from 'lib/text';
 
 export default function Home() {
@@ -10,16 +10,16 @@ export default function Home() {
 	return (
 		<Page>
 			<section className="container grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-				{AllSuitesWithMajor.map((suite) => (
+				{AllSuitsWithMajor.map((suit) => (
 					<Card
-						key={suite}
+						key={suit}
 						className="grow"
 						isPressable
 						shadow="sm"
-						onPress={() => router.push(`/suites/${suite}`)}
+						onPress={() => router.push(`/suits/${suit}`)}
 					>
 						<CardBody>
-							<h2>{displayCase(suite)}</h2>
+							<h2>{displayCase(suit)}</h2>
 						</CardBody>
 					</Card>
 				))}

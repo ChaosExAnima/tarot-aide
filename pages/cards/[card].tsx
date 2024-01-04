@@ -3,8 +3,8 @@ import {
 	AllCards,
 	AnyCard,
 	MajorCard,
-	MinorCardWithoutSuite,
-	SuiteWithMajor,
+	MinorCardWithoutSuit,
+	SuitWithMajor,
 } from 'lib/cards/constants';
 import { getCardAndSuitFromName, isCard } from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
@@ -22,8 +22,8 @@ type CardPageContext = {
 interface CardPageProps {
 	card: {
 		name: AnyCard;
-		card: MajorCard | MinorCardWithoutSuite;
-		suit: SuiteWithMajor;
+		card: MajorCard | MinorCardWithoutSuit;
+		suit: SuitWithMajor;
 	};
 }
 

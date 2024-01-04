@@ -1,7 +1,7 @@
 import * as constants from './constants';
 
-export function isSuit(suitName: string): suitName is constants.SuiteWithMajor {
-	return constants.AllSuitesWithMajor.includes(suitName as any);
+export function isSuit(suitName: string): suitName is constants.SuitWithMajor {
+	return constants.AllSuitsWithMajor.includes(suitName as any);
 }
 
 export function isCard(cardName: string): cardName is constants.AnyCard {
@@ -18,14 +18,14 @@ export function isMinorCard(cardName: string): cardName is constants.MinorCard {
 
 export function getCardAndSuitFromName(cardName: constants.AnyCard): {
 	card: constants.AnyCardWithoutSuit;
-	suit: constants.SuiteWithMajor;
+	suit: constants.SuitWithMajor;
 } {
 	if (isMajorCard(cardName)) {
-		return { card: cardName, suit: constants.MajorSuite };
+		return { card: cardName, suit: constants.MajorSuit };
 	}
 	const [card, suit] = cardName.split(' of ') as [
-		constants.MinorCardWithoutSuite,
-		constants.Suite,
+		constants.MinorCardWithoutSuit,
+		constants.Suit,
 	];
 	return { card, suit };
 }

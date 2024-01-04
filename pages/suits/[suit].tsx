@@ -8,10 +8,10 @@ import { useRouter } from 'next/router';
 
 import Page from 'components/page';
 import {
-	AllInSuite,
+	AllInSuit,
 	AllMajorArcana,
-	AllSuitesWithMajor,
-	SuiteWithMajor,
+	AllSuitsWithMajor,
+	SuitWithMajor,
 } from 'lib/cards/constants';
 import { isSuit } from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
@@ -21,12 +21,12 @@ type SuitPageContext = {
 };
 
 interface SuitPageProps {
-	suit: SuiteWithMajor;
+	suit: SuitWithMajor;
 }
 
-export default function SuitePage({ suit }: SuitPageProps) {
+export default function SuitPage({ suit }: SuitPageProps) {
 	const isMajor = suit === 'major';
-	const cards = isMajor ? AllMajorArcana : AllInSuite;
+	const cards = isMajor ? AllMajorArcana : AllInSuit;
 	const router = useRouter();
 	return (
 		<Page title={displayCase(suit)}>
@@ -75,7 +75,7 @@ export async function getStaticPaths(): Promise<
 	GetStaticPathsResult<SuitPageContext>
 > {
 	return {
-		paths: AllSuitesWithMajor.map((suit) => ({
+		paths: AllSuitsWithMajor.map((suit) => ({
 			params: { suit: suit.replaceAll(' ', '-') },
 		})),
 		fallback: true,

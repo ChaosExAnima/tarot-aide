@@ -2,8 +2,8 @@ import {
 	AnyCard,
 	MajorCard,
 	MinorCard,
-	MinorCardWithoutSuite,
-	Suite,
+	MinorCardWithoutSuit,
+	Suit,
 } from './constants';
 
 export interface GenericDeck {
@@ -23,18 +23,18 @@ export interface GenericCard {
 
 export interface TarotCard extends GenericCard {
 	name: AnyCard;
-	suite: null | Suite;
+	suit: null | Suit;
 }
 
 export interface MajorTarotCard extends TarotCard {
 	name: MajorCard;
-	suite: null;
+	suit: null;
 }
 
 export interface MinorTarotCard extends TarotCard {
 	name: MinorCard;
-	shortName: MinorCardWithoutSuite;
-	suite: Suite;
+	shortName: MinorCardWithoutSuit;
+	suit: Suit;
 }
 
 export type CardMap = Map<AnyCard, TarotCard>;
