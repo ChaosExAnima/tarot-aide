@@ -1,6 +1,6 @@
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Image } from '@nextui-org/react';
+import { Image } from '@nextui-org/react';
+
+import CancelButton from 'components/buttons/cancel';
 
 interface UploadImageProps {
 	image: string;
@@ -16,15 +16,11 @@ export default function UploadImage({ image, onRemove }: UploadImageProps) {
 				height="100%"
 				alt="Uploaded image"
 			/>
-			<Button
-				isIconOnly
-				color="danger"
+			<CancelButton
 				onPress={onRemove}
+				className="absolute top-2 right-2 z-20"
 				aria-label="Delete this image"
-				className="absolute top-2 right-2 z-20 rounded-full"
-			>
-				<FontAwesomeIcon icon={faXmark} />
-			</Button>
+			/>
 		</figure>
 	);
 }

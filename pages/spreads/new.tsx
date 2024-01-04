@@ -2,6 +2,7 @@ import { Button, Card, CardHeader, Input } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+import CancelButton from 'components/buttons/cancel';
 import CardPicker from 'components/card-picker';
 import Page from 'components/page';
 import UploadControls from 'components/upload';
@@ -40,12 +41,7 @@ export default function NewSpreadPage() {
 			<section className="grid grid-cols-2 gap-4 grow">
 				{cards.map((card) => (
 					<Card key={card} className="h-full">
-						<Button
-							color="danger"
-							className="absolute top-0 right-0"
-						>
-							X
-						</Button>
+						<CancelButton className="absolute top-1 right-1 w-6 h-6 min-w-0" />
 						<CardHeader>{displayCase(card)}</CardHeader>
 					</Card>
 				))}
