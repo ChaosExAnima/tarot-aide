@@ -7,26 +7,24 @@ import { displayCase } from 'lib/text';
 export default function Home() {
 	return (
 		<Page>
-			<main className="container flex flex-col gap-4 p-4 min-h-[calc(100vh-65px)]">
-				{AllSuitsWithMajor.map((suit) => (
-					<Link
-						href={`/suits/${suit}`}
-						key={suit}
-						className="font-bold text-lg text-slate-900 bg-secondary rounded-lg px-4 grow"
-						isBlock
-					>
-						{displayCase(suit)}
-					</Link>
-				))}
-				<Divider />
+			{AllSuitsWithMajor.map((suit) => (
 				<Link
-					href="/spreads/new"
-					className="font-bold text-lg text-slate-900 bg-primary rounded-lg px-4 grow"
+					href={`/suits/${suit}`}
+					key={suit}
+					className="font-bold text-lg text-slate-900 bg-secondary rounded-lg px-4 grow"
 					isBlock
 				>
-					New Spread
+					{displayCase(suit)}
 				</Link>
-			</main>
+			))}
+			<Divider />
+			<Link
+				href="/spreads/new"
+				className="font-bold text-lg text-slate-900 bg-primary rounded-lg px-4 grow"
+				isBlock
+			>
+				New Spread
+			</Link>
 		</Page>
 	);
 }

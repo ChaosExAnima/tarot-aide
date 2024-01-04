@@ -33,7 +33,9 @@ export default function Page({
 				<link rel="icon" href="/favicon.ico" key="icon" />
 			</Head>
 			<Nav />
-			{children}
+			<main className="container flex flex-col gap-4 p-4 min-h-[calc(100vh-65px)]">
+				{children}
+			</main>
 		</>
 	);
 }

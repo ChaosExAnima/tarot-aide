@@ -34,18 +34,16 @@ export default function SuitPage({ suit }: SuitPageProps) {
 	);
 	return (
 		<Page title={displayCase(suit)}>
-			<main className="container flex flex-col min-h-height">
-				<section className="flex-grow grid grid-cols-2 gap-4 p-4">
-					{isMajor && AllMajorArcana.map(cardMap)}
-					{!isMajor && AllNumberCards.map(cardMap)}
+			<section className="flex-grow grid grid-cols-2 gap-4">
+				{isMajor && AllMajorArcana.map(cardMap)}
+				{!isMajor && AllNumberCards.map(cardMap)}
+			</section>
+			{!isMajor && <Divider />}
+			{!isMajor && (
+				<section className="flex-grow grid grid-cols-2 gap-4">
+					{AllNameCards.map(cardMap)}
 				</section>
-				{!isMajor && <Divider />}
-				{!isMajor && (
-					<section className="flex-grow grid grid-cols-2 gap-4 p-4">
-						{AllNameCards.map(cardMap)}
-					</section>
-				)}
-			</main>
+			)}
 		</Page>
 	);
 }
