@@ -1,4 +1,4 @@
-import { Card, CardBody } from '@nextui-org/react';
+import { Card, CardBody, Divider } from '@nextui-org/react';
 import {
 	GetStaticPathsResult,
 	GetStaticPropsContext,
@@ -8,9 +8,12 @@ import { useRouter } from 'next/router';
 
 import Page from 'components/page';
 import {
-	AllInSuit,
 	AllMajorArcana,
+	AllNameCards,
+	AllNumberCards,
 	AllSuitsWithMajor,
+	AnyCardWithoutSuit,
+	MajorSuit,
 	SuitWithMajor,
 } from 'lib/cards/constants';
 import { isSuit } from 'lib/cards/utils';
@@ -26,32 +29,51 @@ interface SuitPageProps {
 
 export default function SuitPage({ suit }: SuitPageProps) {
 	const isMajor = suit === 'major';
-	const cards = isMajor ? AllMajorArcana : AllInSuit;
-	const router = useRouter();
+	const cardMap = (card: AnyCardWithoutSuit) => (
+		<SuitCard key={card} card={card} suit={suit} />
+	);
 	return (
 		<Page title={displayCase(suit)}>
-			<section className="container grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-				{cards.map((card) => (
-					<Card
-						key={card}
-						className="grow"
-						isPressable
-						shadow="sm"
-						onPress={() =>
-							router.push(
-								`/cards/${
-									isMajor ? card : `${card}-of-${suit}`
-								}`,
-							)
-						}
-					>
-						<CardBody>
-							<h2>{displayCase(card)}</h2>
-						</CardBody>
-					</Card>
-				))}
-			</section>
+			<main className="container flex flex-col min-h-height">
+				<section className="flex-grow grid grid-cols-2 gap-4 p-4">
+					{isMajor && AllMajorArcana.map(cardMap)}
+					{!isMajor && AllNumberCards.map(cardMap)}
+				</section>
+				{!isMajor && <Divider />}
+				{!isMajor && (
+					<section className="flex-grow grid grid-cols-2 gap-4 p-4">
+						{AllNameCards.map(cardMap)}
+					</section>
+				)}
+			</main>
 		</Page>
+	);
+}
+
+function SuitCard({
+	card,
+	suit,
+}: {
+	card: AnyCardWithoutSuit;
+	suit: SuitWithMajor;
+}) {
+	const router = useRouter();
+	const isMajor = suit === MajorSuit;
+	return (
+		<Card
+			className="grow"
+			isPressable
+			shadow="sm"
+			onPress={() =>
+				router.push(`/cards/${isMajor ? card : `${card}-of-${suit}`}`)
+			}
+		>
+			<CardBody>
+				<h2 className="text-lg text-center font-semibold">
+					{displayCase(card)}
+				</h2>
+			</CardBody>
+		</Card>
 	);
 }
 

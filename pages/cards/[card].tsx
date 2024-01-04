@@ -28,9 +28,13 @@ interface CardPageProps {
 }
 
 export default function CardPage({ card }: CardPageProps) {
+	const name = displayCase(card.name);
 	return (
-		<Page title={displayCase(card?.name)}>
-			{displayCase(card?.name) ?? 'Loading...'}
+		<Page title={name}>
+			<section className="container p-4">
+				<h1 className="text-6xl font-bold text-center mb-4">{name}</h1>
+				<p>Description goes here. Lorem ipsum and that jazz.</p>
+			</section>
 		</Page>
 	);
 }

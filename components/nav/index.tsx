@@ -14,9 +14,8 @@ interface NavItem {
 }
 
 export const NavList: NavItem[] = [
-	{ label: 'Home', path: '/', exact: true },
+	{ label: 'Cards', path: '/', exact: true },
 	{ label: 'Spreads', path: '/spreads' },
-	{ label: 'Cards', path: '/cards' },
 ];
 
 export default function Nav() {
