@@ -26,7 +26,11 @@ export default function Nav() {
 				{NavList.map((item) => (
 					<NavbarItem
 						key={item.path}
-						isActive={item.path === router.pathname}
+						isActive={
+							item.exact
+								? router.pathname === item.path
+								: router.pathname.startsWith(item.path)
+						}
 					>
 						<Link href={item.path} color="primary">
 							{item.label}
