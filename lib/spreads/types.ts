@@ -1,15 +1,19 @@
 import { GenericCard } from 'lib/cards/types';
 import { Audio, Photo } from 'lib/types';
 
-export interface SpreadCard {
-	name: string;
+export interface SpreadPosition {
+	position: string;
 	description?: string;
 	card?: GenericCard;
 	notes?: string;
 }
 
+export interface FilledSpreadPosition extends SpreadPosition {
+	card: GenericCard;
+}
+
 export interface GenericSpread {
-	cards: SpreadCard[];
+	positions: SpreadPosition[];
 }
 
 export interface PatternSpread extends GenericSpread {

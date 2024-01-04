@@ -1,9 +1,11 @@
 import {
 	AnyCard,
 	MajorCard,
+	MajorSuit,
 	MinorCard,
 	MinorCardWithoutSuit,
 	Suit,
+	SuitWithMajor,
 } from './constants';
 
 export interface GenericDeck {
@@ -23,12 +25,14 @@ export interface GenericCard {
 
 export interface TarotCard extends GenericCard {
 	name: AnyCard;
-	suit: null | Suit;
+	shortName?: MinorCardWithoutSuit;
+	suit: SuitWithMajor;
 }
 
 export interface MajorTarotCard extends TarotCard {
 	name: MajorCard;
-	suit: null;
+	shortName: undefined;
+	suit: typeof MajorSuit;
 }
 
 export interface MinorTarotCard extends TarotCard {

@@ -1,4 +1,5 @@
 import * as constants from './constants';
+import { TarotCard } from './types';
 
 export function isSuit(suitName: string): suitName is constants.SuitWithMajor {
 	return constants.AllSuitsWithMajor.includes(suitName as any);
@@ -28,4 +29,25 @@ export function getCardAndSuitFromName(cardName: constants.AnyCard): {
 		constants.Suit,
 	];
 	return { card, suit };
+}
+
+export function getFullNameFromSuitAndCard(
+	suit: constants.Suit,
+	card: constants.MinorCardWithoutSuit,
+): constants.MinorCard {
+	return `${card} of ${suit}`;
+}
+
+export function getCardsFromSuit(suit: constants.SuitWithMajor): TarotCard[] {
+	if (suit === constants.MajorSuit) {
+		return constants.AllMajorArcana.map((name) => ({
+			name,
+			suit: constants.MajorSuit,
+		}));
+	}
+	return constants.AllInSuit.map((name) => ({
+		name: getFullNameFromSuitAndCard(suit, name),
+		shortName: name,
+		suit,
+	}));
 }
