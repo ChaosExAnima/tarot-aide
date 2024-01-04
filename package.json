@@ -11,6 +11,9 @@
 		"build-storybook": "storybook build -s public"
 	},
 	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^6.5.1",
+		"@fortawesome/free-solid-svg-icons": "^6.5.1",
+		"@fortawesome/react-fontawesome": "^0.2.0",
 		"@nextui-org/react": "^2.2.9",
 		"@react-spring/web": "^9.7.3",
 		"clsx": "^2.1.0",
