@@ -1,10 +1,11 @@
-import { Button, Divider, Link } from '@nextui-org/react';
+import { Divider } from '@nextui-org/react';
 import {
 	GetStaticPathsResult,
 	GetStaticPropsContext,
 	GetStaticPropsResult,
 } from 'next';
 
+import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import {
 	AllMajorArcana,
@@ -56,15 +57,13 @@ function SuitCard({
 }) {
 	const isMajor = suit === MajorSuit;
 	return (
-		<Button
-			as={Link}
+		<ButtonLink
 			href={`/cards/${isMajor ? card : `${card}-of-${suit}`}`}
 			key={suit}
-			className="flex font-bold text-lg text-center grow h-full"
-			color="primary"
+			className="grow"
 		>
 			{displayCase(card)}
-		</Button>
+		</ButtonLink>
 	);
 }
 

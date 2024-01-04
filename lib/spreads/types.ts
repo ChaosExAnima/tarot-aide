@@ -9,11 +9,16 @@ export interface SpreadCard {
 }
 
 export interface GenericSpread {
-	name: string;
 	cards: SpreadCard[];
 }
 
-export interface Spread extends GenericSpread {
+export interface PatternSpread extends GenericSpread {
+	name: string;
+	description?: string;
+}
+
+export interface ExistingSpread extends GenericSpread {
+	id: string;
 	date: Date;
 	notes?: string;
 	image?: Photo;

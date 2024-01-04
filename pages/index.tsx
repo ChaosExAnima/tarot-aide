@@ -1,5 +1,6 @@
-import { Divider, Link } from '@nextui-org/react';
+import { Divider } from '@nextui-org/react';
 
+import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import { AllSuitsWithMajor } from 'lib/cards/constants';
 import { displayCase } from 'lib/text';
@@ -8,23 +9,19 @@ export default function Home() {
 	return (
 		<Page>
 			{AllSuitsWithMajor.map((suit) => (
-				<Link
+				<ButtonLink
 					href={`/suits/${suit}`}
 					key={suit}
-					className="font-bold text-lg text-slate-900 bg-secondary rounded-lg px-4 grow"
-					isBlock
+					className="grow text-slate-900"
+					color="secondary"
 				>
 					{displayCase(suit)}
-				</Link>
+				</ButtonLink>
 			))}
 			<Divider />
-			<Link
-				href="/spreads/new"
-				className="font-bold text-lg text-slate-900 bg-primary rounded-lg px-4 grow"
-				isBlock
-			>
+			<ButtonLink href="/spreads/new" className="grow">
 				New Spread
-			</Link>
+			</ButtonLink>
 		</Page>
 	);
 }
