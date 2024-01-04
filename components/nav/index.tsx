@@ -55,15 +55,3 @@ export default function Nav() {
 		</Navbar>
 	);
 }
-
-type NavItemProps = NavItem & { curPath: string };
-function NavItem({ label, path, exact, curPath }: NavItemProps) {
-	if ((exact && curPath === path) || (!exact && curPath.startsWith(path))) {
-		return <li aria-current>{label}</li>;
-	}
-	return (
-		<li>
-			<Link href={path}>{label}</Link>
-		</li>
-	);
-}
