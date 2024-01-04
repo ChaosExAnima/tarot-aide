@@ -44,8 +44,10 @@ export const AllNameCards = ['page', 'knight', 'queen', 'king'] as const;
 export type NameCard = (typeof AllNameCards)[number];
 
 export const AllInSuite = [...AllNumberCards, ...AllNameCards] as const;
-export const AllSuites = ['coins', 'cups', 'swords', 'wands'] as const;
+export const AllSuites = ['cups', 'pentacles', 'swords', 'wands'] as const;
+export const AllSuitesWithMajor = [MajorSuite, ...AllSuites] as const;
 export type Suite = (typeof AllSuites)[number];
+export type SuiteWithMajor = (typeof AllSuitesWithMajor)[number];
 
 export const AllMinorArcana: readonly MinorCard[] = AllSuites.reduce<
 	MinorCard[]
@@ -53,13 +55,14 @@ export const AllMinorArcana: readonly MinorCard[] = AllSuites.reduce<
 	(prev, suite) => [
 		...prev,
 		...AllInSuite.map(
-			(suiteCard) => `${suiteCard} of ${suite}` satisfies MinorCard
+			(suiteCard) => `${suiteCard} of ${suite}` satisfies MinorCard,
 		),
 	],
-	[]
+	[],
 );
 export type MinorCardWithoutSuite = NumberCard | NameCard;
 export type MinorCard = `${MinorCardWithoutSuite} of ${Suite}`;
 
 export const AllCards = [...AllMajorArcana, ...AllMinorArcana] as const;
-export type CardName = MajorCard | MinorCard;
+export type AnyCard = MajorCard | MinorCard;
+export type AnyCardWithoutSuit = MajorCard | MinorCardWithoutSuite;

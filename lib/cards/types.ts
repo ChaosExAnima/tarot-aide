@@ -1,5 +1,5 @@
 import {
-	CardName,
+	AnyCard,
 	MajorCard,
 	MinorCard,
 	MinorCardWithoutSuite,
@@ -22,7 +22,7 @@ export interface GenericCard {
 }
 
 export interface TarotCard extends GenericCard {
-	name: CardName;
+	name: AnyCard;
 	suite: null | Suite;
 }
 
@@ -37,4 +37,4 @@ export interface MinorTarotCard extends TarotCard {
 	suite: Suite;
 }
 
-export type CardMap = Map<CardName, TarotCard>;
+export type CardMap = Map<AnyCard, TarotCard>;
