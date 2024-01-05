@@ -4,7 +4,7 @@ import NextImage from 'next/image';
 
 import Page from 'components/page';
 import { getSpreadById } from 'lib/spreads/db';
-import { displayCase } from 'lib/text';
+import { displayCase, displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
@@ -16,8 +16,9 @@ interface SpreadPageProps {
 export default function SpreadPage({ spread }: SpreadPageProps) {
 	return (
 		<Page>
-			<h1>{spread.name}</h1>
-			<p>{spread.date.toDateString()}</p>
+			<h1 className="font-bold text-2xl">
+				{spread.name ?? `Spread ${displayRelativeDate(spread.date)}`}
+			</h1>
 			{spread.photo && (
 				<Image
 					as={NextImage}
