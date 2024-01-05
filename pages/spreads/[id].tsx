@@ -1,7 +1,10 @@
+import { Card, CardBody, CardHeader, Image, Textarea } from '@nextui-org/react';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import NextImage from 'next/image';
 
 import Page from 'components/page';
 import { ExistingSpread, TarotSpreadOnly } from 'lib/spreads/types';
+import { displayCase } from 'lib/text';
 
 interface SpreadPageProps {
 	spread: TarotSpreadOnly<ExistingSpread>;
@@ -12,14 +15,26 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 		<Page>
 			<h1>{spread.name}</h1>
 			<p>{spread.date}</p>
-			<section className="flex flex-col">
-				{spread.positions.map((position) => (
-					<div key={position.position}>
-						<h2>{position.position}</h2>
-						<p>{position.card.name}</p>
-					</div>
-				))}
-			</section>
+			{spread.image && (
+				<Image
+					as={NextImage}
+					src={spread.image.url}
+					width={spread.image.width}
+					height={spread.image.width}
+					alt="Tarot image"
+				/>
+			)}
+			{spread.positions.map((spread) => (
+				<Card key={spread.card.name}>
+					<CardHeader className="gap-2">
+						{displayCase(spread.card.name)}
+						<span className="text-content4">{spread.position}</span>
+					</CardHeader>
+					<CardBody>
+						<Textarea minRows={1} placeholder="Notes go here" />
+					</CardBody>
+				</Card>
+			))}
 		</Page>
 	);
 }
@@ -37,25 +52,54 @@ export async function getServerSideProps(
 				id: context.params!.id,
 				name: 'Fake Spread',
 				date: new Date(2024, 0, 1).toDateString(),
+				image: {
+					id: '1234',
+					url: '/test.jpg',
+					mimeType: 'image/jpeg',
+					width: 1000,
+					height: 1000,
+				},
 				positions: [
 					{
-						position: 'Mind',
-						card: { name: 'death' },
-					},
-					{
-						position: 'Body',
+						position: 'Self',
 						card: {
-							name: 'eight of wands',
-							suit: 'wands',
-							shortName: 'eight',
+							name: 'king of cups',
+							suit: 'cups',
+							shortName: 'king',
 						},
 					},
 					{
-						position: 'Spirit',
+						position: 'Conflict',
+						card: { name: 'chariot' },
+					},
+					{
+						position: 'Past',
 						card: {
-							name: 'two of pentacles',
-							suit: 'pentacles',
+							name: 'page of wands',
+							suit: 'wands',
+							shortName: 'page',
+						},
+					},
+					{
+						position: 'Future',
+						card: {
+							name: 'two of cups',
+							suit: 'cups',
 							shortName: 'two',
+						},
+					},
+					{
+						position: 'Root',
+						card: {
+							name: 'queen of swords',
+							suit: 'swords',
+							shortName: 'queen',
+						},
+					},
+					{
+						position: 'Sky',
+						card: {
+							name: 'star',
 						},
 					},
 				],
