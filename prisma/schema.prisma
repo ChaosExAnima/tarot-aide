@@ -20,7 +20,10 @@ model Spread {
     note        String?
     photo       String?
     audio       String?
+    template    Boolean    @default(false)
     Position    Position[]
+
+    @@index([userId, template])
 }
 
 model Position {
