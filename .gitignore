@@ -40,3 +40,5 @@ next-env.d.ts
 *.code-workspace
 
 prisma/*.db*
+uploads/*
+!.gitkeep
