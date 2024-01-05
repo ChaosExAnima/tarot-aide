@@ -1,16 +1,9 @@
 export type Nullable<T> = T | null;
 
-export interface Media {
-	id: string;
-	url: string;
-	mimeType: string;
-}
-
-export interface Photo extends Media {
-	width: number;
-	height: number;
-}
-
-export interface Audio extends Media {
-	duration: number;
-}
+export type SerializedDates<Obj extends object> = {
+	[Key in keyof Obj]: Obj[Key] extends Date
+		? number
+		: Obj[Key] extends object
+			? SerializedDates<Obj[Key]>
+			: Obj[Key];
+};

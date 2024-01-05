@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+model User {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    email     String   @unique
+    admin     Boolean  @default(false)
+    Spread    Spread[]
+    Media     Media[]
+}
+
+model Spread {
+    id          Int        @id @default(autoincrement())
+    createdAt   DateTime   @default(now())
+    userId      Int
+    user        User       @relation(fields: [userId], references: [id])
+    date        DateTime   @default(now())
+    name        String?
+    description String?
+    note        String?
+    template    Boolean    @default(false)
+    positions   Position[]
+    media       Media[]
+
+    @@index([userId, template])
+}
+
+model Position {
+    id          Int     @id @default(autoincrement())
+    spreadId    Int
+    spread      Spread  @relation(fields: [spreadId], references: [id])
+    name        String
+    description String?
+    card        String?
+    suit        String?
+    note        String?
+}
+
+model Media {
+    createdAt DateTime @default(now())
+    path      String   @id
+    type      String
+    width     Int?
+    height    Int?
+    spreadId  Int
+    spead     Spread   @relation(fields: [spreadId], references: [id])
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+
+    @@index([spreadId])
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}

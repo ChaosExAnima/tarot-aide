@@ -1,47 +1,60 @@
 import { faCamera, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonGroup, Button } from '@nextui-org/react';
+import { ButtonGroup, Button, Image } from '@nextui-org/react';
 import { ChangeEvent, useRef, useState } from 'react';
 
-import UploadImage from './image';
+import CancelButton from 'components/buttons/cancel';
+
 import CameraUpload from './video';
 
 type UploadState = 'initial' | 'camera' | 'image';
 
-export default function UploadControls() {
-	const [image, setImage] = useState<string | null>(null);
+export interface UploadControlsProps {
+	onSelect: (image: Blob | null) => void;
+	isDisabled?: boolean;
+}
+
+export default function UploadControls({
+	onSelect,
+	isDisabled = false,
+}: UploadControlsProps) {
 	const fileRef = useRef<HTMLInputElement>(null);
+	const [image, setImage] = useState<string | null>(null);
 	const [state, setState] = useState<UploadState>('initial');
 
-	const loadImage = (imageData: string) => {
-		setState('image');
-		setImage(imageData);
+	const loadImage = async (photo: Blob | null) => {
+		if (!photo) {
+			return resetImage();
+		}
+		onSelect(photo);
+
+		const reader = new FileReader();
+		reader.addEventListener('load', () => {
+			setImage(reader.result as string);
+			setState('image');
+		});
+		reader.readAsDataURL(photo);
 	};
 
-	const onReset = () => {
+	const resetImage = () => {
 		setState('initial');
 		setImage(null);
+		onSelect(null);
 	};
 
-	const saveImage = (event: ChangeEvent<HTMLInputElement>) => {
+	const getImageFromInput = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (!file) {
 			setImage(null);
 			return;
 		}
-		const reader = new FileReader();
-		reader.addEventListener(
-			'load',
-			() => loadImage(reader.result as string),
-			false,
-		);
-		reader.readAsDataURL(file);
+		loadImage(file);
 	};
 
 	return (
 		<section>
 			{state === 'initial' && (
-				<ButtonGroup fullWidth className="h-20">
+				<ButtonGroup fullWidth className="h-20" isDisabled={isDisabled}>
 					<Button
 						color="primary"
 						className="h-full"
@@ -62,14 +75,27 @@ export default function UploadControls() {
 			)}
 			{state === 'camera' && <CameraUpload onSelect={loadImage} />}
 			{state === 'image' && image && (
-				<UploadImage image={image} onRemove={onReset} />
+				<figure className="relative">
+					<Image
+						src={image}
+						width="100%"
+						height="100%"
+						alt="Uploaded image"
+					/>
+					<CancelButton
+						onPress={resetImage}
+						className="absolute top-2 right-2 z-20"
+						aria-label="Delete this image"
+					/>
+				</figure>
 			)}
 			<input
 				type="file"
 				className="hidden"
 				accept="image/*"
+				name="photo"
 				ref={fileRef}
-				onChange={saveImage}
+				onChange={getImageFromInput}
 			/>
 		</section>
 	);
