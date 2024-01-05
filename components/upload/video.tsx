@@ -1,6 +1,6 @@
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from '@nextui-org/react';
+import { Button, CircularProgress } from '@nextui-org/react';
 import { useState, useRef, useEffect, RefObject } from 'react';
 
 interface CameraUploadProps {
@@ -9,11 +9,12 @@ interface CameraUploadProps {
 
 export default function CameraUpload({ onSelect }: CameraUploadProps) {
 	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState(true);
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
-		loadVideoStream(videoRef, setErrorMessage);
+		loadVideoStream(videoRef, setErrorMessage, () => setLoading(false));
 	}, [videoRef]);
 
 	const onTakePhoto = () => {
@@ -24,21 +25,32 @@ export default function CameraUpload({ onSelect }: CameraUploadProps) {
 		if (!context) {
 			return;
 		}
+		// Get the image
 		const video = videoRef.current;
-		video.pause();
-
 		context.drawImage(video, 0, 0, 640, 480);
-
 		const data = canvasRef.current.toDataURL('image/png');
 		onSelect(data);
+
+		// Clean up
+		if (video.srcObject) {
+			(video.srcObject as MediaStream)
+				.getTracks()
+				.forEach((track) => track.stop());
+			video.srcObject = null;
+		}
 	};
 
 	return (
 		<>
-			<video ref={videoRef} className="rounded-xl">
-				Video stream not available.
-			</video>
-			{errorMessage && <p className="text-danger">{errorMessage}</p>}
+			<figure className="relative">
+				<video ref={videoRef} className="rounded-xl text-white">
+					Video stream not available.
+				</video>
+				{loading && (
+					<CircularProgress className="absolute top-[calc(50%-20px)] left-[calc(50%-20px)]" />
+				)}
+				{errorMessage && <p className="text-danger">{errorMessage}</p>}
+			</figure>
 			<canvas
 				ref={canvasRef}
 				className="hidden"
@@ -61,6 +73,7 @@ export default function CameraUpload({ onSelect }: CameraUploadProps) {
 async function loadVideoStream(
 	videoRef: RefObject<HTMLVideoElement>,
 	onError: (_: string) => void,
+	onSuccess: () => void,
 ) {
 	if (!videoRef.current) {
 		return;
@@ -74,6 +87,7 @@ async function loadVideoStream(
 			videoRef.current.srcObject = stream;
 		}
 		await videoRef.current?.play();
+		onSuccess();
 	} catch (err) {
 		console.error(err);
 		if (err instanceof Error) {
