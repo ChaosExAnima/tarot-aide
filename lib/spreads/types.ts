@@ -1,5 +1,5 @@
 import { GenericCard, TarotCard } from 'lib/cards/types';
-import { Audio, Photo } from 'lib/types';
+import { Audio, Photo } from 'lib/media';
 
 export interface SpreadPosition {
 	position: string;
