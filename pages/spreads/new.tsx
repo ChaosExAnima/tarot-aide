@@ -1,5 +1,4 @@
 import { Button, Card, CardHeader, Input } from '@nextui-org/react';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import CancelButton from 'components/buttons/cancel';
@@ -22,22 +21,20 @@ export default function NewSpreadPage() {
 		setCards((positions) => [...positions, card.name]);
 		clear();
 	};
-	const router = useRouter();
-	const save = () => {
-		router.push('/spreads/2020-01-01-1');
-	};
+	const [photo, setPhoto] = useState<Blob | null>(null);
+
+	const save = () => sendSpread(date, cards, photo);
 	return (
 		<Page>
 			{errorMessage && <p className="text-red-500">{errorMessage}</p>}
 			<Input
 				fullWidth
 				type="text"
-				name="date"
 				label="Date"
 				value={date}
 				onChange={(e) => setDate(e.target.value)}
 			/>
-			<UploadControls />
+			<UploadControls onSelect={setPhoto} />
 			<section className="grid grid-cols-2 gap-4 grow">
 				{cards.map((card) => (
 					<Card key={card} className="h-full">
@@ -56,4 +53,19 @@ export default function NewSpreadPage() {
 			</CardPicker>
 		</Page>
 	);
+}
+
+async function sendSpread(date: string, cards: AnyCard[], photo: Blob | null) {
+	const formData = new FormData();
+	formData.append('date', date);
+	cards.forEach((card) => formData.append('cards', card));
+	if (photo) {
+		formData.append('photo', photo);
+	}
+	const response = await fetch('/api/spread', {
+		method: 'POST',
+		body: formData,
+	});
+	const data = await response.json();
+	console.log(data);
 }
