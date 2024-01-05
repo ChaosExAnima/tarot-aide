@@ -4,6 +4,7 @@ import {
 	Modal,
 	ModalBody,
 	ModalContent,
+	ModalHeader,
 	useDisclosure,
 } from '@nextui-org/react';
 import { clsx } from 'clsx';
@@ -50,6 +51,10 @@ export default function CardPicker({
 				hideCloseButton
 			>
 				<ModalContent>
+					<ModalHeader>
+						{!suit && 'Pick your suit'}
+						{suit && `Select your card in ${displayCase(suit)}`}
+					</ModalHeader>
 					<ModalBody
 						className={clsx(
 							'grid',
@@ -78,7 +83,11 @@ export default function CardPicker({
 										onClick={() => select(card)}
 										isDisabled={disabled}
 									>
-										{displayCase(card.name)}
+										{displayCase(
+											'shortName' in card
+												? card.shortName
+												: card.name,
+										)}
 									</Button>
 								);
 							})}
