@@ -1,11 +1,12 @@
 import { GenericCard, TarotCard } from 'lib/cards/types';
 import { Audio, Photo } from 'lib/media';
+import { Nullable } from 'lib/types';
 
 export interface SpreadPosition {
 	position: string;
-	description?: string;
-	card?: GenericCard;
-	notes?: string;
+	description: Nullable<string>;
+	card: Nullable<GenericCard>;
+	notes: Nullable<string>;
 }
 
 export interface FilledSpreadPosition extends SpreadPosition {
@@ -18,17 +19,17 @@ export interface GenericSpread {
 
 export interface PatternSpread extends GenericSpread {
 	name: string;
-	description?: string;
+	description: Nullable<string>;
 }
 
 export interface ExistingSpread extends GenericSpread {
-	id: string;
+	id: number;
 	date: string;
-	name?: string;
-	description?: string;
-	notes?: string;
-	image?: Photo;
-	audio?: Audio;
+	name: Nullable<string>;
+	description: Nullable<string>;
+	notes: Nullable<string>;
+	photo: Nullable<Photo>;
+	audio: Nullable<Audio>;
 }
 
 export type TarotSpreadPosition = Omit<SpreadPosition, 'card'> & {

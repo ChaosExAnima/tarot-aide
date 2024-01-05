@@ -17,6 +17,14 @@ export interface Audio extends Media {
 	duration: number;
 }
 
+export function isPhoto(media: Media): media is Photo {
+	return media.type === 'photo';
+}
+
+export function isAudio(media: Media): media is Audio {
+	return media.type === 'audio';
+}
+
 const asyncSizeOf = promisify(sizeOf);
 
 export const ALLOWED_IMAGE_TYPES = ['jpg', 'png', 'webp'];
