@@ -3,11 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress } from '@nextui-org/react';
 import { useState, useRef, useEffect, RefObject } from 'react';
 
-interface CameraUploadProps {
-	onSelect: (_: string) => void;
-}
+import { UploadControlsProps } from '.';
 
-export default function CameraUpload({ onSelect }: CameraUploadProps) {
+export default function CameraUpload({ onSelect }: UploadControlsProps) {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [loading, setLoading] = useState(true);
 	const videoRef = useRef<HTMLVideoElement>(null);
@@ -28,16 +26,17 @@ export default function CameraUpload({ onSelect }: CameraUploadProps) {
 		// Get the image
 		const video = videoRef.current;
 		context.drawImage(video, 0, 0, 640, 480);
-		const data = canvasRef.current.toDataURL('image/png');
-		onSelect(data);
-
-		// Clean up
-		if (video.srcObject) {
-			(video.srcObject as MediaStream)
-				.getTracks()
-				.forEach((track) => track.stop());
-			video.srcObject = null;
-		}
+		canvasRef.current.toBlob((blob) => {
+			console.log('video blob', blob);
+			onSelect(blob);
+			// Clean up
+			if (video.srcObject) {
+				(video.srcObject as MediaStream)
+					.getTracks()
+					.forEach((track) => track.stop());
+				video.srcObject = null;
+			}
+		});
 	};
 
 	return (
