@@ -5,8 +5,6 @@ export function middleware(req: NextRequest) {
 	if (req.nextUrl.pathname.startsWith('/images/')) {
 		const url = req.nextUrl.clone();
 		url.pathname = `/api${url.pathname}`;
-		console.log('redirecting to', url.pathname);
-
 		return NextResponse.rewrite(url);
 	}
 }

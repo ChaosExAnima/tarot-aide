@@ -14,9 +14,7 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
-	console.log('serving image', req.query.file);
-
-	console.log(req.url?.replace('/images', ''));
+	req.url = req.url?.replace('/images', '');
 
 	serve(req, res, (err) => {
 		if (err) {
