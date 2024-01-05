@@ -4,16 +4,14 @@ import NextImage from 'next/image';
 
 import Page from 'components/page';
 import prisma from 'lib/db';
-import { serializeDates } from 'lib/helpers';
 import { isAudio, isPhoto } from 'lib/media';
 import { displayCase } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
-import type { SerializedDates } from 'lib/types';
 
 interface SpreadPageProps {
-	spread: SerializedDates<ExistingSpread>;
+	spread: ExistingSpread;
 }
 
 export default function SpreadPage({ spread }: SpreadPageProps) {
@@ -24,7 +22,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 			{spread.photo && (
 				<Image
 					as={NextImage}
-					src={spread.photo.path}
+					src={`/images/${spread.photo.path}`}
 					width={spread.photo.width}
 					height={spread.photo.width}
 					alt="Tarot image"
@@ -77,7 +75,7 @@ export async function getServerSideProps(
 	}
 	return {
 		props: {
-			spread: serializeDates({
+			spread: {
 				id: spread.id,
 				name: spread.name || 'Untitled',
 				description: spread.description,
@@ -91,7 +89,7 @@ export async function getServerSideProps(
 				})),
 				photo: spread.media.find(isPhoto) ?? null,
 				audio: spread.media.find(isAudio) ?? null,
-			}),
+			},
 		},
 	};
 }
