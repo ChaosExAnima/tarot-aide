@@ -20,20 +20,21 @@ model Spread {
     description String?
     note        String?
     template    Boolean    @default(false)
-    position    Position[]
+    positions   Position[]
     media       Media[]
 
     @@index([userId, template])
 }
 
 model Position {
-    id       Int     @id @default(autoincrement())
-    spreadId Int
-    spread   Spread  @relation(fields: [spreadId], references: [id])
-    name     String
-    card     String?
-    suit     String?
-    note     String?
+    id          Int     @id @default(autoincrement())
+    spreadId    Int
+    spread      Spread  @relation(fields: [spreadId], references: [id])
+    name        String
+    description String?
+    card        String?
+    suit        String?
+    note        String?
 }
 
 model Media {
