@@ -3,8 +3,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import NextImage from 'next/image';
 
 import Page from 'components/page';
-import prisma from 'lib/db';
-import { isAudio, isPhoto } from 'lib/media';
+import { getSpreadById } from 'lib/spreads/db';
 import { displayCase } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
@@ -18,7 +17,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 	return (
 		<Page>
 			<h1>{spread.name}</h1>
-			<p>{spread.date}</p>
+			<p>{spread.date.toDateString()}</p>
 			{spread.photo && (
 				<Image
 					as={NextImage}
@@ -42,6 +41,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 								<Textarea
 									minRows={1}
 									placeholder="Notes go here"
+									value={spread.notes ?? ''}
 								/>
 							</CardBody>
 						</Card>
@@ -63,33 +63,13 @@ export async function getServerSideProps(
 	if (!id || isNaN(id)) {
 		return { notFound: true };
 	}
-	const spread = await prisma.spread.findFirst({
-		where: { id, userId: currentUserId },
-		include: {
-			positions: true,
-			media: true,
-		},
-	});
+	const spread = await getSpreadById(id, currentUserId);
 	if (!spread) {
 		return { notFound: true };
 	}
 	return {
 		props: {
-			spread: {
-				id: spread.id,
-				name: spread.name || 'Untitled',
-				description: spread.description,
-				date: spread.date.toDateString(),
-				notes: spread.note,
-				positions: spread.positions.map((position) => ({
-					position: position.name,
-					card: position.card ? { name: position.card } : null,
-					description: position.description,
-					notes: position.note,
-				})),
-				photo: spread.media.find(isPhoto) ?? null,
-				audio: spread.media.find(isAudio) ?? null,
-			},
+			spread,
 		},
 	};
 }
