@@ -8,13 +8,15 @@
 		"start": "next start",
 		"lint": "next lint",
 		"storybook": "storybook dev -p 6006 -s ./public",
-		"build-storybook": "storybook build -s public"
+		"build-storybook": "storybook build -s public",
+		"prisma": "dotenv -e .env.local prisma"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^6.5.1",
 		"@fortawesome/free-solid-svg-icons": "^6.5.1",
 		"@fortawesome/react-fontawesome": "^0.2.0",
 		"@nextui-org/react": "^2.2.9",
+		"@prisma/client": "5.7.1",
 		"@react-spring/web": "^9.7.3",
 		"clsx": "^2.1.0",
 		"framer-motion": "^10.17.4",
@@ -43,6 +45,7 @@
 		"@types/react-dom": "18.2.18",
 		"autoprefixer": "^10.4.16",
 		"babel-loader": "^9.1.3",
+		"dotenv-cli": "^7.3.0",
 		"eslint": "8.56.0",
 		"eslint-config-next": "14.0.4",
 		"eslint-config-prettier": "^9.1.0",
@@ -52,6 +55,7 @@
 		"eslint-plugin-unused-imports": "^3.0.0",
 		"postcss": "^8.4.32",
 		"prettier": "^3.1.1",
+		"prisma": "^5.7.1",
 		"storybook": "7.6.7",
 		"storybook-addon-swc": "^1.2.0",
 		"storybook-dark-mode": "^3.0.3",
