@@ -4,6 +4,7 @@ import sizeOf from 'image-size';
 import { promisify } from 'util';
 
 import prisma from './db';
+import { getCurrentUserId } from './users';
 
 export interface Photo extends Media {
 	type: 'photo';
@@ -23,6 +24,7 @@ export const ALLOWED_IMAGE_TYPES = ['jpg', 'png', 'webp'];
 export async function processPhoto(
 	file: File,
 	spreadId: number,
+	userId?: number,
 ): Promise<Media> {
 	const image = await asyncSizeOf(file.filepath);
 	if (!image) {
@@ -38,6 +40,7 @@ export async function processPhoto(
 			type: 'image',
 			width: image.width,
 			height: image.height,
+			userId: userId ?? getCurrentUserId(),
 		},
 	});
 }
