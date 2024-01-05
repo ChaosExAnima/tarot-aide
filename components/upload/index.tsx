@@ -11,15 +11,18 @@ type UploadState = 'initial' | 'camera' | 'image';
 
 export interface UploadControlsProps {
 	onSelect: (image: Blob | null) => void;
+	isDisabled?: boolean;
 }
 
-export default function UploadControls({ onSelect }: UploadControlsProps) {
+export default function UploadControls({
+	onSelect,
+	isDisabled = false,
+}: UploadControlsProps) {
 	const fileRef = useRef<HTMLInputElement>(null);
 	const [image, setImage] = useState<string | null>(null);
 	const [state, setState] = useState<UploadState>('initial');
 
 	const loadImage = async (photo: Blob | null) => {
-		console.log('loading image...');
 		if (!photo) {
 			return resetImage();
 		}
@@ -27,7 +30,6 @@ export default function UploadControls({ onSelect }: UploadControlsProps) {
 
 		const reader = new FileReader();
 		reader.addEventListener('load', () => {
-			console.log('image loaded');
 			setImage(reader.result as string);
 			setState('image');
 		});
@@ -52,7 +54,7 @@ export default function UploadControls({ onSelect }: UploadControlsProps) {
 	return (
 		<section>
 			{state === 'initial' && (
-				<ButtonGroup fullWidth className="h-20">
+				<ButtonGroup fullWidth className="h-20" isDisabled={isDisabled}>
 					<Button
 						color="primary"
 						className="h-full"
