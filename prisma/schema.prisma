@@ -18,10 +18,9 @@ model Spread {
     name        String?
     description String?
     note        String?
-    photo       String?
-    audio       String?
     template    Boolean    @default(false)
-    Position    Position[]
+    position    Position[]
+    media       Media[]
 
     @@index([userId, template])
 }
@@ -34,6 +33,18 @@ model Position {
     card     String?
     suit     String?
     note     String?
+}
+
+model Media {
+    createdAt DateTime @default(now())
+    path      String   @id
+    type      String
+    width     Int?
+    height    Int?
+    spreadId  Int
+    spead     Spread   @relation(fields: [spreadId], references: [id])
+
+    @@index([spreadId])
 }
 
 generator client {
