@@ -1,4 +1,6 @@
-import { Button, Card, CardHeader, Input } from '@nextui-org/react';
+import { faCalendar, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Card, CardHeader } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -11,7 +13,6 @@ import { TarotCard } from 'lib/cards/types';
 import { displayCase } from 'lib/text';
 
 export default function NewSpreadPage() {
-	const [date, setDate] = useState(new Date().toDateString());
 	const [cards, setCards] = useState<AnyCard[]>([]);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const clear = () => {
@@ -29,14 +30,18 @@ export default function NewSpreadPage() {
 	return (
 		<Page>
 			{errorMessage && <p className="text-red-500">{errorMessage}</p>}
-			<Input
-				fullWidth
-				type="text"
-				name="date"
-				label="Date"
-				value={date}
-				onChange={(e) => setDate(e.target.value)}
-			/>
+			<section className="flex gap-4 items-center justify-end">
+				<Button isIconOnly aria-label="Set date">
+					<FontAwesomeIcon icon={faCalendar} />
+				</Button>
+				<Button
+					isIconOnly
+					color="danger"
+					aria-label="Cancel new spread"
+				>
+					<FontAwesomeIcon icon={faXmark} />
+				</Button>
+			</section>
 			<UploadControls />
 			<section className="grid grid-cols-2 gap-4 grow">
 				{cards.map((card) => (
