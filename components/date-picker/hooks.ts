@@ -15,17 +15,22 @@ export function useDatePicker(initial = new Date()) {
 		});
 	const setMonth = (month: number) =>
 		setDate((date) => {
+			const maxDays = getMaxDaysInMonth(month, date.getFullYear());
 			const newDate = new Date(date);
-			newDate.setMonth(month);
-			const maxDays = getMaxDaysInMonth(newDate);
 			if (newDate.getDate() > maxDays) {
 				newDate.setDate(maxDays);
 			}
+			newDate.setMonth(month);
+
 			return newDate;
 		});
 	const setYear = (year: number) =>
 		setDate((date) => {
+			const maxDays = getMaxDaysInMonth(date.getMonth(), year);
 			const newDate = new Date(date);
+			if (newDate.getDate() > maxDays) {
+				newDate.setDate(maxDays);
+			}
 			newDate.setFullYear(year);
 			return newDate;
 		});
