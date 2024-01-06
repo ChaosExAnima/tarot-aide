@@ -6,6 +6,11 @@ import 'styles/fonts.css';
 
 export const parameters: Parameters = {
 	layout: 'centered',
+	nextjs: {
+		router: {
+			pathname: '/',
+		},
+	},
 };
 
 export const decorators = [
