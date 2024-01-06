@@ -7,10 +7,7 @@ export default {
 	component: OracleCard,
 	render(args) {
 		return (
-			<div className="flex flex-col gap-4 w-96">
-				<OracleCard {...args} />
-				<OracleCard {...args} />
-				<OracleCard {...args} />
+			<div className="w-96">
 				<OracleCard {...args} />
 			</div>
 		);

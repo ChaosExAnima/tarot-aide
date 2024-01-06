@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
+import { displayCardShortName } from 'lib/cards/utils';
 import { BaseSpreadPosition } from 'lib/spreads/types';
 import { displayCase } from 'lib/text';
 
@@ -68,7 +69,7 @@ function OracleCardHeaderEditing({
 				isIconOnly={!card}
 				className="bg-default-100 hover:bg-default-200"
 			>
-				{card ? displayCase(card.name) : <CardsIcon />}
+				{card ? displayCardShortName(card) : <CardsIcon />}
 			</CardPicker>
 			<Input
 				value={editName}
