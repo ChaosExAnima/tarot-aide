@@ -45,7 +45,7 @@ export async function processPhoto(
 		data: {
 			spreadId: spreadId,
 			path: file.newFilename,
-			type: 'image',
+			type: 'photo',
 			width: image.width,
 			height: image.height,
 			userId: userId ?? getCurrentUserId(),

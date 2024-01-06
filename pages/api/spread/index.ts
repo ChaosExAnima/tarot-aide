@@ -11,7 +11,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const bodySchema = z.object({
 	date: z.coerce
 		.date()
-		.refine((date) => date < new Date(), {
+		.refine((date) => date <= new Date(), {
 			message: 'Cannot create spreads in the future',
 		})
 		.default(() => new Date()),
