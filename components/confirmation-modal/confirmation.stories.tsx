@@ -6,6 +6,7 @@ import ConfirmationModal from '.';
 import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
+	title: 'Confirmation Modal',
 	component: ConfirmationModal,
 	args: {
 		color: 'danger',

@@ -1,9 +1,11 @@
-export default function CardsIcon({ className = '' }: { className?: string }) {
+import clsx from 'clsx';
+
+export default function CardsIcon({ className }: { className?: string }) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
-			className={`${className} h-[1.2em]`}
+			className={clsx('h-[1.2em]', className)}
 		>
 			<path
 				fill="currentColor"
