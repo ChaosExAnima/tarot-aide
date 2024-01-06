@@ -20,7 +20,6 @@ export interface TarotDeck extends GenericDeck {
 
 export interface GenericCard {
 	name: string;
-	image?: string;
 }
 
 export interface BaseTarotCard extends GenericCard {

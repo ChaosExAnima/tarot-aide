@@ -1,17 +1,11 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-	Button,
-	ButtonGroup,
-	Card,
-	CardBody,
-	CardHeader,
-	Textarea,
-} from '@nextui-org/react';
+import { Button, ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useRouter } from 'next/router';
 
+import OracleCard from 'components/cards';
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
 import CardsIcon from 'components/icons/cards';
@@ -19,7 +13,7 @@ import Page from 'components/page';
 import Photo from 'components/photo';
 import { mutateDeleteSpread } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
-import { displayCase, displayRelativeDate } from 'lib/text';
+import { displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
@@ -57,26 +51,9 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 				</ButtonGroup>
 			</header>
 			<Photo photo={spread.photo} />
-			{spread.positions.map(
-				(spread) =>
-					spread.card && (
-						<Card key={spread.card.name}>
-							<CardHeader className="gap-2">
-								{displayCase(spread.card.name)}
-								<span className="text-content4">
-									{spread.name}
-								</span>
-							</CardHeader>
-							<CardBody>
-								<Textarea
-									minRows={1}
-									placeholder="Notes go here"
-									value={spread.notes ?? ''}
-								/>
-							</CardBody>
-						</Card>
-					),
-			)}
+			{spread.positions.map((spread) => (
+				<OracleCard key={spread.id} spread={spread} />
+			))}
 		</Page>
 	);
 }
