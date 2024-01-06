@@ -3,7 +3,12 @@ import { includes } from 'lib/types';
 
 import * as constants from './constants';
 
-import type { GenericCard, MinorTarotCard, TarotCard } from './types';
+import type {
+	GenericCard,
+	MajorTarotCard,
+	MinorTarotCard,
+	TarotCard,
+} from './types';
 
 export function isSuit(suitName: string): suitName is constants.SuitWithMajor {
 	return includes(constants.AllSuitsWithMajor, suitName);
@@ -21,8 +26,20 @@ export function isMinorCard(cardName: string): cardName is constants.MinorCard {
 	return includes(constants.AllMinorArcana, cardName);
 }
 
+export function isMajorTarotCard(card: GenericCard): card is MajorTarotCard {
+	return (
+		isMajorCard(card.name) &&
+		(!('suit' in card) || card.suit === constants.MajorSuit)
+	);
+}
+
 export function isMinorTarotCard(card: GenericCard): card is MinorTarotCard {
-	return isMinorCard(card.name) && 'shortName' in card;
+	return (
+		isMinorCard(card.name) &&
+		'shortName' in card &&
+		'suit' in card &&
+		isSuit(card.suit as string)
+	);
 }
 
 export function getCardAndSuitFromName(cardName: constants.AnyCard): {
@@ -50,6 +67,10 @@ export function displayCardShortName(card: GenericCard): string {
 	let cardName = card.name;
 	if (isMinorTarotCard(card)) {
 		cardName = card.shortName;
+	} else if (card.name === 'high priestess') {
+		cardName = 'priestess';
+	} else if (card.name === 'wheel of fortune') {
+		cardName = 'wheel';
 	}
 	return displayCase(cardName);
 }
