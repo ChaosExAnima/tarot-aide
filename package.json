@@ -41,6 +41,7 @@
 		"@storybook/addon-essentials": "7.6.7",
 		"@storybook/addon-interactions": "7.6.7",
 		"@storybook/addon-links": "7.6.7",
+		"@storybook/addon-themes": "^7.6.7",
 		"@storybook/addons": "7.6.7",
 		"@storybook/api": "7.6.7",
 		"@storybook/components": "7.6.7",
