@@ -1,3 +1,5 @@
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
 	ButtonGroup,
@@ -7,12 +9,16 @@ import {
 	Image,
 	Textarea,
 } from '@nextui-org/react';
+import { useMutation } from '@tanstack/react-query';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import NextImage from 'next/image';
+import { useRouter } from 'next/router';
 
+import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
 import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
+import { mutateDeleteSpread } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
 import { displayCase, displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
@@ -24,6 +30,11 @@ interface SpreadPageProps {
 }
 
 export default function SpreadPage({ spread }: SpreadPageProps) {
+	const router = useRouter();
+	const deleteSpread = useMutation({
+		mutationFn: () => mutateDeleteSpread(spread.id),
+		onSuccess: () => router.push('/spreads'),
+	});
 	return (
 		<Page>
 			<header className="flex flex-nowrap">
@@ -36,6 +47,14 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 					<Button isIconOnly>
 						<CardsIcon />
 					</Button>
+					<ConfirmationModal
+						isIconOnly
+						onConfirm={deleteSpread.mutate}
+						header="Delete this spread?"
+						body="This is permanent!"
+					>
+						<FontAwesomeIcon icon={faTrash} />
+					</ConfirmationModal>
 				</ButtonGroup>
 			</header>
 			{spread.photo && (
