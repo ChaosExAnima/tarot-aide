@@ -1,7 +1,17 @@
-import { Card, CardBody, CardHeader, Image, Textarea } from '@nextui-org/react';
+import {
+	Button,
+	ButtonGroup,
+	Card,
+	CardBody,
+	CardHeader,
+	Image,
+	Textarea,
+} from '@nextui-org/react';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import NextImage from 'next/image';
 
+import DatePicker from 'components/date-picker';
+import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
 import { getSpreadById } from 'lib/spreads/db';
 import { displayCase, displayRelativeDate } from 'lib/text';
@@ -16,9 +26,18 @@ interface SpreadPageProps {
 export default function SpreadPage({ spread }: SpreadPageProps) {
 	return (
 		<Page>
-			<h1 className="font-bold text-2xl">
-				{spread.name ?? `Spread ${displayRelativeDate(spread.date)}`}
-			</h1>
+			<header className="flex flex-nowrap">
+				<h1 className="font-bold text-2xl grow">
+					{spread.name ??
+						`Spread ${displayRelativeDate(spread.date)}`}
+				</h1>
+				<ButtonGroup>
+					<DatePicker onPick={console.log} value={spread.date} />
+					<Button isIconOnly>
+						<CardsIcon />
+					</Button>
+				</ButtonGroup>
+			</header>
 			{spread.photo && (
 				<Image
 					as={NextImage}

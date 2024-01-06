@@ -24,3 +24,18 @@ export function displayRelativeDate(date: Date): string {
 	}
 	return rtf.format(days, 'day');
 }
+
+const ordinalFormatter = new Intl.PluralRules('en', { type: 'ordinal' });
+
+export function displayOrdinal(value: number): string {
+	switch (ordinalFormatter.select(value)) {
+		case 'one':
+			return `${value}st`;
+		case 'two':
+			return `${value}nd`;
+		case 'few':
+			return `${value}rd`;
+		default:
+			return `${value}th`;
+	}
+}
