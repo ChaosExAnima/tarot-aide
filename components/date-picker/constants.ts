@@ -7,6 +7,10 @@ interface SelectItemValue {
 
 const EARLIEST_YEAR = 2000;
 
+export function getMaxDaysInMonth(date: Date): number {
+	return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
 // Years from 2000 to current year
 export function getYears(): SelectItemValue[] {
 	return Array.from(
@@ -28,9 +32,8 @@ export function getMonths(): SelectItemValue[] {
 }
 
 export function getDays(date: Date): SelectItemValue[] {
-	return Array.from(
-		Array(
-			new Date(date.getFullYear(), date.getMonth(), 0).getDate(),
-		).keys(),
-	).map((day) => ({ value: String(day), label: displayOrdinal(day + 1) }));
+	return Array.from(Array(getMaxDaysInMonth(date)).keys()).map((day) => ({
+		value: String(day + 1),
+		label: displayOrdinal(day + 1),
+	}));
 }

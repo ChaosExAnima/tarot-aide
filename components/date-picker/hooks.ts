@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import { getDays } from './constants';
+import { getDays, getMaxDaysInMonth } from './constants';
 
-export function useDate(initial = new Date()) {
+export function useDatePicker(initial = new Date()) {
 	const [date, setDate] = useState(initial);
-	const days = useMemo(() => getDays(date), [date]);
+
+	const days = getDays(date);
+
 	const setDay = (day: number) =>
 		setDate((date) => {
 			const newDate = new Date(date);
@@ -14,7 +16,11 @@ export function useDate(initial = new Date()) {
 	const setMonth = (month: number) =>
 		setDate((date) => {
 			const newDate = new Date(date);
-			newDate.setMonth(month + 1);
+			newDate.setMonth(month);
+			const maxDays = getMaxDaysInMonth(newDate);
+			if (newDate.getDate() > maxDays) {
+				newDate.setDate(maxDays);
+			}
 			return newDate;
 		});
 	const setYear = (year: number) =>
