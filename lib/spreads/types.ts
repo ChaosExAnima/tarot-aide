@@ -5,9 +5,9 @@ import { Nullable } from 'lib/types';
 export interface BaseSpreadPosition<Card extends GenericCard = GenericCard> {
 	id?: number;
 	name: string;
-	description: Nullable<string>;
-	card: Nullable<Card>;
-	notes: Nullable<string>;
+	description?: Nullable<string>;
+	card?: Nullable<Card>;
+	notes?: Nullable<string>;
 }
 
 export interface EmptySpreadPosition extends BaseSpreadPosition {

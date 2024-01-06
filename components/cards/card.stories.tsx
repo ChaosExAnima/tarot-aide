@@ -4,12 +4,31 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
 	component: OracleCard,
-	args: {
-		card: {
-			name: 'fool',
-		},
-	},
 } satisfies Meta<typeof OracleCard>;
 type Story = StoryObj<typeof OracleCard>;
 
-export const Primary: Story = {};
+export const EmptySpread: Story = {
+	args: {
+		spread: {
+			name: '',
+		},
+	},
+};
+export const TemplateSpread: Story = {
+	args: {
+		spread: {
+			name: 'Past',
+		},
+	},
+};
+
+export const FilledSpread: Story = {
+	args: {
+		spread: {
+			name: 'Past',
+			card: {
+				name: 'fool',
+			},
+		},
+	},
+};

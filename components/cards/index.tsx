@@ -1,35 +1,65 @@
-import { Card, CardBody, CardHeader, Textarea } from '@nextui-org/react';
+import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Input,
+	Textarea,
+} from '@nextui-org/react';
+import { useState } from 'react';
 
-import { GenericCard } from 'lib/cards/types';
 import { BaseSpreadPosition } from 'lib/spreads/types';
 import { displayCase } from 'lib/text';
 
-type CardProps =
-	| {
-			card: GenericCard;
-	  }
-	| {
-			spread: BaseSpreadPosition;
-	  };
+interface CardProps {
+	onSave?: () => void;
+	spread: BaseSpreadPosition;
+}
 
-export default function OracleCard(props: CardProps) {
-	const card = 'card' in props ? props.card : props.spread.card;
-	const spread = 'spread' in props ? props.spread : null;
+export default function OracleCard({ spread }: CardProps) {
+	const card = spread.card;
+	const [editName, setEditName] = useState(spread?.name ?? '');
+	const [editNotes, setEditNotes] = useState(spread?.notes ?? '');
+
+	const title = card ? displayCase(card.name) : spread?.name ?? '';
+	const subTitle = !!card && spread?.name;
+
 	return (
-		<Card>
+		<Card className="w-full">
 			<CardHeader className="gap-2">
-				{card && displayCase(card.name)}
-				{spread && <span className="text-content4">{spread.name}</span>}
+				{title}
+				{subTitle && <span className="text-content4">{subTitle}</span>}
+				{!spread.name && (
+					<Input
+						value={editName}
+						placeholder="Position name"
+						onValueChange={setEditName}
+						endContent={
+							editName && (
+								<Button
+									isIconOnly
+									color="success"
+									variant="light"
+								>
+									<FontAwesomeIcon icon={faSave} size="xl" />
+								</Button>
+							)
+						}
+					/>
+				)}
 			</CardHeader>
-			<CardBody>
-				{spread && (
+			{spread.card && (
+				<CardBody>
 					<Textarea
 						minRows={1}
 						placeholder="Notes go here"
-						value={spread.notes ?? ''}
+						value={editNotes}
+						onValueChange={setEditNotes}
 					/>
-				)}
-			</CardBody>
+				</CardBody>
+			)}
 		</Card>
 	);
 }
