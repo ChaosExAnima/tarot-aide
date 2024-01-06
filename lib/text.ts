@@ -7,6 +7,14 @@ export function displayCase(input: string): string {
 	});
 }
 
+export function displayDate(date: Date): string {
+	return date.toLocaleDateString('en', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+}
+
 const rtf = new Intl.RelativeTimeFormat('en', {
 	localeMatcher: 'best fit',
 	numeric: 'always', // other values: "auto"
