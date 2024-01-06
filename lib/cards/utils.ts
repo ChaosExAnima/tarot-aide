@@ -75,6 +75,21 @@ export function displayCardShortName(card: GenericCard): string {
 	return displayCase(cardName);
 }
 
+const CARDS_WITHOUT_THE = [
+	'strength',
+	'justice',
+	'death',
+	'temperance',
+	'judgement',
+] as const;
+export function displayCardFullName(card: GenericCard): string {
+	let cardName = card.name;
+	if (isMajorTarotCard(card) && !includes(CARDS_WITHOUT_THE, card.name)) {
+		cardName = `The ${cardName}`;
+	}
+	return displayCase(cardName);
+}
+
 export function getCardsFromSuit(suit: constants.SuitWithMajor): TarotCard[] {
 	if (suit === constants.MajorSuit) {
 		return constants.AllMajorArcana.map((name) => ({

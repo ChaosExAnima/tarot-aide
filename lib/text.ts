@@ -1,6 +1,6 @@
 export function displayCase(input: string): string {
 	return input.replace(
-		/(\w)(\w{2,})/g,
+		/([a-z])(\w{2,})/g,
 		(_, firstChar: string, rest: string) => firstChar.toUpperCase() + rest,
 	);
 }

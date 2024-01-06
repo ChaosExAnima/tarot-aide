@@ -1,36 +1,35 @@
-import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CardHeader, Input } from '@nextui-org/react';
+import clsx from 'clsx';
 import { useState } from 'react';
 
+import SaveButton from 'components/buttons/save';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
-import { displayCardShortName } from 'lib/cards/utils';
-import { BaseSpreadPosition } from 'lib/spreads/types';
-import { displayCase } from 'lib/text';
+import { displayCardFullName, displayCardShortName } from 'lib/cards/utils';
 
-interface OracleCardHeaderProps {
-	spread: BaseSpreadPosition;
-	editable?: boolean;
-}
+import type { OracleCardProps } from './index';
 
 export default function OracleCardHeader({
 	spread,
 	editable = true,
-}: OracleCardHeaderProps) {
-	const [editing, setEditing] = useState(!spread?.name);
+	template = false,
+}: OracleCardProps) {
+	const [editing, setEditing] = useState(!spread?.name && editable);
 
 	if (editing) {
 		return (
 			<OracleCardHeaderEditing
 				spread={spread}
+				template={template}
 				onSave={() => setEditing(false)}
 			/>
 		);
 	}
 
 	const card = spread.card;
-	const title = card ? displayCase(card.name) : spread?.name ?? '';
+	const title = card ? displayCardFullName(card) : spread?.name ?? '';
 	const subTitle = !!card && spread?.name;
 
 	return (
@@ -58,35 +57,46 @@ export default function OracleCardHeader({
 function OracleCardHeaderEditing({
 	spread,
 	onSave,
-}: OracleCardHeaderProps & { onSave: () => void }) {
+	template,
+}: OracleCardProps) {
 	const [editName, setEditName] = useState(spread?.name ?? '');
 	const [card, setCard] = useState(spread?.card ?? null);
+	const saveHandler = () => {
+		if (!editName || (!card && !template)) {
+			return;
+		}
+		onSave &&
+			onSave({
+				...spread,
+				name: editName,
+				card,
+			});
+	};
 	return (
 		<CardHeader className="gap-2">
-			<CardPicker
-				onPick={setCard}
-				disabledCards={card ? [card.name] : []}
-				isIconOnly={!card}
-				className="bg-default-100 hover:bg-default-200"
-			>
-				{card ? displayCardShortName(card) : <CardsIcon />}
-			</CardPicker>
+			{!template && (
+				<CardPicker
+					onPick={setCard}
+					disabledCards={card ? [card.name] : []}
+					isIconOnly={!card}
+					className={clsx('bg-default-100 hover:bg-default-200')}
+				>
+					{card ? displayCardShortName(card) : <CardsIcon />}
+				</CardPicker>
+			)}
 			<Input
 				value={editName}
 				placeholder="Position name"
 				onValueChange={setEditName}
 				size="sm"
-				classNames={{ inputWrapper: 'h-10 rounded-medium' }}
+				classNames={{
+					inputWrapper: clsx('h-10 rounded-medium'),
+				}}
 			/>
-			<Button
-				isIconOnly
-				color="success"
-				variant="light"
-				onPress={() => onSave()}
-				className="rounded-full"
-			>
-				<FontAwesomeIcon icon={faSave} size="xl" />
-			</Button>
+			<SaveButton
+				onPress={saveHandler}
+				isDisabled={!editName || (!card && !template)}
+			/>
 		</CardHeader>
 	);
 }

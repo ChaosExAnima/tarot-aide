@@ -22,8 +22,10 @@ export const EmptySpread: Story = {
 		},
 	},
 };
+
 export const TemplateSpread: Story = {
 	args: {
+		template: true,
 		spread: {
 			name: 'Past',
 		},
@@ -37,6 +39,20 @@ export const FilledSpread: Story = {
 			card: {
 				name: 'fool',
 			},
+			notes: 'This is a note',
 		},
+	},
+};
+
+export const ReadOnlySpread: Story = {
+	args: {
+		spread: {
+			name: 'Past',
+			card: {
+				name: 'fool',
+			},
+			notes: 'This is a note',
+		},
+		editable: false,
 	},
 };
