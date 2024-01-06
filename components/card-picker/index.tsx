@@ -10,15 +10,15 @@ import {
 import { clsx } from 'clsx';
 import { ReactNode, useState } from 'react';
 
-import { AllSuitsWithMajor, AnyCard, SuitWithMajor } from 'lib/cards/constants';
+import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
 import { TarotCard } from 'lib/cards/types';
 import { getCardsFromSuit } from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
 interface CardPickerProps extends ButtonProps {
 	children: ReactNode;
-	onPick: (_: TarotCard) => void;
-	disabledCards?: AnyCard[];
+	onPick: (card: TarotCard) => void;
+	disabledCards?: string[];
 }
 
 export default function CardPicker({
