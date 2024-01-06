@@ -1,20 +1,23 @@
+import { includes } from 'lib/types';
+
 import * as constants from './constants';
-import { TarotCard } from './types';
+
+import type { TarotCard } from './types';
 
 export function isSuit(suitName: string): suitName is constants.SuitWithMajor {
-	return constants.AllSuitsWithMajor.includes(suitName as any);
+	return includes(constants.AllSuitsWithMajor, suitName);
 }
 
 export function isCard(cardName: string): cardName is constants.AnyCard {
-	return constants.AllCards.includes(cardName as any);
+	return includes(constants.AllCards, cardName);
 }
 
 export function isMajorCard(cardName: string): cardName is constants.MajorCard {
-	return constants.AllMajorArcana.includes(cardName as any);
+	return includes(constants.AllMajorArcana, cardName);
 }
 
 export function isMinorCard(cardName: string): cardName is constants.MinorCard {
-	return constants.AllMinorArcana.includes(cardName as any);
+	return includes(constants.AllMinorArcana, cardName);
 }
 
 export function getCardAndSuitFromName(cardName: constants.AnyCard): {
