@@ -27,6 +27,15 @@ export default function App({ Component, pageProps }: AppProps) {
 					name="viewport"
 					content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
 				/>
+				<link rel="icon" href="/favicon.ico" sizes="48x48" />
+				<link
+					rel="icon"
+					type="image/svg+xml"
+					href="/favicon.svg"
+					sizes="any"
+				/>
+				<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+				<link rel="manifest" href="/site.webmanifest" />
 			</Head>
 			<QueryClientProvider client={queryClient}>
 				<HydrationBoundary state={pageProps.dehydratedState}>
