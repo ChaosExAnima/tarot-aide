@@ -24,7 +24,7 @@ export interface PatternSpread extends GenericSpread {
 
 export interface ExistingSpread extends GenericSpread {
 	id: number;
-	date: string;
+	date: Date;
 	name: Nullable<string>;
 	description: Nullable<string>;
 	notes: Nullable<string>;

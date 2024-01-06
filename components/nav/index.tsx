@@ -1,3 +1,5 @@
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Input,
 	Link,
@@ -50,6 +52,7 @@ export default function Nav() {
 					placeholder="Search"
 					size="sm"
 					type="search"
+					endContent={<FontAwesomeIcon icon={faSearch} />}
 				/>
 			</NavbarContent>
 		</Navbar>

@@ -44,8 +44,8 @@ export async function processPhoto(
 	return await prisma.media.create({
 		data: {
 			spreadId: spreadId,
-			path: file.filepath,
-			type: 'image',
+			path: file.newFilename,
+			type: 'photo',
 			width: image.width,
 			height: image.height,
 			userId: userId ?? getCurrentUserId(),

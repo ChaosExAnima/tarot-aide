@@ -1,4 +1,6 @@
-import { Button, Card, CardHeader, Input } from '@nextui-org/react';
+import { faCalendar, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Card, CardHeader } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -13,7 +15,6 @@ import { SpreadResponseBody } from 'lib/spreads/api';
 import { displayCase } from 'lib/text';
 
 export default function NewSpreadPage() {
-	const [date, setDate] = useState(new Date().toDateString());
 	const [cards, setCards] = useState<AnyCard[]>([]);
 	const [photo, setPhoto] = useState<Blob | null>(null);
 	const router = useRouter();
@@ -35,14 +36,18 @@ export default function NewSpreadPage() {
 					Error: {saveSpread.error.message}
 				</p>
 			)}
-			<Input
-				fullWidth
-				type="text"
-				label="Date"
-				value={date}
-				onChange={(e) => setDate(e.target.value)}
-				isDisabled={disable}
-			/>
+			<section className="flex gap-4 items-center justify-end">
+				<Button isIconOnly aria-label="Set date">
+					<FontAwesomeIcon icon={faCalendar} />
+				</Button>
+				<Button
+					isIconOnly
+					color="danger"
+					aria-label="Cancel new spread"
+				>
+					<FontAwesomeIcon icon={faXmark} />
+				</Button>
+			</section>
 			<UploadControls onSelect={setPhoto} isDisabled={disable} />
 			<section className="grid grid-cols-2 gap-4 grow">
 				{cards.map((card) => (
@@ -55,7 +60,7 @@ export default function NewSpreadPage() {
 			{cards.length > 0 && (
 				<Button
 					color="success"
-					onPress={() => saveSpread.mutate({ date, cards, photo })}
+					onPress={() => saveSpread.mutate({ cards, photo })}
 					isDisabled={disable}
 				>
 					Start Writing

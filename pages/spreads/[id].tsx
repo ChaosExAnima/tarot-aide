@@ -1,31 +1,91 @@
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	Button,
+	ButtonGroup,
+	Card,
+	CardBody,
+	CardHeader,
+	Image,
+	Textarea,
+} from '@nextui-org/react';
+import { useMutation } from '@tanstack/react-query';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import NextImage from 'next/image';
+import { useRouter } from 'next/router';
 
+import ConfirmationModal from 'components/confirmation-modal';
+import DatePicker from 'components/date-picker';
+import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
-import prisma from 'lib/db';
-import { serializeDates } from 'lib/helpers';
-import { isAudio, isPhoto } from 'lib/media';
+import { mutateDeleteSpread } from 'lib/spreads/api';
+import { getSpreadById } from 'lib/spreads/db';
+import { displayCase, displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
-import type { SerializedDates } from 'lib/types';
 
 interface SpreadPageProps {
-	spread: SerializedDates<ExistingSpread>;
+	spread: ExistingSpread;
 }
 
 export default function SpreadPage({ spread }: SpreadPageProps) {
+	const router = useRouter();
+	const deleteSpread = useMutation({
+		mutationFn: () => mutateDeleteSpread(spread.id),
+		onSuccess: () => router.push('/spreads'),
+	});
 	return (
 		<Page>
-			<h1>{spread.name}</h1>
-			<p>{spread.date}</p>
-			<section className="flex flex-col">
-				{spread.positions.map((position) => (
-					<div key={position.position}>
-						<h2>{position.position}</h2>
-						{position.card && <p>{position.card.name}</p>}
-					</div>
-				))}
-			</section>
+			<header className="flex flex-nowrap">
+				<h1 className="font-bold text-2xl grow">
+					{spread.name ??
+						`Spread ${displayRelativeDate(spread.date)}`}
+				</h1>
+				<ButtonGroup>
+					<DatePicker onPick={console.log} value={spread.date} />
+					<Button isIconOnly>
+						<CardsIcon />
+					</Button>
+					<ConfirmationModal
+						isIconOnly
+						onConfirm={deleteSpread.mutate}
+						header="Delete this spread?"
+						body="This is permanent!"
+					>
+						<FontAwesomeIcon icon={faTrash} />
+					</ConfirmationModal>
+				</ButtonGroup>
+			</header>
+			{spread.photo && (
+				<Image
+					as={NextImage}
+					src={`/images/${spread.photo.path}`}
+					width={spread.photo.width}
+					height={spread.photo.width}
+					alt="Tarot image"
+				/>
+			)}
+			{spread.positions.map(
+				(spread) =>
+					spread.card && (
+						<Card key={spread.card.name}>
+							<CardHeader className="gap-2">
+								{displayCase(spread.card.name)}
+								<span className="text-content4">
+									{spread.position}
+								</span>
+							</CardHeader>
+							<CardBody>
+								<Textarea
+									minRows={1}
+									placeholder="Notes go here"
+									value={spread.notes ?? ''}
+								/>
+							</CardBody>
+						</Card>
+					),
+			)}
 		</Page>
 	);
 }
@@ -42,33 +102,13 @@ export async function getServerSideProps(
 	if (!id || isNaN(id)) {
 		return { notFound: true };
 	}
-	const spread = await prisma.spread.findFirst({
-		where: { id, userId: currentUserId },
-		include: {
-			positions: true,
-			media: true,
-		},
-	});
+	const spread = await getSpreadById(id, currentUserId);
 	if (!spread) {
 		return { notFound: true };
 	}
 	return {
 		props: {
-			spread: serializeDates({
-				id: spread.id,
-				name: spread.name || 'Untitled',
-				description: spread.description,
-				date: spread.date.toDateString(),
-				notes: spread.note,
-				positions: spread.positions.map((position) => ({
-					position: position.name,
-					card: position.card ? { name: position.card } : null,
-					description: position.description,
-					notes: position.note,
-				})),
-				photo: spread.media.find(isPhoto) ?? null,
-				audio: spread.media.find(isAudio) ?? null,
-			}),
+			spread,
 		},
 	};
 }
