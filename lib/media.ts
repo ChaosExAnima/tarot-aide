@@ -6,23 +6,26 @@ import { promisify } from 'util';
 import prisma from './db';
 import { getCurrentUserId } from './users';
 
+const PHOTO_TYPE = 'photo';
+const AUDIO_TYPE = 'audio';
+
 export interface Photo extends Media {
-	type: 'photo';
+	type: typeof PHOTO_TYPE;
 	width: number;
 	height: number;
 }
 
 export interface Audio extends Media {
-	type: 'audio';
+	type: typeof AUDIO_TYPE;
 	duration: number;
 }
 
 export function isPhoto(media: Media): media is Photo {
-	return media.type === 'photo';
+	return media.type === PHOTO_TYPE;
 }
 
 export function isAudio(media: Media): media is Audio {
-	return media.type === 'audio';
+	return media.type === AUDIO_TYPE;
 }
 
 const asyncSizeOf = promisify(sizeOf);
@@ -32,7 +35,7 @@ export const ALLOWED_IMAGE_TYPES = ['jpg', 'png', 'webp'];
 export async function processPhoto(
 	file: File,
 	spreadId: number,
-	userId?: number,
+	userId = getCurrentUserId(),
 ): Promise<Media> {
 	const image = await asyncSizeOf(file.filepath);
 	if (!image) {
@@ -45,10 +48,10 @@ export async function processPhoto(
 		data: {
 			spreadId: spreadId,
 			path: file.newFilename,
-			type: 'photo',
+			type: PHOTO_TYPE,
 			width: image.width,
 			height: image.height,
-			userId: userId ?? getCurrentUserId(),
+			userId: userId,
 		},
 	});
 }
