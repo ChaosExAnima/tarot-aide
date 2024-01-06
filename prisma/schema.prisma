@@ -29,7 +29,7 @@ model Spread {
 model Position {
     id          Int     @id @default(autoincrement())
     spreadId    Int
-    spread      Spread  @relation(fields: [spreadId], references: [id])
+    spread      Spread  @relation(fields: [spreadId], references: [id], onDelete: Cascade)
     name        String
     description String?
     card        String?
@@ -43,10 +43,10 @@ model Media {
     type      String
     width     Int?
     height    Int?
-    spreadId  Int
-    spead     Spread   @relation(fields: [spreadId], references: [id])
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
+    spreadId  Int?
+    spead     Spread?  @relation(fields: [spreadId], references: [id], onDelete: SetNull)
+    userId    Int?
+    user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
     @@index([spreadId])
 }
