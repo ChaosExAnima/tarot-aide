@@ -64,7 +64,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 							<CardHeader className="gap-2">
 								{displayCase(spread.card.name)}
 								<span className="text-content4">
-									{spread.position}
+									{spread.name}
 								</span>
 							</CardHeader>
 							<CardBody>
