@@ -34,6 +34,7 @@ export type TarotCard = MajorTarotCard | MinorTarotCard;
 
 export interface CardReference {
 	text: string;
+	keywords: string[];
 	reversed: boolean;
 	source?: string;
 }

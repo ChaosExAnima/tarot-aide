@@ -32,5 +32,8 @@ function dbToCardReference(
 	return {
 		...reference,
 		source: reference.source ?? undefined,
+		keywords: (reference.keywords ?? '')
+			.split(',')
+			.map((keyword) => keyword.trim()),
 	};
 }
