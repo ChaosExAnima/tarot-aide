@@ -33,7 +33,6 @@ export type MajorCard = (typeof AllMajorArcana)[number];
 
 export const AllNumberCards = [
 	'ace',
-	'one',
 	'two',
 	'three',
 	'four',
@@ -44,6 +43,18 @@ export const AllNumberCards = [
 	'nine',
 	'ten',
 ] as const;
+export const AllNumbersToNumerals = {
+	ace: 'I',
+	two: 'II',
+	three: 'III',
+	four: 'IV',
+	five: 'V',
+	six: 'VI',
+	seven: 'VII',
+	eight: 'VIII',
+	nine: 'IX',
+	ten: 'X',
+} as const;
 export type NumberCard = (typeof AllNumberCards)[number];
 
 export const AllNameCards = ['page', 'knight', 'queen', 'king'] as const;

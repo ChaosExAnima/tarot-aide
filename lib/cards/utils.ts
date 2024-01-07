@@ -26,6 +26,12 @@ export function isMinorCard(cardName: string): cardName is constants.MinorCard {
 	return includes(constants.AllMinorArcana, cardName);
 }
 
+export function isNumberCard(
+	cardName: string,
+): cardName is constants.NumberCard {
+	return includes(constants.AllNumberCards, cardName);
+}
+
 export function isMajorTarotCard(card: GenericCard): card is MajorTarotCard {
 	return (
 		isMajorCard(card.name) &&
@@ -67,9 +73,15 @@ export function displaySuitName(suit: constants.SuitWithMajor): string {
 	return displayCase(suit);
 }
 
-export function displayCardShortName(card: GenericCard): string {
+export function displayCardShortName(
+	card: GenericCard,
+	numerals?: boolean,
+): string {
 	let cardName = card.name;
 	if (isMinorTarotCard(card)) {
+		if (numerals && isNumberCard(card.shortName)) {
+			return constants.AllNumbersToNumerals[card.shortName];
+		}
 		cardName = card.shortName;
 	} else if (card.name === 'high priestess') {
 		cardName = 'priestess';

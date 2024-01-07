@@ -7,7 +7,9 @@ import { useState } from 'react';
 import SaveButton from 'components/buttons/save';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
-import { displayCardFullName, displayCardShortName } from 'lib/cards/utils';
+import { displayCardFullName } from 'lib/cards/utils';
+
+import { CardName } from './display';
 
 import type { OracleCardProps } from './index';
 
@@ -79,9 +81,12 @@ function OracleCardHeaderEditing({
 					onPick={setCard}
 					disabledCards={card ? [card.name] : []}
 					isIconOnly={!card}
-					className={clsx('bg-default-100 hover:bg-default-200')}
+					className={clsx(
+						'bg-default-100 hover:bg-default-200',
+						!!card && 'w-40',
+					)}
 				>
-					{card ? displayCardShortName(card) : <CardsIcon />}
+					{card ? <CardName card={card} short icon /> : <CardsIcon />}
 				</CardPicker>
 			)}
 			<Input

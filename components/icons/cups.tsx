@@ -4,8 +4,8 @@ export default function CupsIcon({ className }: ClassNameProps) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			className={className}
 			viewBox="0 0 320 512"
+			className={className}
 		>
 			<path
 				fill="currentColor"

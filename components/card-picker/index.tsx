@@ -14,7 +14,7 @@ import { ReactNode, useState } from 'react';
 
 import { SuitIcon } from 'components/cards/display';
 import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
-import { TarotCard } from 'lib/cards/types';
+import { GenericCard } from 'lib/cards/types';
 import {
 	displayCardShortName,
 	displaySuitName,
@@ -24,7 +24,7 @@ import { displayCase } from 'lib/text';
 
 interface CardPickerProps extends ButtonProps {
 	children: ReactNode;
-	onPick: (card: TarotCard) => void;
+	onPick: (card: GenericCard) => void;
 	disabledSuits?: SuitWithMajor[];
 	disabledCards?: string[];
 }
@@ -42,7 +42,7 @@ export default function CardPicker({
 		onOpen();
 		setSuit(null);
 	};
-	const select = (card: TarotCard) => {
+	const select = (card: GenericCard) => {
 		onPick(card);
 		onClose();
 		setSuit(null);
@@ -97,21 +97,18 @@ export default function CardPicker({
 								</Button>
 							))}
 						{suit &&
-							getCardsFromSuit(suit).map((card) => {
-								const disabled = disabledCards.includes(
-									card.name,
-								);
-								return (
-									<Button
-										fullWidth
-										key={card.name}
-										onClick={() => select(card)}
-										isDisabled={disabled}
-									>
-										{displayCardShortName(card)}
-									</Button>
-								);
-							})}
+							getCardsFromSuit(suit).map((card) => (
+								<Button
+									fullWidth
+									key={card.name}
+									onClick={() => select(card)}
+									isDisabled={disabledCards.includes(
+										card.name,
+									)}
+								>
+									{displayCardShortName(card)}
+								</Button>
+							))}
 					</ModalBody>
 				</ModalContent>
 			</Modal>
