@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 
-export default function CardsIcon({ className }: { className?: string }) {
+import type { ClassNameProps } from 'lib/types';
+
+export default function CardsIcon({ className }: ClassNameProps) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
