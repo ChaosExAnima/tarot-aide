@@ -1,3 +1,4 @@
+import CardReferenceDisplay from 'components/cards/reference';
 import Page from 'components/page';
 import { AllCards } from 'lib/cards/constants';
 import { getCardReferences } from 'lib/cards/db';
@@ -24,16 +25,14 @@ export default function CardPage({ card }: CardPageProps) {
 	return (
 		<Page title={name}>
 			<h1 className="text-6xl font-bold text-center mb-2">{name}</h1>
-			<div className="flex flex-col gap-4">
-				{refs.map((ref) => (
-					<div key={ref.text} className="flex flex-col gap-2">
-						<h2 className="text-xl text-center">
-							{ref.keywords.join(', ')}
-						</h2>
-						<p className="text">{ref.text}</p>
-					</div>
+			<section className="flex flex-col gap-4">
+				{refs.map((cardRef) => (
+					<CardReferenceDisplay
+						key={cardRef.text}
+						cardRef={cardRef}
+					/>
 				))}
-			</div>
+			</section>
 		</Page>
 	);
 }
