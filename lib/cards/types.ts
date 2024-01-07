@@ -8,18 +8,10 @@ import type {
 	SuitWithMajor,
 } from './constants';
 
-export interface GenericDeck {
-	name: string;
-	cards: GenericCard[];
-}
-
-export interface TarotDeck extends GenericDeck {
-	cards: TarotCard[];
-	isTarot: true;
-}
-
 export interface GenericCard {
+	id?: number;
 	name: string;
+	references?: CardReference[];
 }
 
 export interface BaseTarotCard extends GenericCard {
@@ -40,4 +32,14 @@ export interface MinorTarotCard extends BaseTarotCard {
 
 export type TarotCard = MajorTarotCard | MinorTarotCard;
 
-export type CardMap = Map<AnyCard, TarotCard>;
+export interface CardReference {
+	text: string;
+	reversed: boolean;
+	source?: string;
+}
+
+export type CardWithRefs<CardType extends GenericCard = GenericCard> = Omit<
+	CardType,
+	'references'
+> &
+	Required<Pick<CardType, 'references'>>;

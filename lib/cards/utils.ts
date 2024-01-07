@@ -48,7 +48,12 @@ export function isMinorTarotCard(card: GenericCard): card is MinorTarotCard {
 	);
 }
 
-export function getCardFromName(cardName: constants.AnyCard): TarotCard {
+export function getCardFromName(
+	cardName: constants.AnyCard | string,
+): TarotCard | null {
+	if (!isCard(cardName)) {
+		return null;
+	}
 	if (isMajorCard(cardName)) {
 		return { name: cardName, suit: constants.MajorSuit };
 	}

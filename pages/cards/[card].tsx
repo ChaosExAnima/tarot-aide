@@ -1,7 +1,8 @@
 import Page from 'components/page';
 import { AllCards } from 'lib/cards/constants';
-import { GenericCard } from 'lib/cards/types';
-import { displayCardFullName, getCardFromName, isCard } from 'lib/cards/utils';
+import { getCardReferences } from 'lib/cards/db';
+import { CardWithRefs } from 'lib/cards/types';
+import { displayCardFullName, getCardFromName } from 'lib/cards/utils';
 
 import type {
 	GetStaticPathsResult,
@@ -14,7 +15,7 @@ type CardPageContext = {
 };
 
 interface CardPageProps {
-	card: GenericCard;
+	card: CardWithRefs;
 }
 
 export default function CardPage({ card }: CardPageProps) {
@@ -22,7 +23,6 @@ export default function CardPage({ card }: CardPageProps) {
 	return (
 		<Page title={name}>
 			<h1 className="text-6xl font-bold text-center mb-4">{name}</h1>
-			<p>Description goes here. Lorem ipsum and that jazz.</p>
 		</Page>
 	);
 }
@@ -30,16 +30,20 @@ export default function CardPage({ card }: CardPageProps) {
 export async function getStaticProps(
 	context: GetStaticPropsContext<CardPageContext>,
 ): Promise<GetStaticPropsResult<CardPageProps>> {
-	const { card: cardName } = context.params ?? {};
-	const card = cardName?.replaceAll('-', ' ');
-	if (!card || !isCard(card)) {
+	const cardName = context.params?.card?.replaceAll('-', ' ') ?? '';
+	const card = getCardFromName(cardName);
+	if (!card) {
 		return {
 			notFound: true,
 		};
 	}
+
 	return {
 		props: {
-			card: getCardFromName(card),
+			card: {
+				...card,
+				references: await getCardReferences(card),
+			},
 		},
 	};
 }

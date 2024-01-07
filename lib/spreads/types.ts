@@ -39,7 +39,7 @@ export interface PatternSpread extends GenericSpread {
 }
 
 export interface ExistingSpread extends GenericSpread {
-	id: number;
+	id?: number;
 	date: Date;
 	description: Nullable<string>;
 	positions: SpreadPosition[];
