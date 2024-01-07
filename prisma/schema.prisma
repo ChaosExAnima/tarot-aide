@@ -6,8 +6,9 @@ model User {
     createdAt DateTime @default(now())
     email     String   @unique
     admin     Boolean  @default(false)
-    Spread    Spread[]
-    Media     Media[]
+    spreads   Spread[]
+    uploads   Media[]
+    Card      Card[]
 }
 
 model Spread {
@@ -15,10 +16,10 @@ model Spread {
     createdAt   DateTime   @default(now())
     userId      Int
     user        User       @relation(fields: [userId], references: [id])
+    name        String
     date        DateTime   @default(now())
-    name        String?
     description String?
-    note        String?
+    notes       String?
     template    Boolean    @default(false)
     positions   Position[]
     media       Media[]
@@ -32,9 +33,10 @@ model Position {
     spread      Spread  @relation(fields: [spreadId], references: [id], onDelete: Cascade)
     name        String
     description String?
-    card        String?
+    card        Card?   @relation(fields: [cardId], references: [id])
+    cardId      Int?
     suit        String?
-    note        String?
+    notes       String?
 }
 
 model Media {
@@ -50,6 +52,32 @@ model Media {
 
     @@index([spreadId])
 }
+
+model Card {
+    id         Int             @id @default(autoincrement())
+    name       String
+    suit       String?
+    references CardReference[]
+    positions  Position[]
+    userId     Int
+    user       User            @relation(fields: [userId], references: [id])
+
+    @@index([suit])
+}
+
+model CardReference {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    cardId    Int
+    card      Card     @relation(fields: [cardId], references: [id])
+    text      String
+    source    String?
+    reversed  Boolean  @default(false)
+
+    @@index([cardId, reversed])
+}
+
+// TODO: Add deck models to support differently named cards
 
 generator client {
     provider = "prisma-client-js"
