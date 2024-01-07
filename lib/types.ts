@@ -7,3 +7,17 @@ export function includes<T>(array: readonly T[], item: T): item is T {
 export interface ClassNameProps {
 	className?: string;
 }
+
+export interface ResponseBody {
+	message?: string;
+	success: boolean;
+}
+
+export interface ErrorReponseBody extends ResponseBody {
+	message: string;
+	success: false;
+}
+
+export type ResponseWithError<Body extends ResponseBody> =
+	| Body
+	| ErrorReponseBody;

@@ -1,12 +1,4 @@
-export interface ResponseBody {
-	message?: string;
-	success: boolean;
-}
-
-export interface ErrorReponseBody extends ResponseBody {
-	message: string;
-	success: false;
-}
+import { ResponseBody, ResponseWithError } from 'lib/types';
 
 export interface SpreadCreatedResponseBody extends ResponseBody {
 	message: string;
@@ -14,7 +6,7 @@ export interface SpreadCreatedResponseBody extends ResponseBody {
 	spreadId: number;
 }
 
-export type SpreadResponseBody = ErrorReponseBody | SpreadCreatedResponseBody;
+export type SpreadResponseBody = ResponseWithError<SpreadCreatedResponseBody>;
 
 export async function mutateDeleteSpread(spreadId: number) {
 	const response = await fetch(`/api/spread/${spreadId}`, {
