@@ -7,7 +7,7 @@ type CardReferenceDualMeanings = {
 	reversed: CardReferenceNoReversal;
 };
 
-export default function getDefaultCardReference(
+export function getDefaultCardReference(
 	cardName: AnyCard,
 	reversed = false,
 ): CardReference {
@@ -156,17 +156,16 @@ export const references = {
 	},
 	justice: {
 		upright: {
-			keywords: ['fairness', 'truth', 'law', 'cause and effect'],
-			text: 'Justice is the twelfth card of the Major Arcana. It represents fairness, truth, law, and cause and effect. Justice is a card of fairness, of truth, of law, and of cause and effect. It is a card of fairness, of truth, of law, and of cause and effect.',
+			text: 'The Justice card represents fairness, balance, and truth. In the upright position, it signifies a fair and just resolution to a situation. Embrace the principles of equality, act with integrity, and make decisions based on objective reasoning.',
+			keywords: ['fairness', 'balance', 'truth'],
 		},
 		reversed: {
+			text: 'When reversed, the Justice card may indicate injustice or a lack of accountability. It suggests the need to address imbalances and strive for fairness in your actions. Examine your decisions and be mindful of the consequences to promote a more just environment.',
 			keywords: [
-				'unfairness',
-				'dishonesty',
-				'lawlessness',
-				'unaccountability',
+				'injustice',
+				'lack of accountability',
+				'striving for fairness',
 			],
-			text: 'Justice reversed represents unfairness, dishonesty, lawlessness, and unaccountability. It is a card of unfairness, of dishonesty, of lawlessness, and of unaccountability. Justice reversed is a card of unfairness, of dishonesty, of lawlessness, and of unaccountability.',
 		},
 	},
 	'hanged man': {

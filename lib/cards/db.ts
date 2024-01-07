@@ -1,29 +1,32 @@
 import prisma from 'lib/db';
 import { getCurrentUserId } from 'lib/users';
 
+import { getDefaultCardReference } from './references';
 import { CardReference, GenericCard } from './types';
+import { isTarotCard } from './utils';
 
 import type { Prisma } from '@prisma/client';
 
-export async function getCardReferences(
-	card: GenericCard,
-): Promise<CardReference[]> {
+export async function getCardReferences(card: GenericCard) {
+	const references: CardReference[] = [];
 	if (!card.id) {
 		const dbCard = await prisma.card.findFirst({
 			where: { name: card.name, userId: getCurrentUserId() },
 			include: { references: true },
 		});
 		if (dbCard) {
-			return dbCard.references.map(dbToCardReference);
+			references.push(...dbCard.references.map(dbToCardReference));
 		}
 	} else {
-		return (
-			await prisma.cardReference.findMany({
-				where: { cardId: card.id },
-			})
-		).map(dbToCardReference);
+		const dbReferences = await prisma.cardReference.findMany({
+			where: { cardId: card.id },
+		});
+		references.push(...dbReferences.map(dbToCardReference));
 	}
-	return [];
+	if (isTarotCard(card)) {
+		references.push(getDefaultCardReference(card.name));
+	}
+	return references;
 }
 
 function dbToCardReference(

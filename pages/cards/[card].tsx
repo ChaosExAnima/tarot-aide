@@ -20,9 +20,20 @@ interface CardPageProps {
 
 export default function CardPage({ card }: CardPageProps) {
 	const name = displayCardFullName(card);
+	const refs = card.references;
 	return (
 		<Page title={name}>
-			<h1 className="text-6xl font-bold text-center mb-4">{name}</h1>
+			<h1 className="text-6xl font-bold text-center mb-2">{name}</h1>
+			<div className="flex flex-col gap-4">
+				{refs.map((ref) => (
+					<div key={ref.text} className="flex flex-col gap-2">
+						<h2 className="text-xl text-center">
+							{ref.keywords.join(', ')}
+						</h2>
+						<p className="text">{ref.text}</p>
+					</div>
+				))}
+			</div>
 		</Page>
 	);
 }

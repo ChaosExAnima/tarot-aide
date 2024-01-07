@@ -32,6 +32,10 @@ export function isNumberCard(
 	return includes(constants.AllNumberCards, cardName);
 }
 
+export function isTarotCard(card: GenericCard): card is TarotCard {
+	return isMajorTarotCard(card) || isMinorTarotCard(card);
+}
+
 export function isMajorTarotCard(card: GenericCard): card is MajorTarotCard {
 	return (
 		isMajorCard(card.name) &&
