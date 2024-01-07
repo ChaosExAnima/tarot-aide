@@ -60,7 +60,7 @@ export default function CardPicker({
 				hideCloseButton
 			>
 				<ModalContent>
-					<ModalHeader>
+					<ModalHeader className="p-4">
 						{!suit && 'Pick your suit'}
 						{suit && (
 							<>

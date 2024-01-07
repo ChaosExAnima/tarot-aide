@@ -42,18 +42,15 @@ export function isMinorTarotCard(card: GenericCard): card is MinorTarotCard {
 	);
 }
 
-export function getCardAndSuitFromName(cardName: constants.AnyCard): {
-	card: constants.AnyCardWithoutSuit;
-	suit: constants.SuitWithMajor;
-} {
+export function getCardFromName(cardName: constants.AnyCard): TarotCard {
 	if (isMajorCard(cardName)) {
-		return { card: cardName, suit: constants.MajorSuit };
+		return { name: cardName, suit: constants.MajorSuit };
 	}
-	const [card, suit] = cardName.split(' of ') as [
+	const [shortName, suit] = cardName.split(' of ') as [
 		constants.MinorCardWithoutSuit,
 		constants.Suit,
 	];
-	return { card, suit };
+	return { name: cardName, shortName, suit };
 }
 
 export function getFullNameFromSuitAndCard(
