@@ -12,7 +12,7 @@ import {
 import { clsx } from 'clsx';
 import { ReactNode, useState } from 'react';
 
-import SuitIcon from 'components/icons/suit';
+import { SuitIcon } from 'components/cards/display';
 import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
 import { TarotCard } from 'lib/cards/types';
 import {

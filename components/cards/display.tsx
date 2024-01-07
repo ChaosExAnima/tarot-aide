@@ -1,13 +1,13 @@
-import CupsIcon from './cups';
-import MajorArcanaIcon from './major';
-import PentaclesIcon from './pentacles';
-import SwordsIcon from './swords';
-import WandsIcon from './wands';
+import CupsIcon from '../icons/cups';
+import MajorArcanaIcon from '../icons/major';
+import PentaclesIcon from '../icons/pentacles';
+import SwordsIcon from '../icons/swords';
+import WandsIcon from '../icons/wands';
 
 import type { SuitWithMajor } from 'lib/cards/constants';
 import type { ClassNameProps } from 'lib/types';
 
-export default function SuitIcon({
+export function SuitIcon({
 	suit,
 	className,
 }: { suit: SuitWithMajor } & ClassNameProps) {
