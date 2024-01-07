@@ -1,3 +1,5 @@
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
 	ButtonProps,
@@ -10,21 +12,28 @@ import {
 import { clsx } from 'clsx';
 import { ReactNode, useState } from 'react';
 
-import { AllSuitsWithMajor, AnyCard, SuitWithMajor } from 'lib/cards/constants';
-import { TarotCard } from 'lib/cards/types';
-import { getCardsFromSuit } from 'lib/cards/utils';
+import { SuitIcon } from 'components/cards/display';
+import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
+import { GenericCard } from 'lib/cards/types';
+import {
+	displayCardShortName,
+	displaySuitName,
+	getCardsFromSuit,
+} from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
 interface CardPickerProps extends ButtonProps {
 	children: ReactNode;
-	onPick: (_: TarotCard) => void;
-	disabledCards?: AnyCard[];
+	onPick: (card: GenericCard) => void;
+	disabledSuits?: SuitWithMajor[];
+	disabledCards?: string[];
 }
 
 export default function CardPicker({
 	children,
 	onPick,
-	disabledCards,
+	disabledSuits = [],
+	disabledCards = [],
 	...props
 }: CardPickerProps) {
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -33,7 +42,7 @@ export default function CardPicker({
 		onOpen();
 		setSuit(null);
 	};
-	const select = (card: TarotCard) => {
+	const select = (card: GenericCard) => {
 		onPick(card);
 		onClose();
 		setSuit(null);
@@ -51,9 +60,21 @@ export default function CardPicker({
 				hideCloseButton
 			>
 				<ModalContent>
-					<ModalHeader>
+					<ModalHeader className="p-4">
 						{!suit && 'Pick your suit'}
-						{suit && `Select your card in ${displayCase(suit)}`}
+						{suit && (
+							<>
+								<span className="grow">
+									Select your card in {displayCase(suit)}
+								</span>
+								<Button
+									isIconOnly
+									onClick={() => setSuit(null)}
+								>
+									<FontAwesomeIcon icon={faArrowLeft} />
+								</Button>
+							</>
+						)}
 					</ModalHeader>
 					<ModalBody
 						className={clsx(
@@ -67,30 +88,27 @@ export default function CardPicker({
 								<Button
 									key={suitName}
 									onClick={() => setSuit(suitName)}
+									isDisabled={disabledSuits.includes(
+										suitName,
+									)}
 								>
-									{displayCase(suitName)}
+									{displaySuitName(suitName)}
+									<SuitIcon suit={suitName} className="h-4" />
 								</Button>
 							))}
 						{suit &&
-							getCardsFromSuit(suit).map((card) => {
-								const disabled = disabledCards?.includes(
-									card.name,
-								);
-								return (
-									<Button
-										fullWidth
-										key={card.name}
-										onClick={() => select(card)}
-										isDisabled={disabled}
-									>
-										{displayCase(
-											'shortName' in card
-												? card.shortName
-												: card.name,
-										)}
-									</Button>
-								);
-							})}
+							getCardsFromSuit(suit).map((card) => (
+								<Button
+									fullWidth
+									key={card.name}
+									onClick={() => select(card)}
+									isDisabled={disabledCards.includes(
+										card.name,
+									)}
+								>
+									{displayCardShortName(card)}
+								</Button>
+							))}
 					</ModalBody>
 				</ModalContent>
 			</Modal>

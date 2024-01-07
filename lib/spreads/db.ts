@@ -44,9 +44,8 @@ function dbToExistingSpread(
 		...spread,
 		notes: spread.note,
 		positions: spread.positions.map((position) => ({
-			position: position.name,
+			...position,
 			card: position.card ? { name: position.card } : null,
-			description: position.description,
 			notes: position.note,
 		})),
 		photo: spread.media.find(isPhoto) ?? null,

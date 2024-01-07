@@ -1,9 +1,13 @@
-export default function CardsIcon({ className = '' }: { className?: string }) {
+import clsx from 'clsx';
+
+import type { ClassNameProps } from 'lib/types';
+
+export default function CardsIcon({ className }: ClassNameProps) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
-			className={`${className} h-[1.2em]`}
+			className={clsx('h-[1.2em]', className)}
 		>
 			<path
 				fill="currentColor"

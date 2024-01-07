@@ -1,13 +1,7 @@
 import Page from 'components/page';
-import {
-	AllCards,
-	AnyCard,
-	MajorCard,
-	MinorCardWithoutSuit,
-	SuitWithMajor,
-} from 'lib/cards/constants';
-import { getCardAndSuitFromName, isCard } from 'lib/cards/utils';
-import { displayCase } from 'lib/text';
+import { AllCards } from 'lib/cards/constants';
+import { GenericCard } from 'lib/cards/types';
+import { displayCardFullName, getCardFromName, isCard } from 'lib/cards/utils';
 
 import type {
 	GetStaticPathsResult,
@@ -20,15 +14,11 @@ type CardPageContext = {
 };
 
 interface CardPageProps {
-	card: {
-		name: AnyCard;
-		card: MajorCard | MinorCardWithoutSuit;
-		suit: SuitWithMajor;
-	};
+	card: GenericCard;
 }
 
 export default function CardPage({ card }: CardPageProps) {
-	const name = displayCase(card.name);
+	const name = displayCardFullName(card);
 	return (
 		<Page title={name}>
 			<h1 className="text-6xl font-bold text-center mb-4">{name}</h1>
@@ -49,10 +39,7 @@ export async function getStaticProps(
 	}
 	return {
 		props: {
-			card: {
-				name: card,
-				...getCardAndSuitFromName(card),
-			},
+			card: getCardFromName(card),
 		},
 	};
 }

@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 
-import Card from 'components/card';
 import Page from 'components/page';
 import {
 	AllInSuit,
@@ -10,8 +9,6 @@ import {
 	MinorCard,
 } from 'lib/cards/constants';
 import { displayCase } from 'lib/text';
-
-import classes from './cards.module.css';
 
 export default function CardPage() {
 	return (
@@ -38,16 +35,9 @@ interface CardListProps {
 }
 function CardList({ cards }: CardListProps) {
 	return (
-		<ol className={classes.cardWrapper}>
+		<ol>
 			{cards.map((card) => (
-				<li key={card}>
-					<Card
-						card={{
-							name: card,
-							image: `https://picsum.photos/seed/${card}/300/550.webp?blur`,
-						}}
-					/>
-				</li>
+				<li key={card}>{card}</li>
 			))}
 		</ol>
 	);

@@ -1,9 +1,15 @@
 export function displayCase(input: string): string {
-	return input.replace(/(\w)(\w*)/g, (_, firstChar: string, rest: string) => {
-		if (rest.length < 2) {
-			return firstChar + rest;
-		}
-		return firstChar.toUpperCase() + rest;
+	return input.replace(
+		/([a-z])(\w{2,})/g,
+		(_, firstChar: string, rest: string) => firstChar.toUpperCase() + rest,
+	);
+}
+
+export function displayDate(date: Date): string {
+	return date.toLocaleDateString('en', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
 	});
 }
 

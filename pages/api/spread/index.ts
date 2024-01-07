@@ -5,6 +5,7 @@ import { isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
 import { SpreadResponseBody } from 'lib/spreads/api';
+import { displayDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -54,8 +55,13 @@ export default async function handler(
 
 		const spread = await prisma.spread.create({
 			data: {
-				userId: getCurrentUserId(),
 				...spreadBody,
+				userId: getCurrentUserId(),
+				name:
+					spreadBody.name ??
+					`${cards.length}-card spread on ${displayDate(
+						spreadBody.date,
+					)}`,
 			},
 		});
 
