@@ -1,9 +1,9 @@
-import { Card, CardBody, Textarea } from '@nextui-org/react';
-import { useState } from 'react';
+import { Card, CardBody } from '@nextui-org/react';
 
 import { BaseSpreadPosition } from 'lib/spreads/types';
 
 import OracleCardHeader from './header';
+import OracleCardNotes from './notes';
 
 export interface OracleCardProps {
 	onSave?: (spread: BaseSpreadPosition) => void;
@@ -14,21 +14,13 @@ export interface OracleCardProps {
 
 export default function OracleCard(props: OracleCardProps) {
 	const { spread, editable = true, template = false } = props;
-	const [editNotes, setEditNotes] = useState(spread?.notes ?? '');
 
 	return (
 		<Card className="w-full">
 			<OracleCardHeader {...props} />
 			{!template && spread.card && (
-				<CardBody>
-					{editable && (
-						<Textarea
-							minRows={1}
-							placeholder="Notes go here"
-							value={editNotes}
-							onValueChange={setEditNotes}
-						/>
-					)}
+				<CardBody className="gap-4">
+					{editable && <OracleCardNotes {...props} />}
 					{!editable && spread.notes}
 				</CardBody>
 			)}
