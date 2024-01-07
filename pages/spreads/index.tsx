@@ -5,7 +5,7 @@ import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import { getSpreadsForUser } from 'lib/spreads/db';
 import { ExistingSpread } from 'lib/spreads/types';
-import { displayRelativeDate } from 'lib/text';
+import { displaySpreadName } from 'lib/spreads/utils';
 import { getCurrentUserId } from 'lib/users';
 
 interface SpreadsPageProps {
@@ -22,9 +22,7 @@ export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 					className="text-slate-900"
 					href={`/spreads/${spread.id}`}
 				>
-					{spread.positions.length}&nbsp;
-					{spread.positions.length === 1 ? 'card' : 'cards'}&nbsp;
-					{displayRelativeDate(spread.date)}
+					{displaySpreadName(spread)}
 				</ButtonLink>
 			))}
 			<ButtonLink href="/spreads/new">New Spread</ButtonLink>

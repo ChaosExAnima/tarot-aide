@@ -1,4 +1,3 @@
-import { Divider } from '@nextui-org/react';
 import {
 	GetStaticPathsResult,
 	GetStaticPropsContext,
@@ -7,16 +6,8 @@ import {
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
-import {
-	AllMajorArcana,
-	AllNameCards,
-	AllNumberCards,
-	AllSuitsWithMajor,
-	AnyCardWithoutSuit,
-	MajorSuit,
-	SuitWithMajor,
-} from 'lib/cards/constants';
-import { isSuit } from 'lib/cards/utils';
+import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
+import { displayCardFullName, getCardsFromSuit, isSuit } from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
 type SuitPageContext = {
@@ -28,42 +19,21 @@ interface SuitPageProps {
 }
 
 export default function SuitPage({ suit }: SuitPageProps) {
-	const isMajor = suit === 'major';
-	const cardMap = (card: AnyCardWithoutSuit) => (
-		<SuitCard key={card} card={card} suit={suit} />
-	);
+	const cards = getCardsFromSuit(suit);
 	return (
 		<Page title={displayCase(suit)}>
 			<section className="flex-grow grid grid-cols-2 gap-4">
-				{isMajor && AllMajorArcana.map(cardMap)}
-				{!isMajor && AllNumberCards.map(cardMap)}
+				{cards.map((card) => (
+					<ButtonLink
+						href={`/cards/${card.name.replaceAll(' ', '-')}`}
+						className="grow"
+						key={card.name}
+					>
+						{displayCardFullName(card)}
+					</ButtonLink>
+				))}
 			</section>
-			{!isMajor && <Divider />}
-			{!isMajor && (
-				<section className="flex-grow grid grid-cols-2 gap-4">
-					{AllNameCards.map(cardMap)}
-				</section>
-			)}
 		</Page>
-	);
-}
-
-function SuitCard({
-	card,
-	suit,
-}: {
-	card: AnyCardWithoutSuit;
-	suit: SuitWithMajor;
-}) {
-	const isMajor = suit === MajorSuit;
-	return (
-		<ButtonLink
-			href={`/cards/${isMajor ? card : `${card}-of-${suit}`}`}
-			key={suit}
-			className="grow"
-		>
-			{displayCase(card)}
-		</ButtonLink>
 	);
 }
 

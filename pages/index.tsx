@@ -1,9 +1,10 @@
 import { Divider } from '@nextui-org/react';
 
 import ButtonLink from 'components/button-link';
+import { SuitIcon } from 'components/cards/display';
 import Page from 'components/page';
 import { AllSuitsWithMajor } from 'lib/cards/constants';
-import { displayCase } from 'lib/text';
+import { displaySuitName } from 'lib/cards/utils';
 
 export default function Home() {
 	return (
@@ -15,7 +16,8 @@ export default function Home() {
 					className="grow text-slate-900"
 					color="secondary"
 				>
-					{displayCase(suit)}
+					{displaySuitName(suit)}
+					<SuitIcon suit={suit} className="h-4" />
 				</ButtonLink>
 			))}
 			<Divider />

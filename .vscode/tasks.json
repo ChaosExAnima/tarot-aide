@@ -12,6 +12,12 @@
 			"script": "storybook",
 			"problemMatcher": [],
 			"label": "Start Storybook Server"
+		},
+		{
+			"type": "npm",
+			"script": "test",
+			"problemMatcher": [],
+			"label": "Run Tests"
 		}
 	]
 }

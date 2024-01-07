@@ -39,7 +39,8 @@
 		"no-unused-vars": "off",
 		"unused-imports/no-unused-imports": "warn",
 		"unused-imports/no-unused-vars": "off",
-		"import/no-named-as-default": "off"
+		"import/no-named-as-default": "off",
+		"import/no-named-as-default-member": "off"
 	},
 	"settings": {
 		"import/parsers": {

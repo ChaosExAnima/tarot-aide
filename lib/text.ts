@@ -1,3 +1,8 @@
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
+
 /**
  * Converts the first character of each word in a string to uppercase.
  *
@@ -25,12 +30,6 @@ export function displayDate(date: Date): string {
 	});
 }
 
-const rtf = new Intl.RelativeTimeFormat('en', {
-	localeMatcher: 'best fit',
-	numeric: 'always', // other values: "auto"
-	style: 'short',
-});
-
 /**
  * Display a relative date, e.g. "today", "yesterday", "2 days ago", "3 months ago", "1 year ago"
  *
@@ -39,23 +38,7 @@ const rtf = new Intl.RelativeTimeFormat('en', {
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat
  */
 export function displayRelativeDate(date: Date): string {
-	const diff = date.getTime() - Date.now();
-	const days = Math.ceil(diff / (1000 * 60 * 60 * 24)) * -1;
-
-	if (days === 0) {
-		return 'today';
-	} else if (days === 1) {
-		return 'yesterday';
-	} else if (days <= 30) {
-		return rtf.format(days, 'day');
-	} else if (days < 365) {
-		const months = Math.floor(days / 30);
-		return rtf.format(months, 'month');
-	} else if (days >= 365) {
-		const years = Math.floor(days / 365);
-		return rtf.format(years, 'year');
-	}
-	return rtf.format(days, 'day');
+	return dayjs(date).fromNow();
 }
 
 const ordinalFormatter = new Intl.PluralRules('en', { type: 'ordinal' });
@@ -76,5 +59,23 @@ export function displayOrdinal(value: number): string {
 			return `${value}rd`;
 		default:
 			return `${value}th`;
+	}
+}
+
+const pluralRules = new Intl.PluralRules('en');
+
+/**
+ * Pluralizes a noun based on the given number.
+ *
+ * @param number - The number to determine the plural form.
+ * @param noun - The noun to be pluralized.
+ * @returns The pluralized noun.
+ */
+export function pluralize(number: number, noun = ''): string {
+	switch (pluralRules.select(number)) {
+		case 'one':
+			return noun;
+		default:
+			return noun + 's';
 	}
 }
