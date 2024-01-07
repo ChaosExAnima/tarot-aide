@@ -72,6 +72,7 @@ model CardReference {
     card      Card     @relation(fields: [cardId], references: [id])
     text      String
     source    String?
+    keywords  String?
     reversed  Boolean  @default(false)
 
     @@index([cardId, reversed])
