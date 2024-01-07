@@ -1,3 +1,5 @@
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
 	ButtonProps,
@@ -10,21 +12,28 @@ import {
 import { clsx } from 'clsx';
 import { ReactNode, useState } from 'react';
 
+import SuitIcon from 'components/icons/suit';
 import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
 import { TarotCard } from 'lib/cards/types';
-import { getCardsFromSuit } from 'lib/cards/utils';
+import {
+	displayCardShortName,
+	displaySuitName,
+	getCardsFromSuit,
+} from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
 interface CardPickerProps extends ButtonProps {
 	children: ReactNode;
 	onPick: (card: TarotCard) => void;
+	disabledSuits?: SuitWithMajor[];
 	disabledCards?: string[];
 }
 
 export default function CardPicker({
 	children,
 	onPick,
-	disabledCards,
+	disabledSuits = [],
+	disabledCards = [],
 	...props
 }: CardPickerProps) {
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -53,7 +62,19 @@ export default function CardPicker({
 				<ModalContent>
 					<ModalHeader>
 						{!suit && 'Pick your suit'}
-						{suit && `Select your card in ${displayCase(suit)}`}
+						{suit && (
+							<>
+								<span className="grow">
+									Select your card in {displayCase(suit)}
+								</span>
+								<Button
+									isIconOnly
+									onClick={() => setSuit(null)}
+								>
+									<FontAwesomeIcon icon={faArrowLeft} />
+								</Button>
+							</>
+						)}
 					</ModalHeader>
 					<ModalBody
 						className={clsx(
@@ -67,13 +88,17 @@ export default function CardPicker({
 								<Button
 									key={suitName}
 									onClick={() => setSuit(suitName)}
+									isDisabled={disabledSuits.includes(
+										suitName,
+									)}
 								>
-									{displayCase(suitName)}
+									{displaySuitName(suitName)}
+									<SuitIcon suit={suitName} className="h-4" />
 								</Button>
 							))}
 						{suit &&
 							getCardsFromSuit(suit).map((card) => {
-								const disabled = disabledCards?.includes(
+								const disabled = disabledCards.includes(
 									card.name,
 								);
 								return (
@@ -83,11 +108,7 @@ export default function CardPicker({
 										onClick={() => select(card)}
 										isDisabled={disabled}
 									>
-										{displayCase(
-											'shortName' in card
-												? card.shortName
-												: card.name,
-										)}
+										{displayCardShortName(card)}
 									</Button>
 								);
 							})}

@@ -63,6 +63,13 @@ export function getFullNameFromSuitAndCard(
 	return `${card} of ${suit}`;
 }
 
+export function displaySuitName(suit: constants.SuitWithMajor): string {
+	if (suit === constants.MajorSuit) {
+		return 'Major Arcana';
+	}
+	return displayCase(suit);
+}
+
 export function displayCardShortName(card: GenericCard): string {
 	let cardName = card.name;
 	if (isMinorTarotCard(card)) {
