@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 
+import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { isAudio, isPhoto } from 'lib/media';
 
@@ -44,7 +45,7 @@ export function dbToExistingSpread(
 		...spread,
 		positions: spread.positions.map((position) => ({
 			...position,
-			card: position.name ? { name: position.name } : null,
+			card: position.card ? getCardFromName(position.card) : null,
 		})),
 		photo: spread.media.find(isPhoto) ?? null,
 		audio: spread.media.find(isAudio) ?? null,

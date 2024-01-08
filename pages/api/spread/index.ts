@@ -3,7 +3,7 @@ import { parse } from 'superjson';
 import { z } from 'zod';
 
 import { ResponseBody, handlerWithError } from 'lib/api';
-import { isCard } from 'lib/cards/utils';
+import { getCardFromName, isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
 import { displayDate } from 'lib/text';
@@ -64,12 +64,17 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 			},
 		});
 
-		for (const card of cards) {
+		for (const cardName of cards) {
+			const card = getCardFromName(cardName);
+			if (!card) {
+				continue;
+			}
 			await prisma.position.create({
 				data: {
 					name: '',
 					spreadId: spread.id,
-					card,
+					card: 'shortName' in card ? card.shortName : card.name,
+					suit: card.suit,
 				},
 			});
 		}
