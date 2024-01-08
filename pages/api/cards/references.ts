@@ -13,26 +13,17 @@ export interface CardReferencesResponseBody extends ResponseBody {
 
 const cardsSchema = z.preprocess(
 	(arg) => parse(arg as SuperJSONValue),
-	z.array(
-		z.union([
-			z.string(),
-			z.object({ name: z.string(), reversed: z.boolean().optional() }),
-		]),
-	),
+	z.array(z.object({ name: z.string(), reversed: z.coerce.boolean() })),
 );
+export type CardReferencesRequest = z.infer<typeof cardsSchema>;
 
 const handler = handlerWithError<CardReferencesResponseBody>(
-	['GET'],
+	['POST'],
 	async (req) => {
-		if (!req.url || !req.headers.host) {
-			throw new ApiError(400, 'Invalid request');
+		const cards = cardsSchema.parse(req.body);
+		if (cards.length === 0) {
+			throw new ApiError(400, 'No cards provided');
 		}
-		const url = new URL(req.url!, req.headers.host);
-		const cardsParam = url.searchParams.get('cards');
-		if (!cardsParam) {
-			throw new ApiError(400, 'Missing cards');
-		}
-		const cards = cardsSchema.parse(cardsParam);
 
 		return {
 			success: true,
@@ -46,15 +37,10 @@ async function getRefMap(
 	cards: z.infer<typeof cardsSchema>,
 ): Promise<CardReferenceMap> {
 	const references = await Promise.all(
-		cards.map(async (card) => {
-			if (typeof card === 'string') {
-				return [card, await getCardReferences(card)];
-			}
-			return [
-				card.name,
-				await getCardReferences(card.name, card.reversed),
-			];
-		}),
+		cards.map(async (card) => [
+			card.name,
+			await getCardReferences(card.name, card.reversed),
+		]),
 	);
 	return Object.fromEntries(references.values());
 }

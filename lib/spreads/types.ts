@@ -24,7 +24,7 @@ export interface FilledSpreadPosition extends BaseSpreadPosition {
 export type SpreadPosition = EmptySpreadPosition | FilledSpreadPosition;
 
 export function isFilledPosition(
-	position: SpreadPosition,
+	position: BaseSpreadPosition,
 ): position is FilledSpreadPosition {
 	return position.card !== null;
 }

@@ -26,11 +26,10 @@ export function isResponseBody(input: unknown): input is ResponseBody {
 	);
 }
 
-export async function fetchFromApi<Body extends ResponseBody>(
-	path: string,
-	data?: SuperJSONValue,
-	options?: RequestInit,
-) {
+export async function fetchFromApi<
+	Response extends ResponseBody,
+	RequestBody = SuperJSONValue,
+>(path: string, data?: RequestBody, options?: RequestInit) {
 	if (data) {
 		options = {
 			method: 'POST',
@@ -39,7 +38,7 @@ export async function fetchFromApi<Body extends ResponseBody>(
 		};
 	}
 	const response = await fetch(path, options);
-	const body: ResponseWithError<Body> = await response.json();
+	const body: ResponseWithError<Response> = await response.json();
 	if (!response.ok || !body.success) {
 		throw new Error(body.message ?? 'Unknown error');
 	}
