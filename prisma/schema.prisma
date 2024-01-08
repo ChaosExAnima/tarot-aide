@@ -34,6 +34,7 @@ model Position {
     name        String
     description String?
     card        String?
+    reversed    Boolean @default(false)
     suit        String?
     notes       String?
 }
