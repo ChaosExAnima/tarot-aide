@@ -1,10 +1,11 @@
 import prisma from 'lib/db';
+import { isFilledPosition, type SpreadPosition } from 'lib/spreads/types';
 import { getCurrentUserId } from 'lib/users';
 
 import { getDefaultCardReference } from './references';
-import { CardReference, GenericCard } from './types';
 import { isTarotCard } from './utils';
 
+import type { CardReference, CardReferenceMap, GenericCard } from './types';
 import type { Prisma } from '@prisma/client';
 
 export async function getCardReferences(card: GenericCard, reversed = false) {
@@ -16,6 +17,21 @@ export async function getCardReferences(card: GenericCard, reversed = false) {
 		references.push(getDefaultCardReference(card.name, reversed));
 	}
 	return references;
+}
+
+export async function getCardReferenceMap(
+	positions: SpreadPosition[],
+): Promise<CardReferenceMap> {
+	const references = await Promise.all(
+		positions
+			.filter(isFilledPosition)
+			.map((position) =>
+				getCardReferences(position.card, position.reversed),
+			),
+	);
+	return Object.fromEntries(
+		positions.map((position, index) => [position.id, references[index]]),
+	);
 }
 
 function dbToCardReference(

@@ -44,3 +44,5 @@ export type CardWithRefs<CardType extends GenericCard = GenericCard> = Omit<
 	'references'
 > &
 	Required<Pick<CardType, 'references'>>;
+
+export type CardReferenceMap = Record<string, CardReference[]>;
