@@ -1,19 +1,16 @@
-import { parse } from 'superjson';
 import { z } from 'zod';
 
 import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
 import { getCardReferences } from 'lib/cards/db';
 
 import type { CardReferenceMap } from 'lib/cards/types';
-import type { SuperJSONValue } from 'superjson/dist/types';
 
 export interface CardReferencesResponseBody extends ResponseBody {
 	references: CardReferenceMap;
 }
 
-const cardsSchema = z.preprocess(
-	(arg) => parse(arg as SuperJSONValue),
-	z.array(z.object({ name: z.string(), reversed: z.coerce.boolean() })),
+const cardsSchema = z.array(
+	z.object({ name: z.string(), reversed: z.coerce.boolean() }),
 );
 export type CardReferencesRequest = z.infer<typeof cardsSchema>;
 

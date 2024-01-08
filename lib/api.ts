@@ -1,4 +1,4 @@
-import { stringify } from 'superjson';
+import { parse, stringify } from 'superjson';
 
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SuperJSONValue } from 'superjson/dist/types';
@@ -64,6 +64,9 @@ export function handlerWithError<Body extends ResponseBody>(
 	handler?: ApiHandler<Body>,
 ): NextApiHandler<ResponseWithError<Body | ResponseBody>> {
 	return async (req, res) => {
+		if (req.body && typeof req.body === 'string') {
+			req.body = parse(req.body);
+		}
 		const realHandler = handler ?? (handlerOrMethods as ApiHandler<Body>);
 		const methods = Array.isArray(handlerOrMethods) ? handlerOrMethods : [];
 		try {
