@@ -48,11 +48,8 @@ dependencies:
     specifier: 14.0.4
     version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
   next-superjson-plugin:
-    specifier: ./node_modules/next-superjson2
-    version: link:node_modules/next-superjson2
-  next-superjson2:
-    specifier: ^0.6.1
-    version: 0.6.1(next@14.0.4)(superjson@2.2.1)
+    specifier: ^0.5.10
+    version: 0.5.10(next@14.0.4)(superjson@1.13.3)
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -63,8 +60,8 @@ dependencies:
     specifier: ^1.15.0
     version: 1.15.0
   superjson:
-    specifier: ^2.2.1
-    version: 2.2.1
+    specifier: ^1.13.3
+    version: 1.13.3
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -11380,15 +11377,15 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
-  /next-superjson2@0.6.1(next@14.0.4)(superjson@2.2.1):
-    resolution: {integrity: sha512-B26Son3f6KbdWhbrBR9q2V2cd2RBYQfkOGANCpERafqIYnAB7fXPWbuVN2pALCHnwdZ83TFyTEoNWpLTDatjng==}
+  /next-superjson-plugin@0.5.10(next@14.0.4)(superjson@1.13.3):
+    resolution: {integrity: sha512-y3vAKlZfZP6iEDb0R+XQ6UQ7YYDxbsZ0iZlV50/Hvw0Fzl+ScQJj+CbXdcl+ETugK9JbhCS7G7hMCGIjiGkgXQ==}
     peerDependencies:
       next: ^13.0 || ^14.0
-      superjson: ^2
+      superjson: ^1
     dependencies:
       hoist-non-react-statics: 3.3.2
       next: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
-      superjson: 2.2.1
+      superjson: 1.13.3
     dev: false
 
   /next@14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0):
@@ -13421,9 +13418,9 @@ packages:
       pirates: 4.0.6
       ts-interface-checker: 0.1.13
 
-  /superjson@2.2.1:
-    resolution: {integrity: sha512-8iGv75BYOa0xRJHK5vRLEjE2H/i4lulTjzpUXic3Eg8akftYjkmQDa8JARQ42rlczXyFR3IeRoeFCc7RxHsYZA==}
-    engines: {node: '>=16'}
+  /superjson@1.13.3:
+    resolution: {integrity: sha512-mJiVjfd2vokfDxsQPOwJ/PtanO87LhpYY88ubI5dUB1Ab58Txbyje3+jpm+/83R/fevaq/107NNhtYBLuoTrFg==}
+    engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.5
     dev: false
