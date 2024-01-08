@@ -35,7 +35,7 @@ export async function getSpreadById(
 	return dbToExistingSpread(spread);
 }
 
-function dbToExistingSpread(
+export function dbToExistingSpread(
 	spread: Prisma.SpreadGetPayload<{
 		include: { positions: true; media: true };
 	}>,

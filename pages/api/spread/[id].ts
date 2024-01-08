@@ -1,12 +1,26 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import prisma from 'lib/db';
-import { ResponseBody } from 'lib/spreads/api';
+import { dbToExistingSpread } from 'lib/spreads/db';
+import { ExistingSpread } from 'lib/spreads/types';
+import { ResponseBody, ResponseWithError } from 'lib/types';
 import { getCurrentUserId } from 'lib/users';
+
+const patchSchema = z.object({
+	name: z.string().optional(),
+	date: z.date().optional(),
+	description: z.string().optional(),
+	notes: z.string().optional(),
+});
+
+interface SpreadUpdateResponseBody extends ResponseBody {
+	spread?: ExistingSpread;
+}
 
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ResponseBody>,
+	res: NextApiResponse<ResponseWithError<SpreadUpdateResponseBody>>,
 ) {
 	const spreadId = req.query.id;
 	if (!spreadId) {
@@ -15,6 +29,12 @@ export default async function handler(
 	}
 	const userId = getCurrentUserId();
 	try {
+		let spread = await prisma.spread.findUnique({
+			where: {
+				id: Number(spreadId),
+			},
+			include: { positions: true, media: true },
+		});
 		switch (req.method) {
 			case 'DELETE':
 				await prisma.spread.delete({
@@ -26,11 +46,15 @@ export default async function handler(
 				break;
 			case 'PUT':
 			case 'PATCH':
-				res.status(405).json({
-					success: false,
-					message: 'Method not implemented',
+				const data = patchSchema.parse(req.body);
+				spread = await prisma.spread.update({
+					where: {
+						id: Number(spreadId),
+						userId,
+					},
+					data,
+					include: { positions: true, media: true },
 				});
-				return;
 			default:
 				res.status(405).json({
 					success: false,
@@ -38,7 +62,10 @@ export default async function handler(
 				});
 				return;
 		}
-		res.status(200).json({ success: true });
+		res.status(200).json({
+			success: true,
+			spread: spread ? dbToExistingSpread(spread) : undefined,
+		});
 	} catch (err) {
 		console.error(`Error deleting spread ${spreadId}:`, err);
 		res.status(500).json({
