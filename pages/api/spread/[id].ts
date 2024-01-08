@@ -7,11 +7,19 @@ import { ExistingSpread } from 'lib/spreads/types';
 import { ResponseBody, ResponseWithError } from 'lib/types';
 import { getCurrentUserId } from 'lib/users';
 
+const positionSchema = z.object({
+	id: z.number().optional(),
+	name: z.string().optional(),
+	description: z.string().optional(),
+	card: z.string().optional(),
+});
+
 const patchSchema = z.object({
 	name: z.string().optional(),
 	date: z.date().optional(),
 	description: z.string().optional(),
 	notes: z.string().optional(),
+	positions: z.array(positionSchema).optional(),
 });
 
 interface SpreadUpdateResponseBody extends ResponseBody {
@@ -41,13 +49,24 @@ export default async function handler(
 				break;
 			case 'PUT':
 			case 'PATCH':
-				const data = patchSchema.parse(req.body);
+				const body = patchSchema.parse(req.body);
 				spread = await prisma.spread.update({
 					where: {
 						id: Number(spreadId),
 						userId,
 					},
-					data,
+					data: {
+						...body,
+						positions: {
+							upsert: body.positions?.map((position) => {
+								return {
+									where: { id: position.id },
+									update: position,
+									create: { name: '', ...position },
+								};
+							}),
+						},
+					},
 					include: { positions: true, media: true },
 				});
 			default:
