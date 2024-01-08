@@ -29,12 +29,7 @@ export default async function handler(
 	}
 	const userId = getCurrentUserId();
 	try {
-		let spread = await prisma.spread.findUnique({
-			where: {
-				id: Number(spreadId),
-			},
-			include: { positions: true, media: true },
-		});
+		let spread = null;
 		switch (req.method) {
 			case 'DELETE':
 				await prisma.spread.delete({
