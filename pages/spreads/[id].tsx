@@ -1,13 +1,13 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, ButtonGroup } from '@nextui-org/react';
+import { ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
 import OracleCard from 'components/cards';
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
-import CardsIcon from 'components/icons/cards';
+import EditableHeader from 'components/editable-header';
 import Page from 'components/page';
 import Photo from 'components/photo';
 import { mutateDeleteSpread } from 'lib/spreads/api';
@@ -30,25 +30,30 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 	});
 	return (
 		<Page>
-			<header className="flex flex-nowrap">
-				<h1 className="font-bold text-2xl grow">
-					{spread.name ??
-						`Spread ${displayRelativeDate(spread.date)}`}
-				</h1>
-				<ButtonGroup>
-					<DatePicker onPick={console.log} value={spread.date} />
-					<Button isIconOnly>
-						<CardsIcon />
-					</Button>
-					<ConfirmationModal
-						isIconOnly
-						onConfirm={deleteSpread.mutate}
-						header="Delete this spread?"
-						body="This is permanent!"
-					>
-						<FontAwesomeIcon icon={faTrash} />
-					</ConfirmationModal>
-				</ButtonGroup>
+			<header className="flex flex-nowrap gap-4 items-center">
+				<EditableHeader
+					initial={
+						spread.name ??
+						`Spread ${displayRelativeDate(spread.date)}`
+					}
+					onSave={console.log}
+					classNames={{
+						header: 'font-bold text-2xl',
+						inputWrapper: 'grow h-10',
+					}}
+				>
+					<ButtonGroup>
+						<DatePicker onPick={console.log} value={spread.date} />
+						<ConfirmationModal
+							isIconOnly
+							onConfirm={deleteSpread.mutate}
+							header="Delete this spread?"
+							body="This is permanent!"
+						>
+							<FontAwesomeIcon icon={faTrash} />
+						</ConfirmationModal>
+					</ButtonGroup>
+				</EditableHeader>
 			</header>
 			<Photo photo={spread.photo} />
 			{spread.positions.map((spread) => (
