@@ -1,4 +1,4 @@
-import { faMagnifyingGlass, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faQuestion, faSave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
@@ -32,27 +32,16 @@ export default function OracleCardNotes({ spread }: OracleCardProps) {
 
 	return (
 		<>
-			<div className="flex flex-row gap-2">
-				<Textarea
-					minRows={1}
-					placeholder="Notes go here"
-					value={editNotes}
-					onValueChange={setEditNotes}
-				/>
-				{spread.card && (
-					<Button
-						isIconOnly
-						onPress={() => setShowRefs(true)}
-						isLoading={isLoading}
-						isDisabled={isLoading}
-					>
-						<FontAwesomeIcon icon={faMagnifyingGlass} />
-					</Button>
-				)}
-			</div>
+			<Textarea
+				minRows={1}
+				placeholder="Notes go here"
+				value={editNotes}
+				onValueChange={setEditNotes}
+			/>
 			{spread.card && (
 				<Modal
 					isOpen={showRefs}
+					onOpenChange={setShowRefs}
 					placement="top-center"
 					backdrop="blur"
 					classNames={{
@@ -76,14 +65,29 @@ export default function OracleCardNotes({ spread }: OracleCardProps) {
 			)}
 
 			{notes !== editNotes && (
-				<ButtonGroup className="justify-end">
-					<Button isIconOnly>
-						<FontAwesomeIcon icon={faMagnifyingGlass} />
-					</Button>
-					<Button color="success" isIconOnly>
-						<FontAwesomeIcon icon={faSave} />
-					</Button>
-				</ButtonGroup>
+				<div className="flex items-center">
+					<p className="grow text-content4 text-sm">
+						{spread.card &&
+							data?.references[spread.card.name][0].keywords
+								.slice(0, 3)
+								.join(', ')}
+					</p>
+					<ButtonGroup>
+						{spread.card && (
+							<Button
+								isIconOnly
+								onPress={() => setShowRefs(true)}
+								isLoading={isLoading}
+								isDisabled={isLoading}
+							>
+								<FontAwesomeIcon icon={faQuestion} />
+							</Button>
+						)}
+						<Button color="success" isIconOnly>
+							<FontAwesomeIcon icon={faSave} />
+						</Button>
+					</ButtonGroup>
+				</div>
 			)}
 		</>
 	);
