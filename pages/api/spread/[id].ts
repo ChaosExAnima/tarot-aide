@@ -1,7 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { ResponseBody, ResponseWithError } from 'lib/api';
+import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
 import prisma from 'lib/db';
 import { dbToExistingSpread } from 'lib/spreads/db';
 import { ExistingSpread } from 'lib/spreads/types';
@@ -28,65 +27,54 @@ export interface SpreadUpdateResponseBody extends ResponseBody {
 	spread?: ExistingSpread;
 }
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse<ResponseWithError<SpreadUpdateResponseBody>>,
-) {
-	const spreadId = req.query.id;
+const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
+	const spreadId = z.number().positive().int().parse(req.query.id);
 	if (!spreadId) {
-		res.status(400).json({ success: false, message: 'Missing spread ID' });
-		return;
+		throw new ApiError(400, 'Missing spread ID');
 	}
 	const userId = getCurrentUserId();
-	try {
-		let spread = null;
-		switch (req.method) {
-			case 'DELETE':
-				await prisma.spread.delete({
-					where: {
-						id: Number(spreadId),
-						userId,
+	let spread = null;
+	switch (req.method) {
+		case 'GET':
+			await prisma.spread.findFirstOrThrow({
+				where: { id: spreadId, userId },
+			});
+		case 'DELETE':
+			await prisma.spread.delete({
+				where: {
+					id: Number(spreadId),
+					userId,
+				},
+			});
+			break;
+		case 'PUT':
+		case 'PATCH':
+			const body = patchSchema.parse(req.body);
+			spread = await prisma.spread.update({
+				where: {
+					id: Number(spreadId),
+					userId,
+				},
+				data: {
+					...body,
+					positions: {
+						upsert: body.positions?.map((position) => {
+							return {
+								where: { id: position.id },
+								update: position,
+								create: { name: '', ...position },
+							};
+						}),
 					},
-				});
-				break;
-			case 'PUT':
-			case 'PATCH':
-				const body = patchSchema.parse(req.body);
-				spread = await prisma.spread.update({
-					where: {
-						id: Number(spreadId),
-						userId,
-					},
-					data: {
-						...body,
-						positions: {
-							upsert: body.positions?.map((position) => {
-								return {
-									where: { id: position.id },
-									update: position,
-									create: { name: '', ...position },
-								};
-							}),
-						},
-					},
-					include: { positions: true, media: true },
-				});
-			default:
-				res.status(405).json({
-					success: false,
-					message: 'Method not allowed',
-				});
-				return;
-		}
-		res.status(200).json({
-			success: true,
-			spread: spread ? dbToExistingSpread(spread) : undefined,
-		});
-	} catch (err) {
-		console.error(`Error deleting spread ${spreadId}:`, err);
-		res.status(500).json({
-			success: false,
-			message: 'Could not delete spread',
-		});
+				},
+				include: { positions: true, media: true },
+			});
+		default:
+			throw new ApiError(405, 'Method not allowed');
 	}
-}
+	return {
+		success: true,
+		spread: spread ? dbToExistingSpread(spread) : undefined,
+	};
+});
+export default handler;

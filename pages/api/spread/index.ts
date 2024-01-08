@@ -1,14 +1,12 @@
 import { Formidable } from 'formidable';
 import { z } from 'zod';
 
-import { ResponseBody, ResponseWithError } from 'lib/api';
+import { ResponseBody, handlerWithError } from 'lib/api';
 import { isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
 import { displayDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
-
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 const bodySchema = z.object({
 	date: z.date().refine((date) => date <= new Date(), {
@@ -37,16 +35,9 @@ export interface SpreadCreatedResponse extends ResponseBody {
 	spreadId: number;
 }
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse<ResponseWithError<SpreadCreatedResponse>>,
-) {
-	if (req.method !== 'POST') {
-		res.status(405).json({ success: false, message: 'Method not allowed' });
-		return;
-	}
-
-	try {
+const handler = handlerWithError<SpreadCreatedResponse>(
+	['POST'],
+	async (req) => {
 		const form = new Formidable({
 			uploadDir: `uploads/${getCurrentUserId()}}`,
 			keepExtensions: true,
@@ -82,14 +73,11 @@ export default async function handler(
 			await processPhoto(files.photo[0], spread.id);
 		}
 
-		res.status(200).json({
+		return {
 			success: true,
 			message: 'Spread created',
 			spreadId: spread.id,
-		});
-	} catch (error) {
-		console.log('Invalid request:', error);
-		res.status(400).json({ success: false, message: 'Invalid request' });
-		return;
-	}
-}
+		};
+	},
+);
+export default handler;

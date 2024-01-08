@@ -1,6 +1,6 @@
 import { stringify } from 'superjson';
 
-import { ResponseBody, ResponseWithError, fetchFromApi } from 'lib/api';
+import { ResponseWithError, fetchFromApi } from 'lib/api';
 
 import type {
 	SpreadCreateRequestBody,
@@ -12,11 +12,11 @@ import type {
 } from 'pages/api/spread/[id]';
 
 export async function mutateCreateSpread(
-	{ cards, ...body }: SpreadCreateRequestBody,
+	{ cards, date }: SpreadCreateRequestBody,
 	photo: Blob | null,
 ) {
 	const formData = new FormData();
-	formData.append('body', stringify(body));
+	formData.append('date', stringify(date));
 	cards.forEach((card) => formData.append('cards', card));
 	if (photo) {
 		formData.append('photo', photo);
@@ -35,26 +35,14 @@ export async function mutateUpdateSpread(
 	spreadId: number,
 	body: SpreadUpdateRequestBody,
 ) {
-	const response = await fetch(`/api/spread/${spreadId}`, {
-		method: 'PATCH',
-		body: JSON.stringify(body),
-	});
-	const responseBody: SpreadResponseBody = await response.json();
-	if (!response.ok) {
-		throw new Error(responseBody.message ?? 'Invalid response');
-	}
-	if (!responseBody.success) {
-		throw new Error(responseBody.message ?? 'Invalid response');
-	}
-	return responseBody;
+	return fetchFromApi<SpreadUpdateResponseBody>(
+		`/api/spread/${spreadId}`,
+		body,
+	);
 }
 
 export async function mutateDeleteSpread(spreadId: number) {
-	const response = await fetch(`/api/spread/${spreadId}`, {
+	return fetchFromApi(`/api/spread/${spreadId}`, null, {
 		method: 'DELETE',
 	});
-	const body: ResponseBody = await response.json();
-	if (!response.ok) {
-		throw new Error(body.message ?? 'Invalid response');
-	}
 }
