@@ -48,8 +48,11 @@ dependencies:
     specifier: 14.0.4
     version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
   next-superjson-plugin:
-    specifier: ^0.5.10
-    version: 0.5.10(next@14.0.4)(superjson@2.2.1)
+    specifier: ./node_modules/next-superjson2
+    version: link:node_modules/next-superjson2
+  next-superjson2:
+    specifier: ^0.6.1
+    version: 0.6.1(next@14.0.4)(superjson@2.2.1)
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -11377,11 +11380,11 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
-  /next-superjson-plugin@0.5.10(next@14.0.4)(superjson@2.2.1):
-    resolution: {integrity: sha512-y3vAKlZfZP6iEDb0R+XQ6UQ7YYDxbsZ0iZlV50/Hvw0Fzl+ScQJj+CbXdcl+ETugK9JbhCS7G7hMCGIjiGkgXQ==}
+  /next-superjson2@0.6.1(next@14.0.4)(superjson@2.2.1):
+    resolution: {integrity: sha512-B26Son3f6KbdWhbrBR9q2V2cd2RBYQfkOGANCpERafqIYnAB7fXPWbuVN2pALCHnwdZ83TFyTEoNWpLTDatjng==}
     peerDependencies:
       next: ^13.0 || ^14.0
-      superjson: ^1
+      superjson: ^2
     dependencies:
       hoist-non-react-statics: 3.3.2
       next: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)

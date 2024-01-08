@@ -1,12 +1,13 @@
-import { GetServerSidePropsResult } from 'next';
 import React from 'react';
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import { getSpreadsForUser } from 'lib/spreads/db';
-import { ExistingSpread } from 'lib/spreads/types';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { getCurrentUserId } from 'lib/users';
+
+import type { ExistingSpread } from 'lib/spreads/types';
+import type { GetServerSidePropsResult } from 'next';
 
 interface SpreadsPageProps {
 	spreads: ExistingSpread[];
