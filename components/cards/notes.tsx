@@ -6,7 +6,8 @@ import { useState } from 'react';
 import { OracleCardProps } from './index';
 
 export default function OracleCardNotes({ spread }: OracleCardProps) {
-	const [editNotes, setEditNotes] = useState(spread?.notes ?? '');
+	const notes = spread?.notes ?? '';
+	const [editNotes, setEditNotes] = useState(notes);
 
 	return (
 		<>
@@ -16,7 +17,7 @@ export default function OracleCardNotes({ spread }: OracleCardProps) {
 				value={editNotes}
 				onValueChange={setEditNotes}
 			/>
-			{spread?.notes !== editNotes && (
+			{notes !== editNotes && (
 				<ButtonGroup className="justify-end">
 					<Button isIconOnly>
 						<FontAwesomeIcon icon={faMagnifyingGlass} />
