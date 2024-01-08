@@ -27,13 +27,6 @@ const bodySchema = z.object({
 	description: z.string().optional(),
 });
 
-const form = new Formidable({
-	uploadDir: 'uploads',
-	keepExtensions: true,
-	allowEmptyFiles: false,
-	maxFiles: 1,
-});
-
 export const config = {
 	api: {
 		bodyParser: false,
@@ -50,6 +43,12 @@ export default async function handler(
 	}
 
 	try {
+		const form = new Formidable({
+			uploadDir: `uploads/${getCurrentUserId()}}`,
+			keepExtensions: true,
+			allowEmptyFiles: false,
+			maxFiles: 1,
+		});
 		const [fields, files] = await form.parse(req);
 		const { cards, ...spreadBody } = bodySchema.parse(fields);
 
