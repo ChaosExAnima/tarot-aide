@@ -1,31 +1,29 @@
 import { Formidable } from 'formidable';
 import { z } from 'zod';
 
+import { ResponseBody, ResponseWithError } from 'lib/api';
 import { isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
-import { SpreadResponseBody } from 'lib/spreads/api';
 import { displayDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 const bodySchema = z.object({
-	date: z.coerce
-		.date()
-		.refine((date) => date <= new Date(), {
-			message: 'Cannot create spreads in the future',
-		})
-		.default(() => new Date()),
-	cards: z
-		.array(
-			z.string().refine((card) => isCard(card), {
-				message: 'Invalid card name',
-			}),
-		)
-		.nonempty(),
+	date: z.date().refine((date) => date <= new Date(), {
+		message: 'Cannot create spreads in the future',
+	}),
+	cards: z.array(
+		z.string().refine(isCard, {
+			message: 'Invalid card name',
+		}),
+	),
 	name: z.string().optional(),
 	description: z.string().optional(),
+	template: z.boolean().optional(),
 });
+export type SpreadCreateRequestBody = z.infer<typeof bodySchema>;
 
 export const config = {
 	api: {
@@ -33,9 +31,15 @@ export const config = {
 	},
 };
 
+export interface SpreadCreatedResponse extends ResponseBody {
+	message: string;
+	success: true;
+	spreadId: number;
+}
+
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<SpreadResponseBody>,
+	res: NextApiResponse<ResponseWithError<SpreadCreatedResponse>>,
 ) {
 	if (req.method !== 'POST') {
 		res.status(405).json({ success: false, message: 'Method not allowed' });

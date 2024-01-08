@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 
+import { ResponseBody, ResponseWithError } from 'lib/api';
 import prisma from 'lib/db';
 import { dbToExistingSpread } from 'lib/spreads/db';
 import { ExistingSpread } from 'lib/spreads/types';
-import { ResponseBody, ResponseWithError } from 'lib/types';
 import { getCurrentUserId } from 'lib/users';
 
 const positionSchema = z.object({
@@ -22,7 +22,9 @@ const patchSchema = z.object({
 	positions: z.array(positionSchema).optional(),
 });
 
-interface SpreadUpdateResponseBody extends ResponseBody {
+export type SpreadUpdateRequestBody = z.infer<typeof patchSchema>;
+
+export interface SpreadUpdateResponseBody extends ResponseBody {
 	spread?: ExistingSpread;
 }
 
