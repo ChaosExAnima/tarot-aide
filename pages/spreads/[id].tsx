@@ -2,7 +2,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useRouter } from 'next/router';
 
 import OracleCard from 'components/cards';
@@ -17,6 +16,7 @@ import { displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 interface SpreadPageProps {
 	spread: ExistingSpread;
