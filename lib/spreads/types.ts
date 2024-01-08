@@ -34,12 +34,13 @@ export interface GenericSpread {
 }
 
 export interface PatternSpread extends GenericSpread {
+	id: number;
 	description: Nullable<string>;
 	positions: EmptySpreadPosition[];
 }
 
 export interface ExistingSpread extends GenericSpread {
-	id?: number;
+	id: number;
 	date: Date;
 	description: Nullable<string>;
 	positions: SpreadPosition[];
