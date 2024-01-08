@@ -23,7 +23,7 @@ export default function NewSpreadPage() {
 	const saveSpread = useMutation({
 		mutationFn: () =>
 			mutateCreateSpread({ cards, date: new Date() }, photo),
-		onSuccess: (spreadId) => {
+		onSuccess: ({ spreadId }) => {
 			router.push(`/spreads/${spreadId}`);
 		},
 	});

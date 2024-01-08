@@ -24,7 +24,8 @@ export async function mutateCreateSpread(
 
 	const response = await fetchFromApi<SpreadCreatedResponse>(
 		'/api/spread',
-		formData,
+		null,
+		{ body: formData, method: 'POST' },
 	);
 	return response;
 }
