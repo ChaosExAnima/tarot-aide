@@ -3,18 +3,18 @@ import { isFilledPosition, type SpreadPosition } from 'lib/spreads/types';
 import { getCurrentUserId } from 'lib/users';
 
 import { getDefaultCardReference } from './references';
-import { isTarotCard } from './utils';
+import { isCard } from './utils';
 
-import type { CardReference, CardReferenceMap, GenericCard } from './types';
+import type { CardReference, CardReferenceMap } from './types';
 import type { Prisma } from '@prisma/client';
 
-export async function getCardReferences(card: GenericCard, reversed = false) {
+export async function getCardReferences(cardName: string, reversed = false) {
 	const dbReferences = await prisma.cardReference.findMany({
-		where: { card: card.name, reversed, userId: getCurrentUserId() },
+		where: { card: cardName, reversed, userId: getCurrentUserId() },
 	});
 	const references = dbReferences.map(dbToCardReference);
-	if (isTarotCard(card)) {
-		references.push(getDefaultCardReference(card.name, reversed));
+	if (isCard(cardName)) {
+		references.push(getDefaultCardReference(cardName, reversed));
 	}
 	return references;
 }
@@ -26,7 +26,7 @@ export async function getCardReferenceMap(
 		positions
 			.filter(isFilledPosition)
 			.map((position) =>
-				getCardReferences(position.card, position.reversed),
+				getCardReferences(position.card.name, position.reversed),
 			),
 	);
 	return Object.fromEntries(

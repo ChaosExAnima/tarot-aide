@@ -1,6 +1,6 @@
-import { NextApiHandler } from 'next';
 import { stringify } from 'superjson';
 
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SuperJSONValue } from 'superjson/dist/types';
 
 export interface ResponseBody {
@@ -46,9 +46,10 @@ export async function fetchFromApi<Body extends ResponseBody>(
 	return body;
 }
 
-export type ApiHandler<Body extends ResponseBody> = NextApiHandler<
-	ResponseWithError<Body | ResponseBody>
->;
+export type ApiHandler<Body extends ResponseBody> = (
+	req: NextApiRequest,
+	res: NextApiResponse<ResponseWithError<Body | ResponseBody>>,
+) => Promise<void | Body>;
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -56,7 +57,7 @@ export function handlerWithError<Body extends ResponseBody>(
 	handlerOrMethods: ApiHandler<Body>,
 ): NextApiHandler<ResponseWithError<Body | ResponseBody>>;
 export function handlerWithError<Body extends ResponseBody>(
-	handlerOrMethods: Methods[],
+	methods: Methods[],
 	handler: ApiHandler<Body>,
 ): NextApiHandler<ResponseWithError<Body | ResponseBody>>;
 export function handlerWithError<Body extends ResponseBody>(
@@ -67,7 +68,10 @@ export function handlerWithError<Body extends ResponseBody>(
 		const realHandler = handler ?? (handlerOrMethods as ApiHandler<Body>);
 		const methods = Array.isArray(handlerOrMethods) ? handlerOrMethods : [];
 		try {
-			if (!req.method || !methods.includes(req.method as Methods)) {
+			if (
+				methods.length &&
+				(!req.method || !methods.includes(req.method as Methods))
+			) {
 				throw new ApiError(405, 'Method not allowed');
 			}
 			const response = await realHandler(req, res);
