@@ -10,13 +10,14 @@ import DatePicker from 'components/date-picker';
 import EditableHeader from 'components/editable-header';
 import Page from 'components/page';
 import Photo from 'components/photo';
-import { mutateDeleteSpread } from 'lib/spreads/api';
+import { mutateDeleteSpread, mutateUpdateSpread } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
 import { displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import type { SpreadUpdateRequestBody } from 'pages/api/spread/[id]';
 
 interface SpreadPageProps {
 	spread: ExistingSpread;
@@ -24,6 +25,10 @@ interface SpreadPageProps {
 
 export default function SpreadPage({ spread }: SpreadPageProps) {
 	const router = useRouter();
+	const updateSpread = useMutation({
+		mutationFn: (body: SpreadUpdateRequestBody) =>
+			mutateUpdateSpread(spread.id, body),
+	});
 	const deleteSpread = useMutation({
 		mutationFn: () => mutateDeleteSpread(spread.id),
 		onSuccess: () => router.push('/spreads'),
@@ -36,7 +41,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 						spread.name ??
 						`Spread ${displayRelativeDate(spread.date)}`
 					}
-					onSave={console.log}
+					onSave={(title) => updateSpread.mutate({ name: title })}
 					classNames={{
 						header: 'font-bold text-2xl',
 						inputWrapper: 'grow h-10',

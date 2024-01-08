@@ -28,7 +28,7 @@ export interface SpreadUpdateResponseBody extends ResponseBody {
 }
 
 const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
-	const spreadId = z.number().positive().int().parse(req.query.id);
+	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
 	if (!spreadId) {
 		throw new ApiError(400, 'Missing spread ID');
 	}
@@ -36,9 +36,11 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 	let spread = null;
 	switch (req.method) {
 		case 'GET':
-			await prisma.spread.findFirstOrThrow({
+			spread = await prisma.spread.findFirstOrThrow({
 				where: { id: spreadId, userId },
+				include: { positions: true, media: true },
 			});
+			break;
 		case 'DELETE':
 			await prisma.spread.delete({
 				where: {
@@ -49,6 +51,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 			break;
 		case 'PUT':
 		case 'PATCH':
+		case 'POST':
 			const body = patchSchema.parse(req.body);
 			spread = await prisma.spread.update({
 				where: {
@@ -69,6 +72,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 				},
 				include: { positions: true, media: true },
 			});
+			break;
 		default:
 			throw new ApiError(405, 'Method not allowed');
 	}

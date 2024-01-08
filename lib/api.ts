@@ -56,7 +56,7 @@ export function handlerWithError<Body extends ResponseBody>(
 	handlerOrMethods: ApiHandler<Body>,
 ): NextApiHandler<ResponseWithError<Body | ResponseBody>>;
 export function handlerWithError<Body extends ResponseBody>(
-	methods: Methods[],
+	handlerOrMethods: Methods[],
 	handler: ApiHandler<Body>,
 ): NextApiHandler<ResponseWithError<Body | ResponseBody>>;
 export function handlerWithError<Body extends ResponseBody>(
@@ -71,7 +71,7 @@ export function handlerWithError<Body extends ResponseBody>(
 		const methods = Array.isArray(handlerOrMethods) ? handlerOrMethods : [];
 		try {
 			if (
-				methods.length &&
+				methods.length > 0 &&
 				(!req.method || !methods.includes(req.method as Methods))
 			) {
 				throw new ApiError(405, 'Method not allowed');
