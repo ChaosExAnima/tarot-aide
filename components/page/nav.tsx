@@ -23,7 +23,7 @@ export const NavList: NavItem[] = [
 export default function Nav() {
 	const router = useRouter();
 	return (
-		<Navbar isBordered>
+		<Navbar isBordered classNames={{ wrapper: 'px-4' }}>
 			<NavbarContent>
 				{NavList.map((item) => (
 					<NavbarItem

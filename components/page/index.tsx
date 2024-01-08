@@ -1,16 +1,24 @@
+import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react';
 import Head from 'next/head';
 
-import Nav from 'components/nav';
+import Nav from './nav';
 
 import type { PropsWithChildren } from 'react';
 
+interface BreadcrumbProps {
+	label: string;
+	href: string;
+}
+
 interface PageProps {
 	title?: string;
+	breadcrumbs?: BreadcrumbProps[];
 }
 
 export default function Page({
 	title,
 	children,
+	breadcrumbs = [],
 }: PropsWithChildren<PageProps>) {
 	let pageTitle = 'Tarot Aide';
 	if (title) {
@@ -33,6 +41,13 @@ export default function Page({
 				<link rel="icon" href="/favicon.ico" key="icon" />
 			</Head>
 			<Nav />
+			<Breadcrumbs>
+				{breadcrumbs.map(({ label, href }) => (
+					<BreadcrumbItem key={href} href={href}>
+						{label}
+					</BreadcrumbItem>
+				))}
+			</Breadcrumbs>
 			<main className="container flex flex-col gap-4 p-4 min-h-[calc(100vh-65px)]">
 				{children}
 			</main>
