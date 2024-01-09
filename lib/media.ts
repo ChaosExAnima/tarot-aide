@@ -1,8 +1,6 @@
 import { Media } from '@prisma/client';
 import { File, Formidable } from 'formidable';
-import { unlink } from 'fs/promises';
 import sizeOf from 'image-size';
-import { resolve } from 'path';
 import { promisify } from 'util';
 
 import prisma from './db';
@@ -12,6 +10,7 @@ import type { NextApiRequest } from 'next';
 
 const PHOTO_TYPE = 'photo';
 const AUDIO_TYPE = 'audio';
+export type MediaType = typeof PHOTO_TYPE | typeof AUDIO_TYPE;
 
 export interface Photo extends Media {
 	type: typeof PHOTO_TYPE;
@@ -60,32 +59,21 @@ export async function processPhoto(
 	});
 }
 
-export async function deleteMedia(
+export function deleteMedia(
 	spreadId: number,
-	type: 'photo' | 'audio',
+	type: MediaType,
 	userId = getCurrentUserId(),
 ) {
-	const result = await prisma.media.findMany({
+	return prisma.media.updateMany({
 		where: {
 			spreadId,
 			type,
 			userId,
 		},
-	});
-	if (!result.length) {
-		throw new Error('Media not found');
-	}
-	await prisma.media.deleteMany({
-		where: {
-			path: {
-				in: result.map((media) => media.path),
-			},
+		data: {
+			deleted: true,
 		},
 	});
-	for (const { path } of result) {
-		await unlink(resolve(process.cwd(), `uploads/${userId}/${path}`));
-	}
-	return result;
 }
 export function parseForm<FieldKey extends string, FileKey extends string>(
 	req: NextApiRequest,
