@@ -61,7 +61,8 @@ export default function SpreadHeader() {
 }
 
 function SpreadHeaderEdit() {
-	const { spread, set, issues, disable, save, dirty } = useEditSpread();
+	const { spread, set, issues, disable, save, dirty, toggleEditing } =
+		useEditSpread();
 	return (
 		<header>
 			<Input
@@ -104,7 +105,7 @@ function SpreadHeaderEdit() {
 					>
 						<FontAwesomeIcon icon={faSave} />
 					</Button>
-					<Button onPress={close} color="danger" isIconOnly>
+					<Button onPress={toggleEditing} color="danger" isIconOnly>
 						<FontAwesomeIcon icon={faCancel} />
 					</Button>
 				</ButtonGroup>
