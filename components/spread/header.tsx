@@ -6,13 +6,15 @@ import {
 	faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonGroup, Button, Input } from '@nextui-org/react';
+import { ButtonGroup, Button, Input, Textarea } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useState } from 'react';
+import { ZodIssue } from 'zod';
 
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
+import { ApiError } from 'lib/api';
 import { mutateDeleteSpread, mutateUpdateSpread } from 'lib/spreads/api';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { displayDate } from 'lib/text';
@@ -31,14 +33,12 @@ export default function SpreadHeader(props: SpreadHeaderProps) {
 		onSuccess: () => router.push('/spreads'),
 	});
 	if (editing) {
-		return (
-			<SpreadHeaderEdit {...props} onComplete={() => setEditing(false)} />
-		);
+		return <SpreadHeaderEdit {...props} close={() => setEditing(false)} />;
 	}
 
 	return (
-		<header>
-			<div className="flex flex-nowrap gap-4 items-center">
+		<header className="flex flex-col">
+			<div className="flex flex-nowrap gap-4 items-center mb-4">
 				<h1 className="grow font-bold text-2xl">
 					{displaySpreadName(spread)}
 				</h1>
@@ -60,22 +60,34 @@ export default function SpreadHeader(props: SpreadHeaderProps) {
 					</ConfirmationModal>
 				</ButtonGroup>
 			</div>
-			{spread.description && <h2>{spread.description}</h2>}
+			{spread.notes
+				?.split('\n')
+				.filter(Boolean)
+				.map((line) => (
+					<p key={line} className="text-content4 text-sm">
+						{line.trim()}
+					</p>
+				))}
 		</header>
 	);
 }
 
+type ErrorMap = Partial<Record<keyof ExistingSpread, string[]>>;
+
 function SpreadHeaderEdit({
 	spread: initial,
-	onComplete,
-}: SpreadHeaderProps & { onComplete: () => void }) {
+	close,
+}: SpreadHeaderProps & { close: () => void }) {
+	const router = useRouter();
 	const [spread, setSpread] = useState(initial);
 	const [dirty, setDirty] = useState(false);
+	const [errors, setErrors] = useState<ErrorMap>({});
 	const changeFactory =
 		<Key extends keyof ExistingSpread>(key: Key) =>
 		(value: ExistingSpread[Key]) =>
 			setSpread((spread) => {
 				setDirty(true);
+				setErrors((errors) => ({ ...errors, [key]: [] }));
 				return { ...spread, [key]: value };
 			});
 	const updateSpread = useMutation({
@@ -88,7 +100,27 @@ function SpreadHeaderEdit({
 					notes: pos.notes ?? null,
 				})),
 			}),
-		onSettled: () => onComplete(),
+		onSuccess: () => {
+			router.replace(router.asPath);
+			close();
+		},
+		onError: (error) => {
+			if (
+				error instanceof ApiError &&
+				Array.isArray(error.response?.details)
+			) {
+				const issues: ZodIssue[] = error.response.details;
+				const newErrors: ErrorMap = {};
+				for (const issue of issues) {
+					for (const path of issue.path) {
+						(newErrors[path as keyof ExistingSpread] ??= []).push(
+							issue.message,
+						);
+					}
+				}
+				setErrors(newErrors);
+			}
+		},
 	});
 	return (
 		<header>
@@ -100,20 +132,24 @@ function SpreadHeaderEdit({
 				classNames={{
 					inputWrapper: 'h-8',
 				}}
+				isInvalid={!!errors.name?.length}
+				errorMessage={errors.name?.join(', ')}
 			/>
-			<Input
-				value={spread.description ?? ''}
-				onValueChange={changeFactory('description')}
-				placeholder="Description"
-				classNames={{
-					mainWrapper: 'my-4',
-				}}
+			<Textarea
+				value={spread.notes ?? ''}
+				onValueChange={changeFactory('notes')}
+				placeholder="Notes"
+				fullWidth
+				className="my-4"
+				isInvalid={!!errors.notes?.length}
+				errorMessage={errors.notes?.join(', ')}
 			/>
 			<div className="flex flex-nowrap gap-4 items-center">
 				<DatePicker
 					onPick={changeFactory('date')}
 					isIconOnly={false}
 					isDisabled={updateSpread.isPending}
+					color={!!errors.date?.length ? 'danger' : 'default'}
 				>
 					<FontAwesomeIcon icon={faCalendar} />
 					{displayDate(spread.date)}
@@ -124,17 +160,21 @@ function SpreadHeaderEdit({
 				>
 					<Button
 						onPress={() => updateSpread.mutate()}
+						isLoading={updateSpread.isPending}
 						color="success"
 						isDisabled={!dirty}
 						isIconOnly
 					>
 						<FontAwesomeIcon icon={faSave} />
 					</Button>
-					<Button onPress={onComplete} color="danger" isIconOnly>
+					<Button onPress={close} color="danger" isIconOnly>
 						<FontAwesomeIcon icon={faCancel} />
 					</Button>
 				</ButtonGroup>
 			</div>
+			{errors.date && (
+				<p className="text-red-500">{errors.date.join(', ')}</p>
+			)}
 		</header>
 	);
 }

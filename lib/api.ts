@@ -1,4 +1,5 @@
 import { parse, stringify } from 'superjson';
+import { ZodError } from 'zod';
 
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SuperJSONValue } from 'superjson/dist/types';
@@ -8,14 +9,15 @@ export interface ResponseBody {
 	success: boolean;
 }
 
-export interface ErrorReponseBody extends ResponseBody {
+export interface ErrorResponseBody extends ResponseBody {
 	message: string;
 	success: false;
+	details?: unknown;
 }
 
 export type ResponseWithError<Body extends ResponseBody> =
 	| Body
-	| ErrorReponseBody;
+	| ErrorResponseBody;
 
 export function isResponseBody(input: unknown): input is ResponseBody {
 	return (
@@ -24,6 +26,10 @@ export function isResponseBody(input: unknown): input is ResponseBody {
 		'success' in input &&
 		typeof input.success === 'boolean'
 	);
+}
+
+export function isErrorResponse(input: unknown): input is ErrorResponseBody {
+	return isResponseBody(input) && !input.success;
 }
 
 export async function fetchFromApi<
@@ -39,8 +45,15 @@ export async function fetchFromApi<
 	}
 	const response = await fetch(path, options);
 	const body: ResponseWithError<Response> = await response.json();
-	if (!response.ok || !body.success) {
-		throw new Error(body.message ?? 'Unknown error');
+	if (!response.ok) {
+		body.success = false;
+	}
+	if (isErrorResponse(body)) {
+		throw new ApiError(
+			response.status,
+			body.message ?? 'Unknown error',
+			body,
+		);
 	}
 	return body;
 }
@@ -84,15 +97,22 @@ export function handlerWithError<Body extends ResponseBody>(
 			}
 		} catch (err) {
 			console.error(`Error in route ${req.url}:`, err);
-			let message = 'Unknown error';
+			const body: ErrorResponseBody = {
+				success: false,
+				message: 'Unknown error',
+			};
 			let status = 500;
+			if (err instanceof Error) {
+				body.message = err.message;
+			}
 			if (err instanceof ApiError) {
 				status = err.statusCode;
+			} else if (err instanceof ZodError) {
+				status = 400;
+				body.message = 'Validation failed';
+				body.details = err.issues;
 			}
-			if (err instanceof Error) {
-				message = err.message;
-			}
-			res.status(status).json({ message, success: false });
+			res.status(status).json(body);
 		}
 	};
 }
@@ -101,6 +121,7 @@ export class ApiError extends Error {
 	constructor(
 		public statusCode = 500,
 		message: string,
+		public response?: ErrorResponseBody,
 	) {
 		super(message);
 	}

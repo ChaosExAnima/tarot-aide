@@ -15,7 +15,12 @@ const positionSchema = z.object({
 
 const patchSchema = z.object({
 	name: z.string().optional(),
-	date: z.date().optional(),
+	date: z
+		.date()
+		.refine((date) => date <= new Date(), {
+			message: 'Date cannot be in the future',
+		})
+		.optional(),
 	description: z.string().optional().nullable(),
 	notes: z.string().optional().nullable(),
 	positions: z.array(positionSchema).optional(),
