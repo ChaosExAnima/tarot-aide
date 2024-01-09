@@ -28,7 +28,12 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 		onSuccess: () => router.push('/spreads'),
 	});
 	return (
-		<Page>
+		<Page
+			breadcrumbs={[
+				{ label: 'Spreads', href: '/spreads' },
+				{ label: spread.name, href: `/spreads/${spread.id}` },
+			]}
+		>
 			<header className="flex flex-col">
 				<div className="flex flex-nowrap gap-4 items-center mb-4">
 					<h1 className="grow font-bold text-2xl">

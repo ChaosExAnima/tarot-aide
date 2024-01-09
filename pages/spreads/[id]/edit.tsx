@@ -23,7 +23,13 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 	const { spread, set, issues, dirty, disable, save } =
 		useEditSpread(initial);
 	return (
-		<Page>
+		<Page
+			breadcrumbs={[
+				{ label: 'Spreads', href: '/spreads' },
+				{ label: initial.name, href: `/spreads/${initial.id}` },
+				{ label: 'Edit', href: `/spreads/${initial.id}/edit` },
+			]}
+		>
 			<header>
 				<Input
 					value={spread.name}

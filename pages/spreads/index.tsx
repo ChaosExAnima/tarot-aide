@@ -15,7 +15,7 @@ interface SpreadsPageProps {
 
 export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 	return (
-		<Page>
+		<Page breadcrumbs={[{ label: 'Spreads', href: '/spreads' }]}>
 			{spreads.map((spread) => (
 				<ButtonLink
 					key={spread.id}
