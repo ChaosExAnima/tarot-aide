@@ -1,8 +1,8 @@
 import OracleCard from 'components/cards';
-import Photo from 'components/photo';
 
 import SpreadHeader from './header';
 import { SpreadContext, useEditSpreadContext } from './hooks';
+import SpreadPhoto from './photo';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 
@@ -15,7 +15,7 @@ export default function SpreadDisplay({ spread: initial }: SpreadDisplayProps) {
 	return (
 		<SpreadContext.Provider value={ctx}>
 			<SpreadHeader />
-			<Photo photo={ctx.spread.photo ?? null} />
+			<SpreadPhoto />
 			{ctx.spread.positions.map((spread) => (
 				<OracleCard key={spread.id} spread={spread} />
 			))}
