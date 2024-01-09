@@ -34,7 +34,7 @@ export default {
 					(labels, cardName) => ({
 						...labels,
 						[cardName]: displayCardFullName(
-							getCardFromName(cardName),
+							getCardFromName(cardName)!,
 						),
 					}),
 					{},

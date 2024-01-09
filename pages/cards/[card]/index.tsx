@@ -65,7 +65,7 @@ export async function getStaticProps(
 		props: {
 			card: {
 				...card,
-				references: await getCardReferences(card),
+				references: await getCardReferences(card.name),
 			},
 			reversed: false,
 		},

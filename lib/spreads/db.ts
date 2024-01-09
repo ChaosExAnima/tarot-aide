@@ -1,10 +1,10 @@
-import { Prisma } from '@prisma/client';
+import { Position, Prisma } from '@prisma/client';
 
 import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { isAudio, isPhoto } from 'lib/media';
 
-import { ExistingSpread } from './types';
+import { ExistingSpread, SpreadPosition } from './types';
 
 export async function getSpreadsForUser(
 	userId: number,
@@ -43,11 +43,21 @@ export function dbToExistingSpread(
 ): ExistingSpread {
 	return {
 		...spread,
-		positions: spread.positions.map((position) => ({
-			...position,
-			card: position.card ? getCardFromName(position.card) : null,
-		})),
-		photo: spread.media.find(isPhoto) ?? null,
-		audio: spread.media.find(isAudio) ?? null,
+		positions: spread.positions.map(dbToSpreadPosition),
+		photo: spread.media.find(isPhoto),
+		audio: spread.media.find(isAudio),
+		notes: spread.notes,
+		description: spread.description,
+	};
+}
+
+export function dbToSpreadPosition(position: Position): SpreadPosition {
+	if (!position.card) {
+		return { ...position, card: null };
+	}
+	const card = getCardFromName(position.card);
+	return {
+		...position,
+		card,
 	};
 }

@@ -69,7 +69,7 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 					name: '',
 					spreadId: spread.id,
 					card: 'shortName' in card ? card.shortName : card.name,
-					suit: card.suit,
+					suit: 'suit' in card ? card.suit : null,
 				},
 			});
 		}

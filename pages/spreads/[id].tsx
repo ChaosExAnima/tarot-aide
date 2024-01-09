@@ -1,71 +1,22 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonGroup } from '@nextui-org/react';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
-
 import OracleCard from 'components/cards';
-import ConfirmationModal from 'components/confirmation-modal';
-import DatePicker from 'components/date-picker';
-import EditableHeader from 'components/editable-header';
 import Page from 'components/page';
 import Photo from 'components/photo';
-import { mutateDeleteSpread, mutateUpdateSpread } from 'lib/spreads/api';
+import SpreadHeader from 'components/spread/header';
 import { getSpreadById } from 'lib/spreads/db';
-import { displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import type { SpreadUpdateRequestBody } from 'pages/api/spread/[id]';
 
 interface SpreadPageProps {
 	spread: ExistingSpread;
 }
 
 export default function SpreadPage({ spread }: SpreadPageProps) {
-	const router = useRouter();
-	const updateSpread = useMutation({
-		mutationFn: (body: SpreadUpdateRequestBody) =>
-			mutateUpdateSpread(spread.id, body),
-	});
-	const deleteSpread = useMutation({
-		mutationFn: () => mutateDeleteSpread(spread.id),
-		onSuccess: () => router.push('/spreads'),
-	});
-	const mutating = updateSpread.isPending || deleteSpread.isPending;
 	return (
 		<Page>
-			<header className="flex flex-nowrap gap-4 items-center">
-				<EditableHeader
-					isDisabled={mutating}
-					onSave={(title) => updateSpread.mutate({ name: title })}
-					initial={
-						spread.name ??
-						`Spread ${displayRelativeDate(spread.date)}`
-					}
-					classNames={{
-						header: 'font-bold text-2xl',
-						inputWrapper: 'grow h-10',
-					}}
-				>
-					<ButtonGroup isDisabled={mutating}>
-						<DatePicker
-							onPick={(date) => updateSpread.mutate({ date })}
-							value={spread.date}
-						/>
-						<ConfirmationModal
-							isIconOnly
-							onConfirm={deleteSpread.mutate}
-							header="Delete this spread?"
-							body="This is permanent!"
-						>
-							<FontAwesomeIcon icon={faTrash} />
-						</ConfirmationModal>
-					</ButtonGroup>
-				</EditableHeader>
-			</header>
-			<Photo photo={spread.photo} />
+			<SpreadHeader spread={spread} />
+			<Photo photo={spread.photo ?? null} />
 			{spread.positions.map((spread) => (
 				<OracleCard key={spread.id} spread={spread} />
 			))}

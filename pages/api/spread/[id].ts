@@ -9,15 +9,15 @@ import { getCurrentUserId } from 'lib/users';
 const positionSchema = z.object({
 	id: z.number().optional(),
 	name: z.string().optional(),
-	description: z.string().optional(),
-	card: z.string().optional(),
+	description: z.string().optional().nullable(),
+	card: z.string().optional().nullable(),
 });
 
 const patchSchema = z.object({
 	name: z.string().optional(),
 	date: z.date().optional(),
-	description: z.string().optional(),
-	notes: z.string().optional(),
+	description: z.string().optional().nullable(),
+	notes: z.string().optional().nullable(),
 	positions: z.array(positionSchema).optional(),
 });
 
