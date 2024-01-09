@@ -12,7 +12,7 @@ interface BreadcrumbProps {
 
 interface PageProps {
 	title?: string;
-	breadcrumbs?: BreadcrumbProps[];
+	breadcrumbs?: (BreadcrumbProps | false)[];
 }
 
 export default function Page({
@@ -44,11 +44,13 @@ export default function Page({
 			{Array.isArray(breadcrumbs) && (
 				<Breadcrumbs className="my-2 mx-4">
 					<BreadcrumbItem href="/">Home</BreadcrumbItem>
-					{breadcrumbs.map(({ label, href }) => (
-						<BreadcrumbItem key={href} href={href}>
-							{label}
-						</BreadcrumbItem>
-					))}
+					{breadcrumbs
+						.filter((b): b is BreadcrumbProps => !!b)
+						.map(({ label, href }) => (
+							<BreadcrumbItem key={href} href={href}>
+								{label}
+							</BreadcrumbItem>
+						))}
 				</Breadcrumbs>
 			)}
 			<main className="container flex flex-col gap-4 p-4 min-h-[calc(100vh-65px)]">
