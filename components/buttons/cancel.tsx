@@ -1,6 +1,7 @@
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, ButtonProps } from '@nextui-org/react';
+import clsx from 'clsx';
 
 export default function CancelButton({ className, ...props }: ButtonProps) {
 	return (
@@ -8,8 +9,7 @@ export default function CancelButton({ className, ...props }: ButtonProps) {
 			{...props}
 			isIconOnly
 			color="danger"
-			aria-label="Delete this image"
-			className={`rounded-full ${className}`}
+			className={clsx('rounded-full', className)}
 		>
 			<FontAwesomeIcon icon={faXmark} />
 		</Button>
