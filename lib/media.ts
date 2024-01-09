@@ -1,5 +1,5 @@
 import { Media } from '@prisma/client';
-import { File } from 'formidable';
+import { File, Formidable } from 'formidable';
 import { unlink } from 'fs/promises';
 import sizeOf from 'image-size';
 import { resolve } from 'path';
@@ -7,6 +7,8 @@ import { promisify } from 'util';
 
 import prisma from './db';
 import { getCurrentUserId } from './users';
+
+import type { NextApiRequest } from 'next';
 
 const PHOTO_TYPE = 'photo';
 const AUDIO_TYPE = 'audio';
@@ -84,4 +86,15 @@ export async function deleteMedia(
 		await unlink(resolve(process.cwd(), `uploads/${userId}/${path}`));
 	}
 	return result;
+}
+export function parseForm<FieldKey extends string, FileKey extends string>(
+	req: NextApiRequest,
+) {
+	const form = new Formidable({
+		uploadDir: `uploads/${getCurrentUserId()}}`,
+		keepExtensions: true,
+		allowEmptyFiles: false,
+		maxFiles: 1,
+	});
+	return form.parse<FieldKey, FileKey>(req);
 }

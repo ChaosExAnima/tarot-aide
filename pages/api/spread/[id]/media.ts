@@ -1,8 +1,8 @@
 import { File } from 'formidable';
 import { z } from 'zod';
 
-import { ApiError, handlerWithError, parseForm } from 'lib/api';
-import { deleteMedia, processPhoto } from 'lib/media';
+import { ApiError, handlerWithError } from 'lib/api';
+import { parseForm, deleteMedia, processPhoto } from 'lib/media';
 import { getCurrentUserId } from 'lib/users';
 
 type EndpointKeys = 'photo' | 'audio';
