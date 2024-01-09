@@ -33,22 +33,27 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 		mutationFn: () => mutateDeleteSpread(spread.id),
 		onSuccess: () => router.push('/spreads'),
 	});
+	const mutating = updateSpread.isPending || deleteSpread.isPending;
 	return (
 		<Page>
 			<header className="flex flex-nowrap gap-4 items-center">
 				<EditableHeader
+					isDisabled={mutating}
+					onSave={(title) => updateSpread.mutate({ name: title })}
 					initial={
 						spread.name ??
 						`Spread ${displayRelativeDate(spread.date)}`
 					}
-					onSave={(title) => updateSpread.mutate({ name: title })}
 					classNames={{
 						header: 'font-bold text-2xl',
 						inputWrapper: 'grow h-10',
 					}}
 				>
-					<ButtonGroup>
-						<DatePicker onPick={console.log} value={spread.date} />
+					<ButtonGroup isDisabled={mutating}>
+						<DatePicker
+							onPick={(date) => updateSpread.mutate({ date })}
+							value={spread.date}
+						/>
 						<ConfirmationModal
 							isIconOnly
 							onConfirm={deleteSpread.mutate}

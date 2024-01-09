@@ -8,6 +8,7 @@ interface EditableHeaderProps {
 	initial: string;
 	onSave: (value: string) => void;
 	classNames?: InputProps['classNames'] & { header?: string };
+	isDisabled?: boolean;
 }
 
 export default function EditableHeader({
@@ -15,6 +16,7 @@ export default function EditableHeader({
 	onSave,
 	classNames,
 	children,
+	isDisabled,
 }: PropsWithChildren<EditableHeaderProps>) {
 	const [text, setText] = useState(initial);
 	const [editing, setEditing] = useState(false);
@@ -44,6 +46,7 @@ export default function EditableHeader({
 			onValueChange={setText}
 			classNames={classNames}
 			endContent={<SaveButton onPress={handleSave} />}
+			isDisabled={isDisabled}
 		/>
 	);
 }
