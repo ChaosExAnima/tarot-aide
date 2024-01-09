@@ -34,7 +34,7 @@ export async function mutateUpdateSpread(
 	spreadId: number,
 	body: SpreadUpdateRequestBody,
 ) {
-	return fetchFromApi<SpreadUpdateResponseBody>(
+	return fetchFromApi<Required<SpreadUpdateResponseBody>>(
 		`/api/spread/${spreadId}`,
 		body,
 	);

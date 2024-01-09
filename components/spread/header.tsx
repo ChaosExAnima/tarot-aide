@@ -8,32 +8,24 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonGroup, Button, Input, Textarea } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
-import router, { useRouter } from 'next/router';
-import { useState } from 'react';
-import { ZodIssue } from 'zod';
+import router from 'next/router';
 
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
-import { ApiError } from 'lib/api';
-import { mutateDeleteSpread, mutateUpdateSpread } from 'lib/spreads/api';
+import { mutateDeleteSpread } from 'lib/spreads/api';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { displayDate } from 'lib/text';
 
-import type { ExistingSpread } from 'lib/spreads/types';
+import { useEditSpread } from './hooks';
 
-interface SpreadHeaderProps {
-	spread: ExistingSpread;
-}
-
-export default function SpreadHeader(props: SpreadHeaderProps) {
-	const { spread } = props;
-	const [editing, setEditing] = useState(false);
+export default function SpreadHeader() {
+	const { spread, editing, toggleEditing } = useEditSpread();
 	const deleteSpread = useMutation({
 		mutationFn: () => mutateDeleteSpread(spread.id),
 		onSuccess: () => router.push('/spreads'),
 	});
 	if (editing) {
-		return <SpreadHeaderEdit {...props} close={() => setEditing(false)} />;
+		return <SpreadHeaderEdit />;
 	}
 
 	return (
@@ -43,11 +35,7 @@ export default function SpreadHeader(props: SpreadHeaderProps) {
 					{displaySpreadName(spread)}
 				</h1>
 				<ButtonGroup isDisabled={deleteSpread.isPending}>
-					<Button
-						onPress={() => setEditing(true)}
-						color="primary"
-						isIconOnly
-					>
+					<Button onPress={toggleEditing} color="primary" isIconOnly>
 						<FontAwesomeIcon icon={faEdit} />
 					</Button>
 					<ConfirmationModal
@@ -72,95 +60,44 @@ export default function SpreadHeader(props: SpreadHeaderProps) {
 	);
 }
 
-type ErrorMap = Partial<Record<keyof ExistingSpread, string[]>>;
-
-function SpreadHeaderEdit({
-	spread: initial,
-	close,
-}: SpreadHeaderProps & { close: () => void }) {
-	const router = useRouter();
-	const [spread, setSpread] = useState(initial);
-	const [dirty, setDirty] = useState(false);
-	const [errors, setErrors] = useState<ErrorMap>({});
-	const changeFactory =
-		<Key extends keyof ExistingSpread>(key: Key) =>
-		(value: ExistingSpread[Key]) =>
-			setSpread((spread) => {
-				setDirty(true);
-				setErrors((errors) => ({ ...errors, [key]: [] }));
-				return { ...spread, [key]: value };
-			});
-	const updateSpread = useMutation({
-		mutationFn: () =>
-			mutateUpdateSpread(initial.id, {
-				...spread,
-				positions: spread.positions.map((pos) => ({
-					...pos,
-					card: pos.card?.name,
-					notes: pos.notes ?? null,
-				})),
-			}),
-		onSuccess: () => {
-			router.replace(router.asPath);
-			close();
-		},
-		onError: (error) => {
-			if (
-				error instanceof ApiError &&
-				Array.isArray(error.response?.details)
-			) {
-				const issues: ZodIssue[] = error.response.details;
-				const newErrors: ErrorMap = {};
-				for (const issue of issues) {
-					for (const path of issue.path) {
-						(newErrors[path as keyof ExistingSpread] ??= []).push(
-							issue.message,
-						);
-					}
-				}
-				setErrors(newErrors);
-			}
-		},
-	});
+function SpreadHeaderEdit() {
+	const { spread, set, issues, disable, save, dirty } = useEditSpread();
 	return (
 		<header>
 			<Input
 				value={spread.name}
-				onValueChange={changeFactory('name')}
+				onValueChange={set('name')}
 				placeholder="Spread name"
 				isRequired
 				classNames={{
 					inputWrapper: 'h-8',
 				}}
-				isInvalid={!!errors.name?.length}
-				errorMessage={errors.name?.join(', ')}
+				isInvalid={!!issues('name')}
+				errorMessage={issues('name')}
 			/>
 			<Textarea
 				value={spread.notes ?? ''}
-				onValueChange={changeFactory('notes')}
+				onValueChange={set('notes')}
 				placeholder="Notes"
 				fullWidth
 				className="my-4"
-				isInvalid={!!errors.notes?.length}
-				errorMessage={errors.notes?.join(', ')}
+				isInvalid={!!issues('notes')}
+				errorMessage={issues('notes')}
 			/>
 			<div className="flex flex-nowrap gap-4 items-center">
 				<DatePicker
-					onPick={changeFactory('date')}
+					onPick={set('date')}
 					isIconOnly={false}
-					isDisabled={updateSpread.isPending}
-					color={!!errors.date?.length ? 'danger' : 'default'}
+					isDisabled={disable}
+					color={!!issues('date') ? 'danger' : 'default'}
 				>
 					<FontAwesomeIcon icon={faCalendar} />
 					{displayDate(spread.date)}
 				</DatePicker>
-				<ButtonGroup
-					isDisabled={updateSpread.isPending}
-					className="grow justify-end"
-				>
+				<ButtonGroup isDisabled={disable} className="grow justify-end">
 					<Button
-						onPress={() => updateSpread.mutate()}
-						isLoading={updateSpread.isPending}
+						onPress={save}
+						isLoading={disable}
 						color="success"
 						isDisabled={!dirty}
 						isIconOnly
@@ -172,9 +109,7 @@ function SpreadHeaderEdit({
 					</Button>
 				</ButtonGroup>
 			</div>
-			{errors.date && (
-				<p className="text-red-500">{errors.date.join(', ')}</p>
-			)}
+			{issues('date') && <p className="text-red-500">{issues('date')}</p>}
 		</header>
 	);
 }

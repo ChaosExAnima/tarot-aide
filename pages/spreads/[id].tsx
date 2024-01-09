@@ -1,7 +1,5 @@
-import OracleCard from 'components/cards';
 import Page from 'components/page';
-import Photo from 'components/photo';
-import SpreadHeader from 'components/spread/header';
+import SpreadDisplay from 'components/spread';
 import { getSpreadById } from 'lib/spreads/db';
 import { getCurrentUserId } from 'lib/users';
 
@@ -15,11 +13,7 @@ interface SpreadPageProps {
 export default function SpreadPage({ spread }: SpreadPageProps) {
 	return (
 		<Page>
-			<SpreadHeader spread={spread} />
-			<Photo photo={spread.photo ?? null} />
-			{spread.positions.map((spread) => (
-				<OracleCard key={spread.id} spread={spread} />
-			))}
+			<SpreadDisplay spread={spread} />
 		</Page>
 	);
 }
