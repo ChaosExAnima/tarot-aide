@@ -52,8 +52,8 @@ export function useEditSpreadContext(
 					notes: pos.notes ?? null,
 				})),
 			}),
-		onSuccess: ({ spread }) => {
-			router.replace(router.asPath);
+		onSuccess: async ({ spread }) => {
+			await router.replace(router.asPath);
 			setSpread(spread);
 			setDirty(false);
 			setEditing(false);
