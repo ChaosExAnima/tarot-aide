@@ -1,6 +1,6 @@
 import { stringify } from 'superjson';
 
-import { ResponseWithError, fetchFromApi } from 'lib/api';
+import { fetchFromApi } from 'lib/api';
 
 import type {
 	SpreadCreateRequestBody,
@@ -29,8 +29,6 @@ export async function mutateCreateSpread(
 	);
 	return response;
 }
-
-export type SpreadResponseBody = ResponseWithError<SpreadUpdateResponseBody>;
 
 export async function mutateUpdateSpread(
 	spreadId: number,
