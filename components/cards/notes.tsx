@@ -21,6 +21,7 @@ import { OracleCardProps } from './index';
 
 export default function OracleCardNotes({ spread }: OracleCardProps) {
 	const notes = spread?.notes ?? '';
+	const [inFocus, setInFocus] = useState(false);
 	const [editNotes, setEditNotes] = useState(notes);
 
 	const [showRefs, setShowRefs] = useState(false);
@@ -37,6 +38,8 @@ export default function OracleCardNotes({ spread }: OracleCardProps) {
 				placeholder="Notes go here"
 				value={editNotes}
 				onValueChange={setEditNotes}
+				onFocus={() => setInFocus(true)}
+				onBlur={() => setInFocus(false)}
 			/>
 			{spread.card && (
 				<Modal
@@ -64,7 +67,7 @@ export default function OracleCardNotes({ spread }: OracleCardProps) {
 				</Modal>
 			)}
 
-			{notes !== editNotes && (
+			{inFocus && (
 				<div className="flex items-center">
 					<p className="grow text-content4 text-sm">
 						{spread.card &&
@@ -83,7 +86,11 @@ export default function OracleCardNotes({ spread }: OracleCardProps) {
 								<FontAwesomeIcon icon={faQuestion} />
 							</Button>
 						)}
-						<Button color="success" isIconOnly>
+						<Button
+							isIconOnly
+							color="success"
+							isDisabled={notes === editNotes}
+						>
 							<FontAwesomeIcon icon={faSave} />
 						</Button>
 					</ButtonGroup>
