@@ -79,3 +79,7 @@ export function pluralize(number: number, noun = ''): string {
 			return noun + 's';
 	}
 }
+
+export function slugify(input: string): string {
+	return encodeURIComponent(input.replaceAll(/\s+/g, '-').toLowerCase());
+}

@@ -1,49 +1,89 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
+import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
 import prisma from 'lib/db';
-import { ResponseBody } from 'lib/spreads/api';
+import { dbToExistingSpread } from 'lib/spreads/db';
+import { ExistingSpread } from 'lib/spreads/types';
 import { getCurrentUserId } from 'lib/users';
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse<ResponseBody>,
-) {
-	const spreadId = req.query.id;
+const positionSchema = z.object({
+	id: z.number().optional(),
+	name: z.string().optional(),
+	description: z.string().optional().nullable(),
+	card: z.string().optional().nullable(),
+});
+
+const patchSchema = z.object({
+	name: z.string().optional(),
+	date: z
+		.date()
+		.refine((date) => date <= new Date(), {
+			message: 'Date cannot be in the future',
+		})
+		.optional(),
+	description: z.string().optional().nullable(),
+	notes: z.string().optional().nullable(),
+	positions: z.array(positionSchema).optional(),
+});
+
+export type SpreadUpdateRequestBody = z.infer<typeof patchSchema>;
+
+export interface SpreadUpdateResponseBody extends ResponseBody {
+	spread?: ExistingSpread;
+}
+
+const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
+	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
 	if (!spreadId) {
-		res.status(400).json({ success: false, message: 'Missing spread ID' });
-		return;
+		throw new ApiError(400, 'Missing spread ID');
 	}
 	const userId = getCurrentUserId();
-	try {
-		switch (req.method) {
-			case 'DELETE':
-				await prisma.spread.delete({
-					where: {
-						id: Number(spreadId),
-						userId,
+	let spread = null;
+	switch (req.method) {
+		case 'GET':
+			spread = await prisma.spread.findFirstOrThrow({
+				where: { id: spreadId, userId },
+				include: { positions: true, media: true },
+			});
+			break;
+		case 'DELETE':
+			await prisma.spread.delete({
+				where: {
+					id: Number(spreadId),
+					userId,
+				},
+			});
+			break;
+		case 'PUT':
+		case 'PATCH':
+		case 'POST':
+			const body = patchSchema.parse(req.body);
+			spread = await prisma.spread.update({
+				where: {
+					id: Number(spreadId),
+					userId,
+				},
+				data: {
+					...body,
+					positions: {
+						upsert: body.positions?.map((position) => {
+							return {
+								where: { id: position.id },
+								update: position,
+								create: { name: '', ...position },
+							};
+						}),
 					},
-				});
-				break;
-			case 'PUT':
-			case 'PATCH':
-				res.status(405).json({
-					success: false,
-					message: 'Method not implemented',
-				});
-				return;
-			default:
-				res.status(405).json({
-					success: false,
-					message: 'Method not allowed',
-				});
-				return;
-		}
-		res.status(200).json({ success: true });
-	} catch (err) {
-		console.error(`Error deleting spread ${spreadId}:`, err);
-		res.status(500).json({
-			success: false,
-			message: 'Could not delete spread',
-		});
+				},
+				include: { positions: true, media: true },
+			});
+			break;
+		default:
+			throw new ApiError(405, 'Method not allowed');
 	}
-}
+	return {
+		success: true,
+		spread: spread ? dbToExistingSpread(spread) : undefined,
+	};
+});
+export default handler;

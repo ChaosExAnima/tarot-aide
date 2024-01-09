@@ -1,38 +1,27 @@
 import { Formidable } from 'formidable';
 import { z } from 'zod';
 
-import { isCard } from 'lib/cards/utils';
+import { ResponseBody, handlerWithError } from 'lib/api';
+import { getCardFromName, isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
-import { SpreadResponseBody } from 'lib/spreads/api';
 import { displayDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
 const bodySchema = z.object({
-	date: z.coerce
-		.date()
-		.refine((date) => date <= new Date(), {
-			message: 'Cannot create spreads in the future',
-		})
-		.default(() => new Date()),
-	cards: z
-		.array(
-			z.string().refine((card) => isCard(card), {
-				message: 'Invalid card name',
-			}),
-		)
-		.nonempty(),
+	date: z.date().refine((date) => date <= new Date(), {
+		message: 'Cannot create spreads in the future',
+	}),
+	cards: z.array(
+		z.string().refine(isCard, {
+			message: 'Invalid card name',
+		}),
+	),
 	name: z.string().optional(),
 	description: z.string().optional(),
+	template: z.boolean().optional(),
 });
-
-const form = new Formidable({
-	uploadDir: 'uploads',
-	keepExtensions: true,
-	allowEmptyFiles: false,
-	maxFiles: 1,
-});
+export type SpreadCreateRequestBody = z.infer<typeof bodySchema>;
 
 export const config = {
 	api: {
@@ -40,16 +29,21 @@ export const config = {
 	},
 };
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse<SpreadResponseBody>,
-) {
-	if (req.method !== 'POST') {
-		res.status(405).json({ success: false, message: 'Method not allowed' });
-		return;
-	}
+export interface SpreadCreatedResponse extends ResponseBody {
+	message: string;
+	success: true;
+	spreadId: number;
+}
 
-	try {
+const handler = handlerWithError<SpreadCreatedResponse>(
+	['POST'],
+	async (req) => {
+		const form = new Formidable({
+			uploadDir: `uploads/${getCurrentUserId()}}`,
+			keepExtensions: true,
+			allowEmptyFiles: false,
+			maxFiles: 1,
+		});
 		const [fields, files] = await form.parse(req);
 		const { cards, ...spreadBody } = bodySchema.parse(fields);
 
@@ -65,12 +59,17 @@ export default async function handler(
 			},
 		});
 
-		for (const card of cards) {
+		for (const cardName of cards) {
+			const card = getCardFromName(cardName);
+			if (!card) {
+				continue;
+			}
 			await prisma.position.create({
 				data: {
 					name: '',
 					spreadId: spread.id,
-					card,
+					card: 'shortName' in card ? card.shortName : card.name,
+					suit: 'suit' in card ? card.suit : null,
 				},
 			});
 		}
@@ -79,14 +78,11 @@ export default async function handler(
 			await processPhoto(files.photo[0], spread.id);
 		}
 
-		res.status(200).json({
+		return {
 			success: true,
 			message: 'Spread created',
 			spreadId: spread.id,
-		});
-	} catch (error) {
-		console.log('Invalid request:', error);
-		res.status(400).json({ success: false, message: 'Invalid request' });
-		return;
-	}
-}
+		};
+	},
+);
+export default handler;

@@ -9,25 +9,30 @@ import CancelButton from 'components/buttons/cancel';
 import CardPicker from 'components/card-picker';
 import Page from 'components/page';
 import UploadControls from 'components/upload';
-import { AnyCard } from 'lib/cards/constants';
-import { TarotCard } from 'lib/cards/types';
-import { SpreadResponseBody } from 'lib/spreads/api';
+import { isTarotCard } from 'lib/cards/utils';
+import { mutateCreateSpread } from 'lib/spreads/api';
 import { displayCase } from 'lib/text';
+
+import type { AnyCard } from 'lib/cards/constants';
+import type { GenericCard } from 'lib/cards/types';
 
 export default function NewSpreadPage() {
 	const [cards, setCards] = useState<AnyCard[]>([]);
 	const [photo, setPhoto] = useState<Blob | null>(null);
 	const router = useRouter();
 	const saveSpread = useMutation({
-		mutationFn: sendSpread,
-		onSuccess: (spreadId) => {
+		mutationFn: () =>
+			mutateCreateSpread({ cards, date: new Date() }, photo),
+		onSuccess: ({ spreadId }) => {
 			router.push(`/spreads/${spreadId}`);
 		},
 	});
 	const disable = saveSpread.isPending || saveSpread.isSuccess;
 
-	const addCard = (card: TarotCard) => {
-		setCards((positions) => [...positions, card.name]);
+	const addCard = (card: GenericCard) => {
+		if (isTarotCard(card)) {
+			setCards((positions) => [...positions, card.name]);
+		}
 	};
 	return (
 		<Page>
@@ -60,7 +65,7 @@ export default function NewSpreadPage() {
 			{cards.length > 0 && (
 				<Button
 					color="success"
-					onPress={() => saveSpread.mutate({ cards, photo })}
+					onPress={() => saveSpread.mutate()}
 					isDisabled={disable}
 				>
 					Start Writing
@@ -76,30 +81,4 @@ export default function NewSpreadPage() {
 			</CardPicker>
 		</Page>
 	);
-}
-
-interface NewSpreadParams {
-	date?: string;
-	cards?: AnyCard[];
-	photo: Blob | null;
-}
-
-async function sendSpread({ date, cards = [], photo }: NewSpreadParams) {
-	const formData = new FormData();
-	if (date) {
-		formData.append('date', date);
-	}
-	cards.forEach((card) => formData.append('cards', card));
-	if (photo) {
-		formData.append('photo', photo);
-	}
-	const response = await fetch('/api/spread', {
-		method: 'POST',
-		body: formData,
-	});
-	const body: SpreadResponseBody = await response.json();
-	if (!response.ok || !body.success) {
-		throw new Error(body.message ?? 'Unknown error');
-	}
-	return body.spreadId;
 }
