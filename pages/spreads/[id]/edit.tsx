@@ -16,7 +16,6 @@ import Page from 'components/page';
 import Photo from 'components/photo';
 import { useEditSpread } from 'components/spread/hooks';
 import UploadControls from 'components/upload';
-import { MediaType, isPhoto } from 'lib/media';
 import {
 	mutateDeleteSpreadMedia,
 	mutateUploadSpreadMedia,
@@ -24,6 +23,7 @@ import {
 import { displayDate } from 'lib/text';
 
 import type { SpreadPageProps } from './index';
+import type { MediaType } from 'lib/media';
 
 export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 	const { spread, set, issues, dirty, disable, save } =
@@ -37,7 +37,7 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 		mutationFn: ({ type, media }: { type: MediaType; media: Blob }) =>
 			mutateUploadSpreadMedia(spread.id, type, media),
 		onSuccess: ({ media }) =>
-			isPhoto(media) ? set('photo')(media) : set('audio')(media),
+			media.type === 'photo' ? set('photo')(media) : set('audio')(media),
 	});
 	return (
 		<Page

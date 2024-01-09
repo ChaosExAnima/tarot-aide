@@ -1,3 +1,4 @@
+import { NextApiRequest } from 'next';
 import { z } from 'zod';
 
 import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
@@ -18,24 +19,15 @@ export interface SpreadMediaUploadResponse extends ResponseBody {
 const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
 	const userId = getCurrentUserId();
+
+	if (req.method === 'DELETE') {
+		return handleDelete(spreadId, userId, req);
+	}
 	const [fields, files] = await parseForm<'type', 'media'>(req);
 	const type = fields.type?.at(0);
 	if (!type || !includes<MediaType>(['photo', 'audio'], type)) {
 		throw new ApiError(400, 'Missing or invalid type');
 	}
-	if (req.method === 'DELETE') {
-		try {
-			const results = await deleteMedia(spreadId, type, userId);
-			return {
-				success: true,
-				message: `Deleted ${results.count} media`,
-			};
-		} catch (err) {
-			console.log('Error deleting media', fields, err);
-		}
-		throw new ApiError(500, 'Could not delete media');
-	}
-
 	const media = files.media?.at(0);
 	if (!media) {
 		throw new ApiError(400, 'Missing photo or audio');
@@ -54,5 +46,29 @@ const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 		media: newMedia,
 	} satisfies SpreadMediaUploadResponse;
 });
+
+async function handleDelete(
+	spreadId: number,
+	userId: number,
+	req: NextApiRequest,
+): Promise<ResponseBody> {
+	const { type } = z
+		.object({
+			type: z
+				.string()
+				.refine((type): type is MediaType =>
+					includes<MediaType>(['photo', 'audio'], type),
+				),
+		})
+		.parse(req.body);
+	if (!type) {
+		throw new ApiError(400, 'Missing or invalid type');
+	}
+	const results = await deleteMedia(spreadId, type, userId);
+	return {
+		success: true,
+		message: `Deleted ${results.count} media`,
+	};
+}
 
 export default handler;
