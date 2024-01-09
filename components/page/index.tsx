@@ -18,7 +18,7 @@ interface PageProps {
 export default function Page({
 	title,
 	children,
-	breadcrumbs = [],
+	breadcrumbs,
 }: PropsWithChildren<PageProps>) {
 	let pageTitle = 'Tarot Aide';
 	if (title) {
@@ -41,13 +41,16 @@ export default function Page({
 				<link rel="icon" href="/favicon.ico" key="icon" />
 			</Head>
 			<Nav />
-			<Breadcrumbs>
-				{breadcrumbs.map(({ label, href }) => (
-					<BreadcrumbItem key={href} href={href}>
-						{label}
-					</BreadcrumbItem>
-				))}
-			</Breadcrumbs>
+			{Array.isArray(breadcrumbs) && (
+				<Breadcrumbs className="my-2 mx-4">
+					<BreadcrumbItem href="/">Home</BreadcrumbItem>
+					{breadcrumbs.map(({ label, href }) => (
+						<BreadcrumbItem key={href} href={href}>
+							{label}
+						</BreadcrumbItem>
+					))}
+				</Breadcrumbs>
+			)}
 			<main className="container flex flex-col gap-4 p-4 min-h-[calc(100vh-65px)]">
 				{children}
 			</main>
