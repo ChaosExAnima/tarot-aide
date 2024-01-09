@@ -91,7 +91,7 @@ export function parseForm<FieldKey extends string, FileKey extends string>(
 	req: NextApiRequest,
 ) {
 	const form = new Formidable({
-		uploadDir: `uploads/${getCurrentUserId()}}`,
+		uploadDir: `uploads/${getCurrentUserId()}`,
 		keepExtensions: true,
 		allowEmptyFiles: false,
 		maxFiles: 1,

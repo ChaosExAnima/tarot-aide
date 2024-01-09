@@ -1,3 +1,4 @@
+import { parse } from 'superjson';
 import { z } from 'zod';
 
 import { ResponseBody, handlerWithError } from 'lib/api';
@@ -6,10 +7,15 @@ import prisma from 'lib/db';
 import { parseForm, processPhoto } from 'lib/media';
 import { getCurrentUserId } from 'lib/users';
 
+import type { SuperJSONValue } from 'superjson/dist/types';
+
 const bodySchema = z.object({
-	date: z.date().refine((date) => date <= new Date(), {
-		message: 'Cannot create spreads in the future',
-	}),
+	date: z.preprocess(
+		(arg) => parse(arg as SuperJSONValue),
+		z.date().refine((date) => date <= new Date(), {
+			message: 'Cannot create spreads in the future',
+		}),
+	),
 	cards: z.array(
 		z.string().refine(isCard, {
 			message: 'Invalid card name',
