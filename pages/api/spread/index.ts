@@ -4,7 +4,6 @@ import { ResponseBody, handlerWithError, parseForm } from 'lib/api';
 import { getCardFromName, isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
-import { displayDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 const bodySchema = z.object({
@@ -44,11 +43,7 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 			data: {
 				...spreadBody,
 				userId: getCurrentUserId(),
-				name:
-					spreadBody.name ??
-					`${cards.length}-card spread on ${displayDate(
-						spreadBody.date,
-					)}`,
+				name: spreadBody.name ?? `${cards.length}-card spread`,
 			},
 		});
 
