@@ -47,7 +47,6 @@ export function dbToExistingSpread(
 		photo: spread.media.find(isPhoto),
 		audio: spread.media.find(isAudio),
 		notes: spread.notes,
-		description: spread.description,
 	};
 }
 

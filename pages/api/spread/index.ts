@@ -18,8 +18,8 @@ const bodySchema = z.object({
 		}),
 	),
 	name: z.string().optional(),
-	description: z.string().optional(),
 	template: z.boolean().optional(),
+	notes: z.string().optional(),
 });
 export type SpreadCreateRequestBody = z.infer<typeof bodySchema>;
 

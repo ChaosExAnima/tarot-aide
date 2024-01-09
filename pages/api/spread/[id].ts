@@ -9,8 +9,8 @@ import { getCurrentUserId } from 'lib/users';
 const positionSchema = z.object({
 	id: z.number().optional(),
 	name: z.string().optional(),
-	description: z.string().optional().nullable(),
 	card: z.string().optional().nullable(),
+	notes: z.string().optional().nullable(),
 });
 
 const patchSchema = z.object({
@@ -21,7 +21,6 @@ const patchSchema = z.object({
 			message: 'Date cannot be in the future',
 		})
 		.optional(),
-	description: z.string().optional().nullable(),
 	notes: z.string().optional().nullable(),
 	positions: z.array(positionSchema).optional(),
 });
