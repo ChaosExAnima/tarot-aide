@@ -4,6 +4,7 @@ import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import { getSpreadsForUser } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
+import { displayRelativeDate } from 'lib/text';
 import { getCurrentUserId } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
@@ -16,6 +17,7 @@ interface SpreadsPageProps {
 export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 	return (
 		<Page breadcrumbs={[{ label: 'Spreads', href: '/spreads' }]}>
+			<ButtonLink href="/spreads/new">New Spread</ButtonLink>
 			{spreads.map((spread) => (
 				<ButtonLink
 					key={spread.id}
@@ -24,9 +26,11 @@ export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 					href={`/spreads/${spread.id}`}
 				>
 					{displaySpreadName(spread)}
+					<span className="opacity-60 font-normal">
+						{displayRelativeDate(spread.date)}
+					</span>
 				</ButtonLink>
 			))}
-			<ButtonLink href="/spreads/new">New Spread</ButtonLink>
 		</Page>
 	);
 }

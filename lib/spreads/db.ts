@@ -15,6 +15,7 @@ export async function getSpreadsForUser(
 			positions: true,
 			media: true,
 		},
+		orderBy: { date: 'desc' },
 	});
 	return spreads.map(dbToExistingSpread);
 }
