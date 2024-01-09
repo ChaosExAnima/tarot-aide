@@ -13,7 +13,9 @@ export async function getSpreadsForUser(
 		where: { userId },
 		include: {
 			positions: true,
-			media: true,
+			media: {
+				where: { deleted: false },
+			},
 		},
 		orderBy: { date: 'desc' },
 	});
@@ -28,7 +30,9 @@ export async function getSpreadById(
 		where: { id, userId },
 		include: {
 			positions: true,
-			media: true,
+			media: {
+				where: { deleted: false },
+			},
 		},
 	});
 	if (!spread) {
