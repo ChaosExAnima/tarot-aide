@@ -45,10 +45,11 @@ model Media {
     height    Int?
     spreadId  Int?
     spead     Spread?  @relation(fields: [spreadId], references: [id], onDelete: SetNull)
+    deleted   Boolean  @default(false)
     userId    Int?
     user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-    @@index([spreadId])
+    @@index([spreadId, deleted])
 }
 
 model CardReference {
