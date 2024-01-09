@@ -12,31 +12,29 @@ model User {
 }
 
 model Spread {
-    id          Int        @id @default(autoincrement())
-    createdAt   DateTime   @default(now())
-    userId      Int
-    user        User       @relation(fields: [userId], references: [id])
-    name        String
-    date        DateTime   @default(now())
-    description String?
-    notes       String?
-    template    Boolean    @default(false)
-    positions   Position[]
-    media       Media[]
+    id        Int        @id @default(autoincrement())
+    createdAt DateTime   @default(now())
+    userId    Int
+    user      User       @relation(fields: [userId], references: [id])
+    name      String
+    date      DateTime   @default(now())
+    notes     String?
+    template  Boolean    @default(false)
+    positions Position[]
+    media     Media[]
 
     @@index([userId, template])
 }
 
 model Position {
-    id          Int     @id @default(autoincrement())
-    spreadId    Int
-    spread      Spread  @relation(fields: [spreadId], references: [id], onDelete: Cascade)
-    name        String
-    description String?
-    card        String?
-    reversed    Boolean @default(false)
-    suit        String?
-    notes       String?
+    id       Int     @id @default(autoincrement())
+    spreadId Int
+    spread   Spread  @relation(fields: [spreadId], references: [id], onDelete: Cascade)
+    name     String
+    card     String?
+    reversed Boolean @default(false)
+    suit     String?
+    notes    String?
 }
 
 model Media {
