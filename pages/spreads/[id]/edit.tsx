@@ -6,6 +6,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input, Textarea, ButtonGroup, Button } from '@nextui-org/react';
+import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 
 import OracleCard from 'components/cards';
@@ -15,6 +16,11 @@ import Page from 'components/page';
 import Photo from 'components/photo';
 import { useEditSpread } from 'components/spread/hooks';
 import UploadControls from 'components/upload';
+import { MediaType, isPhoto } from 'lib/media';
+import {
+	mutateDeleteSpreadMedia,
+	mutateUploadSpreadMedia,
+} from 'lib/spreads/api';
 import { displayDate } from 'lib/text';
 
 import type { SpreadPageProps } from './index';
@@ -22,6 +28,17 @@ import type { SpreadPageProps } from './index';
 export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 	const { spread, set, issues, dirty, disable, save } =
 		useEditSpread(initial);
+	const deleteMedia = useMutation({
+		mutationFn: (type: MediaType) =>
+			mutateDeleteSpreadMedia(spread.id, type),
+		onSuccess: () => set('photo')(null),
+	});
+	const uploadMedia = useMutation({
+		mutationFn: ({ type, media }: { type: MediaType; media: Blob }) =>
+			mutateUploadSpreadMedia(spread.id, type, media),
+		onSuccess: ({ media }) =>
+			isPhoto(media) ? set('photo')(media) : set('audio')(media),
+	});
 	return (
 		<Page
 			breadcrumbs={[
@@ -92,7 +109,9 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 				<figure className="relative">
 					<Photo photo={spread.photo} />
 					<ConfirmationModal
-						onConfirm={console.log}
+						onConfirm={() => deleteMedia.mutate('photo')}
+						isLoading={deleteMedia.isPending}
+						isDisabled={deleteMedia.isPending}
 						className="absolute top-2 right-2 z-20 rounded-full"
 						isIconOnly
 						color="danger"
@@ -103,7 +122,14 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 					</ConfirmationModal>
 				</figure>
 			)}
-			{!spread.photo && <UploadControls onSelect={console.log} />}
+			{!spread.photo && (
+				<UploadControls
+					onSelect={(media) =>
+						media && uploadMedia.mutate({ media, type: 'photo' })
+					}
+					isDisabled={uploadMedia.isPending}
+				/>
+			)}
 			{spread.positions.map((spread) => (
 				<OracleCard key={spread.id} spread={spread} />
 			))}

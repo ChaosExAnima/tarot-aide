@@ -2,7 +2,7 @@ import { Position, Prisma } from '@prisma/client';
 
 import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
-import { isAudio, isPhoto } from 'lib/media';
+import { Audio, Media, MediaType, Photo } from 'lib/media';
 
 import { ExistingSpread, SpreadPosition } from './types';
 
@@ -49,9 +49,33 @@ export function dbToExistingSpread(
 	return {
 		...spread,
 		positions: spread.positions.map(dbToSpreadPosition),
-		photo: spread.media.find(isPhoto),
-		audio: spread.media.find(isAudio),
+		photo: dbToSpreadMedia(spread.media, 'photo'),
+		audio: dbToSpreadMedia(spread.media, 'audio'),
 		notes: spread.notes,
+	};
+}
+
+function dbToSpreadMedia(
+	media: Prisma.MediaUncheckedCreateInput[],
+	type: 'photo',
+): Photo | null;
+function dbToSpreadMedia(
+	media: Prisma.MediaUncheckedCreateInput[],
+	type: 'audio',
+): Audio | null;
+function dbToSpreadMedia(
+	media: Prisma.MediaUncheckedCreateInput[],
+	type: MediaType,
+): Media | null {
+	const found = media.find(({ type: mediaType }) => mediaType === type);
+	if (!found) {
+		return null;
+	}
+	return {
+		type,
+		path: found.path,
+		width: found.width ?? undefined,
+		height: found.height ?? undefined,
 	};
 }
 

@@ -1,6 +1,7 @@
 import { stringify } from 'superjson';
 
 import { fetchFromApi } from 'lib/api';
+import { MediaType } from 'lib/media';
 
 import type {
 	SpreadCreateRequestBody,
@@ -10,6 +11,7 @@ import type {
 	SpreadUpdateRequestBody,
 	SpreadUpdateResponseBody,
 } from 'pages/api/spread/[id]';
+import type { SpreadMediaUploadResponse } from 'pages/api/spread/[id]/media';
 
 export async function mutateCreateSpread(
 	{ cards, date }: SpreadCreateRequestBody,
@@ -44,4 +46,38 @@ export async function mutateDeleteSpread(spreadId: number) {
 	return fetchFromApi(`/api/spread/${spreadId}`, null, {
 		method: 'DELETE',
 	});
+}
+
+export async function mutateDeleteSpreadMedia(
+	spreadId: number,
+	type: MediaType,
+) {
+	return fetchFromApi(
+		`/api/spread/${spreadId}/media`,
+		{ type },
+		{
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		},
+	);
+}
+
+export async function mutateUploadSpreadMedia(
+	spreadId: number,
+	type: MediaType,
+	media: Blob,
+) {
+	const formData = new FormData();
+	formData.set('type', type);
+	formData.set('media', media);
+	return fetchFromApi<SpreadMediaUploadResponse>(
+		`/api/spread/${spreadId}/media`,
+		null,
+		{
+			body: formData,
+			method: 'PUT',
+		},
+	);
 }

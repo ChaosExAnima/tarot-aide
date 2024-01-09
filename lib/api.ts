@@ -64,18 +64,21 @@ export type ApiHandler<Body extends ResponseBody> = (
 ) => Promise<void | Body>;
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+type HandlerResponse<Body extends ResponseBody> = NextApiHandler<
+	ResponseWithError<Body | ResponseBody>
+>;
 
 export function handlerWithError<Body extends ResponseBody>(
 	handlerOrMethods: ApiHandler<Body>,
-): NextApiHandler<ResponseWithError<Body | ResponseBody>>;
+): HandlerResponse<Body>;
 export function handlerWithError<Body extends ResponseBody>(
 	handlerOrMethods: Methods[],
 	handler: ApiHandler<Body>,
-): NextApiHandler<ResponseWithError<Body | ResponseBody>>;
+): HandlerResponse<Body>;
 export function handlerWithError<Body extends ResponseBody>(
 	handlerOrMethods: ApiHandler<Body> | Methods[],
 	handler?: ApiHandler<Body>,
-): NextApiHandler<ResponseWithError<Body | ResponseBody>> {
+): HandlerResponse<Body> {
 	return async (req, res) => {
 		if (req.body && typeof req.body === 'string') {
 			req.body = parse(req.body);

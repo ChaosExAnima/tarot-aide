@@ -1,7 +1,7 @@
-import { Media } from '@prisma/client';
 import { File, Formidable } from 'formidable';
 import sizeOf from 'image-size';
 import { promisify } from 'util';
+import { z } from 'zod';
 
 import prisma from './db';
 import { getCurrentUserId } from './users';
@@ -12,15 +12,33 @@ const PHOTO_TYPE = 'photo';
 const AUDIO_TYPE = 'audio';
 export type MediaType = typeof PHOTO_TYPE | typeof AUDIO_TYPE;
 
-export interface Photo extends Media {
-	type: typeof PHOTO_TYPE;
-	width: number;
-	height: number;
+interface BaseMedia {
+	path: string;
 }
 
-export interface Audio extends Media {
+export interface Photo extends BaseMedia {
+	type: typeof PHOTO_TYPE;
+	width?: number;
+	height?: number;
+}
+
+export interface Audio extends BaseMedia {
 	type: typeof AUDIO_TYPE;
-	duration: number;
+	duration?: number;
+}
+
+export type Media = Photo | Audio;
+
+export function isMedia(media: unknown): media is Media {
+	return z
+		.object({
+			path: z.string(),
+			type: z.enum([PHOTO_TYPE, AUDIO_TYPE]),
+			width: z.number().optional(),
+			height: z.number().optional(),
+			duration: z.number().optional(),
+		})
+		.safeParse(media).success;
 }
 
 export function isPhoto(media: Media): media is Photo {
@@ -39,7 +57,7 @@ export async function processPhoto(
 	file: File,
 	spreadId: number,
 	userId = getCurrentUserId(),
-): Promise<Media> {
+): Promise<Photo> {
 	const image = await asyncSizeOf(file.filepath);
 	if (!image) {
 		throw new Error('Could not determine image size');
@@ -47,7 +65,7 @@ export async function processPhoto(
 	if (!image.type || !ALLOWED_IMAGE_TYPES.includes(image.type)) {
 		throw new Error('Invalid image type');
 	}
-	return await prisma.media.create({
+	const result = await prisma.media.create({
 		data: {
 			spreadId: spreadId,
 			path: file.newFilename,
@@ -57,6 +75,12 @@ export async function processPhoto(
 			userId: userId,
 		},
 	});
+	return {
+		type: PHOTO_TYPE,
+		path: result.path,
+		width: image.width,
+		height: image.height,
+	};
 }
 
 export function deleteMedia(

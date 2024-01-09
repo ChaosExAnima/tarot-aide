@@ -1,9 +1,19 @@
 import { z } from 'zod';
 
-import { ApiError, handlerWithError } from 'lib/api';
-import { parseForm, deleteMedia, processPhoto, MediaType } from 'lib/media';
+import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
+import {
+	parseForm,
+	deleteMedia,
+	processPhoto,
+	MediaType,
+	Media,
+} from 'lib/media';
 import { includes } from 'lib/types';
 import { getCurrentUserId } from 'lib/users';
+
+export interface SpreadMediaUploadResponse extends ResponseBody {
+	media: Media;
+}
 
 const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
@@ -30,11 +40,19 @@ const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 	if (!media) {
 		throw new ApiError(400, 'Missing photo or audio');
 	}
+	// Delete old media, if it exists
+	await deleteMedia(spreadId, type, userId);
+	let newMedia: Media;
 	if (type === 'photo') {
-		await processPhoto(media, spreadId, userId);
+		newMedia = await processPhoto(media, spreadId, userId);
 	} else {
 		throw new ApiError(501, 'Audio not implemented');
 	}
+	return {
+		success: true,
+		message: 'Media uploaded',
+		media: newMedia,
+	} satisfies SpreadMediaUploadResponse;
 });
 
 export default handler;
