@@ -60,6 +60,7 @@ export default function ConfirmationModal({
 							<Button
 								onClick={handleClose}
 								className="rounded-xl"
+								isDisabled={props.isDisabled}
 							>
 								{cancelLabel}
 							</Button>
@@ -67,6 +68,8 @@ export default function ConfirmationModal({
 								color="danger"
 								onClick={onConfirm}
 								className="rounded-xl"
+								isDisabled={props.isDisabled}
+								isLoading={props.isLoading}
 							>
 								{confirmLabel}
 							</Button>
