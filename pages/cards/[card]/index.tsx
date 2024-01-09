@@ -2,10 +2,15 @@ import { Link } from '@nextui-org/react';
 
 import CardReferenceDisplay from 'components/cards/reference';
 import Page from 'components/page';
-import { AllCards } from 'lib/cards/constants';
+import { AllCards, MajorSuit } from 'lib/cards/constants';
 import { getCardReferences } from 'lib/cards/db';
 import { CardWithRefs } from 'lib/cards/types';
-import { displayCardFullName, getCardFromName } from 'lib/cards/utils';
+import {
+	displayCardFullName,
+	displaySuitName,
+	getCardFromName,
+	isMinorTarotCard,
+} from 'lib/cards/utils';
 import { slugify } from 'lib/text';
 
 import type {
@@ -26,8 +31,19 @@ export interface CardPageProps {
 export default function CardPage({ card, reversed }: CardPageProps) {
 	const name = displayCardFullName(card);
 	const refs = card.references;
+	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 	return (
-		<Page title={name}>
+		<Page
+			title={name}
+			breadcrumbs={[
+				{ label: displaySuitName(suit), href: `/suits/${suit}` },
+				{ label: name, href: `/cards/${slugify(card.name)}` },
+				reversed && {
+					label: 'Reversed',
+					href: `/cards/${slugify(card.name)}/reversed`,
+				},
+			]}
+		>
 			<h1 className="text-6xl font-bold text-center mb-2">{name}</h1>
 			<p className="text-2xl text-center">
 				<Link

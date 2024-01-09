@@ -12,7 +12,7 @@ import { displayCase } from 'lib/text';
 
 export default function CardPage() {
 	return (
-		<Page title="Cards">
+		<Page title="Cards" breadcrumbs={[{ label: 'Cards', href: '/cards' }]}>
 			<h1>All Cards</h1>
 			<h2>Major Arcana</h2>
 			<CardList cards={AllMajorArcana} />
