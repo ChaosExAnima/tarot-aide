@@ -1,7 +1,6 @@
-import { Formidable } from 'formidable';
 import { z } from 'zod';
 
-import { ResponseBody, handlerWithError } from 'lib/api';
+import { ResponseBody, handlerWithError, parseForm } from 'lib/api';
 import { getCardFromName, isCard } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { processPhoto } from 'lib/media';
@@ -38,13 +37,7 @@ export interface SpreadCreatedResponse extends ResponseBody {
 const handler = handlerWithError<SpreadCreatedResponse>(
 	['POST'],
 	async (req) => {
-		const form = new Formidable({
-			uploadDir: `uploads/${getCurrentUserId()}}`,
-			keepExtensions: true,
-			allowEmptyFiles: false,
-			maxFiles: 1,
-		});
-		const [fields, files] = await form.parse(req);
+		const [fields, files] = await parseForm(req);
 		const { cards, ...spreadBody } = bodySchema.parse(fields);
 
 		const spread = await prisma.spread.create({

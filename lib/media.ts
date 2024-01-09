@@ -1,6 +1,8 @@
 import { Media } from '@prisma/client';
 import { File } from 'formidable';
+import { unlink } from 'fs/promises';
 import sizeOf from 'image-size';
+import { resolve } from 'path';
 import { promisify } from 'util';
 
 import prisma from './db';
@@ -54,4 +56,32 @@ export async function processPhoto(
 			userId: userId,
 		},
 	});
+}
+
+export async function deleteMedia(
+	spreadId: number,
+	type: 'photo' | 'audio',
+	userId = getCurrentUserId(),
+) {
+	const result = await prisma.media.findMany({
+		where: {
+			spreadId,
+			type,
+			userId,
+		},
+	});
+	if (!result.length) {
+		throw new Error('Media not found');
+	}
+	await prisma.media.deleteMany({
+		where: {
+			path: {
+				in: result.map((media) => media.path),
+			},
+		},
+	});
+	for (const { path } of result) {
+		await unlink(resolve(process.cwd(), `uploads/${userId}/${path}`));
+	}
+	return result;
 }

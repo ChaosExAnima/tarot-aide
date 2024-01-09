@@ -1,5 +1,8 @@
+import { Formidable } from 'formidable';
 import { parse, stringify } from 'superjson';
 import { ZodError } from 'zod';
+
+import { getCurrentUserId } from './users';
 
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SuperJSONValue } from 'superjson/dist/types';
@@ -125,4 +128,16 @@ export class ApiError extends Error {
 	) {
 		super(message);
 	}
+}
+
+export function parseForm<FieldKey extends string, FileKey extends string>(
+	req: NextApiRequest,
+) {
+	const form = new Formidable({
+		uploadDir: `uploads/${getCurrentUserId()}}`,
+		keepExtensions: true,
+		allowEmptyFiles: false,
+		maxFiles: 1,
+	});
+	return form.parse<FieldKey, FileKey>(req);
 }
