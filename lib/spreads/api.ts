@@ -19,7 +19,11 @@ export async function mutateCreateSpread(
 ) {
 	const formData = new FormData();
 	formData.append('date', stringify(date));
-	cards.forEach((card) => formData.append('cards', card));
+
+	for (let i = 0; i < cards.length; i++) {
+		formData.append('cards', cards[i]);
+	}
+
 	if (photo) {
 		formData.append('photo', photo);
 	}

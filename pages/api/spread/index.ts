@@ -2,7 +2,7 @@ import { parse } from 'superjson';
 import { z } from 'zod';
 
 import { ResponseBody, handlerWithError } from 'lib/api';
-import { getCardFromName, isCard } from 'lib/cards/utils';
+import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { parseForm, processPhoto } from 'lib/media';
 import { getCurrentUserId } from 'lib/users';
@@ -16,11 +16,7 @@ const bodySchema = z.object({
 			message: 'Cannot create spreads in the future',
 		}),
 	),
-	cards: z.array(
-		z.string().refine(isCard, {
-			message: 'Invalid card name',
-		}),
-	),
+	cards: z.array(z.string()),
 	name: z.string().optional(),
 	template: z.boolean().optional(),
 	notes: z.string().optional(),

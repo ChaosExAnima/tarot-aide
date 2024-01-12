@@ -4,20 +4,18 @@ import { Nullable } from 'lib/types';
 
 export interface BaseSpreadPosition<Card extends GenericCard = GenericCard> {
 	id?: number;
-	name: string;
+	name?: string;
 	reversed?: boolean;
 	card?: Nullable<Card>;
 	notes?: Nullable<string>;
 }
 
 export interface EmptySpreadPosition extends BaseSpreadPosition {
-	id: number;
 	card: null;
 }
 
 export interface FilledSpreadPosition<Card extends GenericCard = GenericCard>
 	extends BaseSpreadPosition<Card> {
-	id: number;
 	card: Card;
 }
 
