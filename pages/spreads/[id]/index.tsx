@@ -69,7 +69,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 			</header>
 			{spread.photo && <Photo photo={spread.photo} />}
 			{spread.positions.map((spread) => (
-				<OracleCard key={spread.id} spread={spread} />
+				<OracleCard key={spread.id} spread={spread} editable={false} />
 			))}
 		</Page>
 	);
