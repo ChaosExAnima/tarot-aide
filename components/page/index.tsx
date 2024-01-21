@@ -42,7 +42,7 @@ export default function Page({
 			</Head>
 			<Nav />
 			{Array.isArray(breadcrumbs) && (
-				<Breadcrumbs className="my-2 mx-4">
+				<Breadcrumbs className="mt-2 mx-4">
 					<BreadcrumbItem href="/">Home</BreadcrumbItem>
 					{breadcrumbs
 						.filter((b): b is BreadcrumbProps => !!b)

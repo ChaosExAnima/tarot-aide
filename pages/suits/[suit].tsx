@@ -7,7 +7,12 @@ import {
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import { AllSuitsWithMajor, SuitWithMajor } from 'lib/cards/constants';
-import { displayCardFullName, getCardsFromSuit, isSuit } from 'lib/cards/utils';
+import {
+	displayCardFullName,
+	displaySuitName,
+	getCardsFromSuit,
+	isSuit,
+} from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
 type SuitPageContext = {
@@ -21,7 +26,12 @@ interface SuitPageProps {
 export default function SuitPage({ suit }: SuitPageProps) {
 	const cards = getCardsFromSuit(suit);
 	return (
-		<Page title={displayCase(suit)}>
+		<Page
+			title={displayCase(suit)}
+			breadcrumbs={[
+				{ label: displaySuitName(suit), href: `/suits/${suit}` },
+			]}
+		>
 			<section className="flex-grow grid grid-cols-2 gap-4">
 				{cards.map((card) => (
 					<ButtonLink
