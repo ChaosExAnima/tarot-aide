@@ -53,7 +53,7 @@ export default function Page({
 						))}
 				</Breadcrumbs>
 			)}
-			<main className="container flex flex-col gap-4 p-4">
+			<main className="container flex flex-col grow gap-4 p-4">
 				{children}
 			</main>
 		</>
