@@ -56,11 +56,22 @@ export default function NewSpreadPage() {
 				</Button>
 			</section>
 			<UploadControls onSelect={setPhoto} isDisabled={disable} />
-			<section className="flex flex-col gap-4 grow">
+
+			<CardPicker
+				color="primary"
+				onPick={addPosition}
+				disabledCards={positions.map(({ card }) => card.name)}
+				isDisabled={disable}
+			>
+				Add Card
+			</CardPicker>
+
+			<section className="flex flex-col gap-4">
 				{positions.map((card) => (
 					<OracleCardStatic key={card.name} spread={card} />
 				))}
 			</section>
+
 			{positions.length > 0 && (
 				<Button
 					color="success"
@@ -70,14 +81,6 @@ export default function NewSpreadPage() {
 					Save and Continue
 				</Button>
 			)}
-			<CardPicker
-				color="primary"
-				onPick={addPosition}
-				disabledCards={positions.map(({ card }) => card.name)}
-				isDisabled={disable}
-			>
-				Add Card
-			</CardPicker>
 		</Page>
 	);
 }

@@ -91,6 +91,7 @@ export async function getServerSideProps(
 	if (!spread) {
 		return { notFound: true };
 	}
+
 	return {
 		props: {
 			spread,
