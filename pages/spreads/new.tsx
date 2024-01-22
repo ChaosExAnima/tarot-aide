@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
-import OracleCard from 'components/cards';
+import OracleCardStatic from 'components/cards/static';
 import Page from 'components/page';
 import UploadControls from 'components/upload';
 import { mutateCreateSpread } from 'lib/spreads/api';
@@ -15,13 +15,16 @@ import type { GenericCard } from 'lib/cards/types';
 import type { FilledSpreadPosition } from 'lib/spreads/types';
 
 export default function NewSpreadPage() {
-	const [cards, setCards] = useState<FilledSpreadPosition[]>([]);
+	const [positions, setPositions] = useState<FilledSpreadPosition[]>([]);
 	const [photo, setPhoto] = useState<Blob | null>(null);
 	const router = useRouter();
 	const saveSpread = useMutation({
 		mutationFn: () =>
 			mutateCreateSpread(
-				{ cards: cards.map(({ card }) => card.name), date: new Date() },
+				{
+					cards: positions.map(({ card }) => card.name),
+					date: new Date(),
+				},
 				photo,
 			),
 		onSuccess: ({ spreadId }) => {
@@ -30,8 +33,8 @@ export default function NewSpreadPage() {
 	});
 	const disable = saveSpread.isPending || saveSpread.isSuccess;
 
-	const addCard = (card: GenericCard) => {
-		setCards((positions) => [...positions, { card }]);
+	const addPosition = (card: GenericCard) => {
+		setPositions((positions) => [...positions, { card }]);
 	};
 	return (
 		<Page>
@@ -54,11 +57,11 @@ export default function NewSpreadPage() {
 			</section>
 			<UploadControls onSelect={setPhoto} isDisabled={disable} />
 			<section className="flex flex-col gap-4 grow">
-				{cards.map((card) => (
-					<OracleCard key={card.name} spread={card} />
+				{positions.map((card) => (
+					<OracleCardStatic key={card.name} spread={card} />
 				))}
 			</section>
-			{cards.length > 0 && (
+			{positions.length > 0 && (
 				<Button
 					color="success"
 					onPress={() => saveSpread.mutate()}
@@ -69,8 +72,8 @@ export default function NewSpreadPage() {
 			)}
 			<CardPicker
 				color="primary"
-				onPick={addCard}
-				disabledCards={cards.map(({ card }) => card.name)}
+				onPick={addPosition}
+				disabledCards={positions.map(({ card }) => card.name)}
 				isDisabled={disable}
 			>
 				Add Card

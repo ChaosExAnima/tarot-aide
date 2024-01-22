@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import OracleCard from 'components/cards';
+import OracleCardStatic from 'components/cards/static';
 import ConfirmationModal from 'components/confirmation-modal';
 import Page from 'components/page';
 import Photo from 'components/photo';
@@ -69,7 +69,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 			</header>
 			{spread.photo && <Photo photo={spread.photo} />}
 			{spread.positions.map((spread) => (
-				<OracleCard key={spread.id} spread={spread} editable={false} />
+				<OracleCardStatic key={spread.id} spread={spread} />
 			))}
 		</Page>
 	);
