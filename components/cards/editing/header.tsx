@@ -3,10 +3,9 @@ import clsx from 'clsx';
 import { useState } from 'react';
 
 import SaveButton from 'components/buttons/save';
+import CardName from 'components/card-name';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
-
-import { CardName } from '../display';
 
 import { OracleCardEditingProps } from './index';
 
