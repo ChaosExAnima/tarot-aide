@@ -1,6 +1,6 @@
 import { faCalendar, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -15,6 +15,7 @@ import type { GenericCard } from 'lib/cards/types';
 import type { FilledSpreadPosition } from 'lib/spreads/types';
 
 export default function NewSpreadPage() {
+	const [name, setName] = useState('');
 	const [positions, setPositions] = useState<FilledSpreadPosition[]>([]);
 	const [photo, setPhoto] = useState<Blob | null>(null);
 	const router = useRouter();
@@ -22,6 +23,7 @@ export default function NewSpreadPage() {
 		mutationFn: () =>
 			mutateCreateSpread(
 				{
+					name,
 					cards: positions.map(({ card }) => card.name),
 					date: new Date(),
 				},
@@ -43,7 +45,16 @@ export default function NewSpreadPage() {
 					Error: {saveSpread.error.message}
 				</p>
 			)}
-			<section className="flex gap-4 items-center justify-end">
+			<section className="flex gap-4 items-center">
+				<Input
+					placeholder="Spread Name"
+					disabled={disable}
+					value={name}
+					onValueChange={setName}
+					classNames={{
+						inputWrapper: 'h-8',
+					}}
+				/>
 				<Button isIconOnly aria-label="Set date">
 					<FontAwesomeIcon icon={faCalendar} />
 				</Button>

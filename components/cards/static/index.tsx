@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Divider } from '@nextui-org/react';
 
 import { displayCardFullName } from 'lib/cards/utils';
 
@@ -20,7 +20,17 @@ export default function OracleCardStatic({
 				</div>
 				{reversed && <span className="text-content4">Reversed</span>}
 			</CardHeader>
-			{notes && <CardBody className="gap-4">{notes}</CardBody>}
+			{notes && <Divider />}
+			{notes && (
+				<CardBody className="gap-4">
+					{notes
+						.split('\n')
+						.filter(Boolean)
+						.map((line) => (
+							<p key={line}>{line}</p>
+						))}
+				</CardBody>
+			)}
 		</Card>
 	);
 }

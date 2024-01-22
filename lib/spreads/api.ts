@@ -14,11 +14,14 @@ import type {
 import type { SpreadMediaUploadResponse } from 'pages/api/spread/[id]/media';
 
 export async function mutateCreateSpread(
-	{ cards, date }: SpreadCreateRequestBody,
+	{ name, cards, date }: SpreadCreateRequestBody,
 	photo: Blob | null,
 ) {
 	const formData = new FormData();
 	formData.append('date', stringify(date));
+	if (name) {
+		formData.append('name', name);
+	}
 
 	for (let i = 0; i < cards.length; i++) {
 		formData.append('cards', cards[i]);
