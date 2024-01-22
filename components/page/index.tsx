@@ -1,16 +1,12 @@
-import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react';
+import { motion } from 'framer-motion';
 import Head from 'next/head';
 
+import PageBreadcrumbs, { BreadcrumbProps } from './breadcrumbs';
 import Nav from './nav';
 
 import type { PropsWithChildren } from 'react';
 
-interface BreadcrumbProps {
-	label: string;
-	href: string;
-}
-
-interface PageProps {
+export interface PageProps {
 	title?: string;
 	breadcrumbs?: (BreadcrumbProps | false)[];
 }
@@ -41,21 +37,20 @@ export default function Page({
 				<link rel="icon" href="/favicon.ico" key="icon" />
 			</Head>
 			<Nav />
-			{Array.isArray(breadcrumbs) && (
-				<Breadcrumbs className="mt-2 mx-4">
-					<BreadcrumbItem href="/">Home</BreadcrumbItem>
-					{breadcrumbs
-						.filter((b): b is BreadcrumbProps => !!b)
-						.map(({ label, href }) => (
-							<BreadcrumbItem key={href} href={href}>
-								{label}
-							</BreadcrumbItem>
-						))}
-				</Breadcrumbs>
-			)}
-			<main className="container flex flex-col grow gap-4 p-4">
+			<PageBreadcrumbs breadcrumbs={breadcrumbs} />
+			<motion.main
+				initial={{ opacity: 0, scale: 0.9 }}
+				animate={{ opacity: 1, scale: 1 }}
+				exit={{ opacity: 0, scale: 0.9 }}
+				transition={{
+					type: 'spring',
+					stiffness: 260,
+					damping: 20,
+				}}
+				className="container grow flex flex-col gap-4 p-4"
+			>
 				{children}
-			</main>
+			</motion.main>
 		</>
 	);
 }
