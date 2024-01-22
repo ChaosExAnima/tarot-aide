@@ -15,11 +15,12 @@ import { useState } from 'react';
 import { queryCardReferences } from 'lib/cards/api';
 import { displayCardFullName } from 'lib/cards/utils';
 
-import CardReferenceDisplay from './reference';
+import CardReferenceDisplay from '../reference';
+import { OracleCardBaseProps } from '../types';
 
-import { OracleCardProps } from './index';
-
-export default function OracleCardNotes({ spread }: OracleCardProps) {
+export default function OracleCardNotesEditable({
+	spread,
+}: OracleCardBaseProps) {
 	const notes = spread?.notes ?? '';
 	const [inFocus, setInFocus] = useState(false);
 	const [editNotes, setEditNotes] = useState(notes);

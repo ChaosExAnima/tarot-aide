@@ -1,19 +1,20 @@
-import OracleCard from './index';
+import OracleCardEditing from './editing';
+import OracleCardStatic from './static';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
 	title: 'Spread Card',
-	component: OracleCard,
+	component: OracleCardEditing,
 	render(args) {
 		return (
 			<div className="w-96">
-				<OracleCard {...args} />
+				<OracleCardEditing {...args} />
 			</div>
 		);
 	},
-} satisfies Meta<typeof OracleCard>;
-type Story = StoryObj<typeof OracleCard>;
+} satisfies Meta<typeof OracleCardEditing & { static?: boolean }>;
+type Story = StoryObj<typeof OracleCardEditing>;
 
 export const EmptySpread: Story = {
 	args: {
@@ -25,7 +26,7 @@ export const EmptySpread: Story = {
 
 export const TemplateSpread: Story = {
 	args: {
-		template: true,
+		isCardAllowed: false,
 		spread: {
 			name: 'Past',
 		},
@@ -44,7 +45,7 @@ export const FilledSpread: Story = {
 	},
 };
 
-export const ReadOnlySpread: Story = {
+export const StaticSpread: Story = {
 	args: {
 		spread: {
 			name: 'Past',
@@ -53,6 +54,12 @@ export const ReadOnlySpread: Story = {
 			},
 			notes: 'This is a note',
 		},
-		editable: false,
+	},
+	render(args) {
+		return (
+			<div className="w-96">
+				<OracleCardStatic {...args} />
+			</div>
+		);
 	},
 };
