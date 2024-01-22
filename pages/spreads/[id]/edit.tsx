@@ -9,12 +9,12 @@ import { Input, Textarea, ButtonGroup, Button } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 
-import OracleCardEditing from 'components/cards/editing';
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
 import Page from 'components/page';
 import Photo from 'components/photo';
 import { useEditSpread } from 'components/spread/hooks';
+import SpreadList from 'components/spread/list';
 import UploadControls from 'components/upload';
 import {
 	mutateDeleteSpreadMedia,
@@ -24,7 +24,6 @@ import { displayDate } from 'lib/text';
 
 import type { SpreadPageProps } from './index';
 import type { MediaType } from 'lib/media';
-import type { SpreadPosition } from 'lib/spreads/types';
 
 export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 	const { spread, set, issues, dirty, disable, save } =
@@ -40,13 +39,6 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 		onSuccess: ({ media }) =>
 			media.type === 'photo' ? set('photo')(media) : set('audio')(media),
 	});
-	const updateSpread = set('positions');
-	const updatePosition = (updatedPosition: SpreadPosition) => {
-		const positions = spread.positions.map((position) =>
-			position.id === updatedPosition.id ? updatedPosition : position,
-		);
-		updateSpread(positions);
-	};
 	return (
 		<Page
 			breadcrumbs={[
@@ -138,13 +130,10 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 					isDisabled={uploadMedia.isPending}
 				/>
 			)}
-			{spread.positions.map((spread) => (
-				<OracleCardEditing
-					key={spread.id}
-					spread={spread}
-					onSave={updatePosition}
-				/>
-			))}
+			<SpreadList
+				positions={spread.positions}
+				onUpdate={set('positions')}
+			/>
 		</Page>
 	);
 }
