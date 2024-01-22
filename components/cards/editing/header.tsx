@@ -1,4 +1,4 @@
-import { CardHeader, Input } from '@nextui-org/react';
+import { CardHeader, Checkbox, Input } from '@nextui-org/react';
 import clsx from 'clsx';
 import { useState } from 'react';
 
@@ -13,8 +13,9 @@ export default function OracleCardHeaderEditing({
 	onSave,
 	isCardAllowed = true,
 }: OracleCardEditingProps) {
-	const [editName, setEditName] = useState(spread?.name ?? '');
-	const [card, setCard] = useState(spread?.card ?? null);
+	const [editName, setEditName] = useState(spread.name ?? '');
+	const [card, setCard] = useState(spread.card ?? null);
+	const [reversed, setReversed] = useState(spread.reversed ?? false);
 	const nameChangeHandler = (newName: string) => {
 		setEditName(newName);
 		if (!newName || (!card && !isCardAllowed)) {
@@ -24,6 +25,13 @@ export default function OracleCardHeaderEditing({
 			...spread,
 			name: newName,
 			card,
+		});
+	};
+	const reversedChangeHandler = (newReversed: boolean) => {
+		setReversed(newReversed);
+		onSave({
+			...spread,
+			reversed: newReversed,
 		});
 	};
 	return (
@@ -51,6 +59,14 @@ export default function OracleCardHeaderEditing({
 					inputWrapper: clsx('h-10 rounded-medium'),
 				}}
 			/>
+			{isCardAllowed && (
+				<Checkbox
+					isSelected={reversed}
+					onValueChange={reversedChangeHandler}
+				>
+					Reversed
+				</Checkbox>
+			)}
 		</CardHeader>
 	);
 }
