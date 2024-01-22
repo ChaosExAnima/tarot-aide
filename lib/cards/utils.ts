@@ -10,7 +10,13 @@ import type {
 	TarotCard,
 } from './types';
 
-export function isSuit(suitName: string): suitName is constants.SuitWithMajor {
+export function isSuit(suitName: string): suitName is constants.Suit {
+	return includes(constants.AllSuits, suitName);
+}
+
+export function isSuitWithMajor(
+	suitName: string,
+): suitName is constants.SuitWithMajor {
 	return includes(constants.AllSuitsWithMajor, suitName);
 }
 
@@ -20,6 +26,12 @@ export function isCard(cardName: string): cardName is constants.AnyCard {
 
 export function isMajorCard(cardName: string): cardName is constants.MajorCard {
 	return includes(constants.AllMajorArcana, cardName);
+}
+
+export function isMinorCardWithoutSuit(
+	cardName: string,
+): cardName is constants.MinorCardWithoutSuit {
+	return includes(constants.AllInSuit, cardName);
 }
 
 export function isMinorCard(cardName: string): cardName is constants.MinorCard {
@@ -52,9 +64,16 @@ export function isMinorTarotCard(card: GenericCard): card is MinorTarotCard {
 	);
 }
 
-export function getCardFromName(
-	cardName: constants.AnyCard | string,
-): TarotCard | null {
+export function getShortNameFromFull(
+	fullName: constants.MinorCard,
+): constants.MinorCardWithoutSuit {
+	const [shortName] = fullName.split(' of ') as [
+		constants.MinorCardWithoutSuit,
+	];
+	return shortName;
+}
+
+export function getCardFromName(cardName: string): TarotCard | null {
 	if (!isCard(cardName)) {
 		return null;
 	}

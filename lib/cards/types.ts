@@ -32,6 +32,8 @@ export interface MinorTarotCard extends BaseTarotCard {
 
 export type TarotCard = MajorTarotCard | MinorTarotCard;
 
+export type GenericOrTarotCard = GenericCard | TarotCard;
+
 export interface CardReference {
 	text: string;
 	keywords: string[];

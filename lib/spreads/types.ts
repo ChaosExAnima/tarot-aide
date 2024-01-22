@@ -1,4 +1,4 @@
-import { GenericCard } from 'lib/cards/types';
+import { GenericOrTarotCard } from 'lib/cards/types';
 import { Audio, Photo } from 'lib/media';
 import { Nullable } from 'lib/types';
 
@@ -6,7 +6,7 @@ export interface BaseSpreadPosition {
 	id?: number;
 	name?: string;
 	reversed?: boolean;
-	card?: Nullable<GenericCard>;
+	card?: Nullable<GenericOrTarotCard>;
 	notes?: Nullable<string>;
 }
 
@@ -15,7 +15,7 @@ export interface EmptySpreadPosition extends BaseSpreadPosition {
 }
 
 export interface FilledSpreadPosition extends BaseSpreadPosition {
-	card: GenericCard;
+	card: GenericOrTarotCard;
 }
 
 export type SpreadPosition = EmptySpreadPosition | FilledSpreadPosition;
