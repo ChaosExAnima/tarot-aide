@@ -2,21 +2,20 @@ import { GenericCard } from 'lib/cards/types';
 import { Audio, Photo } from 'lib/media';
 import { Nullable } from 'lib/types';
 
-export interface BaseSpreadPosition<Card extends GenericCard = GenericCard> {
+export interface BaseSpreadPosition {
 	id?: number;
 	name?: string;
 	reversed?: boolean;
-	card?: Nullable<Card>;
+	card?: Nullable<GenericCard>;
 	notes?: Nullable<string>;
 }
 
 export interface EmptySpreadPosition extends BaseSpreadPosition {
-	card: null;
+	card?: null;
 }
 
-export interface FilledSpreadPosition<Card extends GenericCard = GenericCard>
-	extends BaseSpreadPosition<Card> {
-	card: Card;
+export interface FilledSpreadPosition extends BaseSpreadPosition {
+	card: GenericCard;
 }
 
 export type SpreadPosition = EmptySpreadPosition | FilledSpreadPosition;
