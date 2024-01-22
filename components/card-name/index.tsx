@@ -6,7 +6,6 @@ import {
 	isMajorTarotCard,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-import { displayCase } from 'lib/text';
 
 import SuitIcon from '../icons/suit';
 
@@ -27,7 +26,7 @@ export default function CardName({
 		return displayCardFullName(card);
 	}
 	if (isMajorTarotCard(card) || !isMinorTarotCard(card)) {
-		return displayCase(card.name);
+		return displayCardShortName(card, false);
 	}
 
 	return (
