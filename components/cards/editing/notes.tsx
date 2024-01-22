@@ -1,4 +1,4 @@
-import { faQuestion, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
@@ -17,11 +17,13 @@ import { queryCardReferences } from 'lib/cards/api';
 import { displayCardFullName } from 'lib/cards/utils';
 
 import CardReferenceDisplay from '../reference';
-import { OracleCardBaseProps } from '../types';
+
+import { OracleCardEditingProps } from './index';
 
 export default function OracleCardNotesEditable({
 	spread,
-}: OracleCardBaseProps) {
+	onSave,
+}: OracleCardEditingProps) {
 	const notes = spread?.notes ?? '';
 	const [inFocus, setInFocus] = useState(false);
 	const [editNotes, setEditNotes] = useState(notes);
@@ -32,6 +34,13 @@ export default function OracleCardNotesEditable({
 		queryFn: () => queryCardReferences([spread]),
 		enabled: !!spread.card,
 	});
+	const handleNotesChange = (newNotes: string) => {
+		setEditNotes(newNotes);
+		onSave({
+			...spread,
+			notes: newNotes,
+		});
+	};
 
 	return (
 		<CardBody className="gap-4">
@@ -39,7 +48,7 @@ export default function OracleCardNotesEditable({
 				minRows={1}
 				placeholder="Notes go here"
 				value={editNotes}
-				onValueChange={setEditNotes}
+				onValueChange={handleNotesChange}
 				onFocus={() => setInFocus(true)}
 				onBlur={() => setInFocus(false)}
 			/>
@@ -88,13 +97,6 @@ export default function OracleCardNotesEditable({
 								<FontAwesomeIcon icon={faQuestion} />
 							</Button>
 						)}
-						<Button
-							isIconOnly
-							color="success"
-							isDisabled={notes === editNotes}
-						>
-							<FontAwesomeIcon icon={faSave} />
-						</Button>
 					</ButtonGroup>
 				</div>
 			)}
