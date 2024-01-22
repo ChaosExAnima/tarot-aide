@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
 import OracleCardStatic from 'components/cards/static';
+import DatePicker from 'components/date-picker';
 import Page from 'components/page';
 import UploadControls from 'components/upload';
 import { mutateCreateSpread } from 'lib/spreads/api';
@@ -18,6 +19,7 @@ export default function NewSpreadPage() {
 	const [name, setName] = useState('');
 	const [positions, setPositions] = useState<FilledSpreadPosition[]>([]);
 	const [photo, setPhoto] = useState<Blob | null>(null);
+	const [date, setDate] = useState<Date>(new Date());
 	const router = useRouter();
 	const saveSpread = useMutation({
 		mutationFn: () =>
@@ -25,7 +27,7 @@ export default function NewSpreadPage() {
 				{
 					name,
 					cards: positions.map(({ card }) => card.name),
-					date: new Date(),
+					date,
 				},
 				photo,
 			),
@@ -55,9 +57,10 @@ export default function NewSpreadPage() {
 						inputWrapper: 'h-8',
 					}}
 				/>
-				<Button isIconOnly aria-label="Set date">
+
+				<DatePicker onPick={setDate} isIconOnly>
 					<FontAwesomeIcon icon={faCalendar} />
-				</Button>
+				</DatePicker>
 				<Button
 					isIconOnly
 					color="danger"
