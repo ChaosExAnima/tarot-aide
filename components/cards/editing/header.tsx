@@ -28,7 +28,7 @@ export default function OracleCardHeaderEditing({
 	};
 	return (
 		<CardHeader className="gap-2">
-			{!isCardAllowed && (
+			{isCardAllowed && (
 				<CardPicker
 					onPick={setCard}
 					disabledCards={card ? [card.name] : []}
