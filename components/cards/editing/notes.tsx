@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
 	ButtonGroup,
+	CardBody,
 	Modal,
 	ModalBody,
 	ModalContent,
@@ -33,7 +34,7 @@ export default function OracleCardNotesEditable({
 	});
 
 	return (
-		<>
+		<CardBody className="gap-4">
 			<Textarea
 				minRows={1}
 				placeholder="Notes go here"
@@ -97,6 +98,6 @@ export default function OracleCardNotesEditable({
 					</ButtonGroup>
 				</div>
 			)}
-		</>
+		</CardBody>
 	);
 }
