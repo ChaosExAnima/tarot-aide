@@ -2,7 +2,6 @@ import { CardHeader, Input } from '@nextui-org/react';
 import clsx from 'clsx';
 import { useState } from 'react';
 
-import SaveButton from 'components/buttons/save';
 import CardName from 'components/card-name';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
@@ -16,13 +15,14 @@ export default function OracleCardHeaderEditing({
 }: OracleCardEditingProps) {
 	const [editName, setEditName] = useState(spread?.name ?? '');
 	const [card, setCard] = useState(spread?.card ?? null);
-	const saveHandler = () => {
-		if (!editName || (!card && !isCardAllowed)) {
+	const nameChangeHandler = (newName: string) => {
+		setEditName(newName);
+		if (!newName || (!card && !isCardAllowed)) {
 			return;
 		}
 		onSave({
 			...spread,
-			name: editName,
+			name: newName,
 			card,
 		});
 	};
@@ -44,15 +44,12 @@ export default function OracleCardHeaderEditing({
 			<Input
 				value={editName}
 				placeholder="Position name"
-				onValueChange={setEditName}
+				onValueChange={nameChangeHandler}
 				size="sm"
+				isRequired
 				classNames={{
 					inputWrapper: clsx('h-10 rounded-medium'),
 				}}
-			/>
-			<SaveButton
-				onPress={saveHandler}
-				isDisabled={!editName || (!card && !isCardAllowed)}
 			/>
 		</CardHeader>
 	);
