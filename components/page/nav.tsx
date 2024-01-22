@@ -12,11 +12,20 @@ import { useRouter } from 'next/router';
 interface NavItem {
 	label: string;
 	path: string;
+	otherPaths?: (string | { path: string; exact: boolean })[];
 	exact?: boolean;
 }
 
 export const NavList: NavItem[] = [
-	{ label: 'Cards', path: '/', exact: true },
+	{
+		label: 'Cards',
+		path: '/',
+		otherPaths: [
+			{ path: '/suits', exact: false },
+			{ path: '/cards', exact: false },
+		],
+		exact: true,
+	},
 	{ label: 'Spreads', path: '/spreads' },
 ];
 
@@ -28,11 +37,7 @@ export default function Nav() {
 				{NavList.map((item) => (
 					<NavbarItem
 						key={item.path}
-						isActive={
-							item.exact
-								? router.pathname === item.path
-								: router.pathname.startsWith(item.path)
-						}
+						isActive={matchNavItem(router.pathname, item)}
 					>
 						<Link href={item.path} color="primary">
 							{item.label}
@@ -57,4 +62,15 @@ export default function Nav() {
 			</NavbarContent>
 		</Navbar>
 	);
+}
+
+function matchNavItem(path: string, item: NavItem): boolean {
+	const pathsToCheck = [item.path, ...(item.otherPaths ?? [])];
+	return pathsToCheck.some((itemPath) => {
+		if (typeof itemPath === 'string') {
+			return item.exact ? path === itemPath : path.startsWith(itemPath);
+		}
+		const exact = itemPath.exact ?? item.exact ?? false;
+		return exact ? path === itemPath.path : path.startsWith(itemPath.path);
+	});
 }
