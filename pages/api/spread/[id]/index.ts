@@ -1,17 +1,22 @@
 import { z } from 'zod';
 
 import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
+import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { dbToExistingSpread } from 'lib/spreads/db';
 import { ExistingSpread } from 'lib/spreads/types';
 import { getCurrentUserId } from 'lib/users';
 
+import type { Prisma } from '@prisma/client';
+
 const positionSchema = z.object({
 	id: z.number().optional(),
 	name: z.string().optional(),
 	card: z.string().optional().nullable(),
+	reversed: z.coerce.boolean(),
 	notes: z.string().optional().nullable(),
 });
+type PositionUpdate = z.infer<typeof positionSchema>;
 
 const patchSchema = z.object({
 	name: z.string().optional(),
@@ -68,8 +73,8 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 						upsert: body.positions?.map((position) => {
 							return {
 								where: { id: position.id },
-								update: position,
-								create: { name: '', ...position },
+								update: bodyToDb(position),
+								create: bodyToDb(position),
 							};
 						}),
 					},
@@ -86,3 +91,24 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 	};
 });
 export default handler;
+
+function bodyToDb(body: PositionUpdate) {
+	const position: Prisma.PositionCreateWithoutSpreadInput = {
+		name: body.name ?? '',
+		card: null,
+		reversed: false,
+		notes: body.notes,
+	};
+	if (!body.card) {
+		return position;
+	}
+	position.card = body.card;
+	position.reversed = body.reversed;
+	const tarotCard = getCardFromName(body.card);
+	if (tarotCard) {
+		position.card =
+			'shortName' in tarotCard ? tarotCard.shortName : tarotCard.name;
+		position.suit = tarotCard.suit;
+	}
+	return position;
+}

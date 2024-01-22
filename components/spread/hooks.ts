@@ -33,6 +33,7 @@ export function useEditSpread(initial: ExistingSpread) {
 				positions: spread.positions.map((pos) => ({
 					...pos,
 					card: pos.card?.name,
+					reversed: pos.reversed ?? false,
 					notes: pos.notes ?? null,
 				})),
 			}),
