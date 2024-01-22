@@ -1,10 +1,22 @@
 import { Position, Prisma } from '@prisma/client';
 
-import { getCardFromName } from 'lib/cards/utils';
+import { MajorSuit } from 'lib/cards/constants';
+import {
+	GenericCard,
+	GenericOrTarotCard,
+	MajorTarotCard,
+	MinorTarotCard,
+} from 'lib/cards/types';
+import {
+	getFullNameFromSuitAndCard,
+	isMajorCard,
+	isMinorCardWithoutSuit,
+	isSuit,
+} from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { Audio, Media, MediaType, Photo } from 'lib/media';
 
-import { ExistingSpread, SpreadPosition } from './types';
+import { ExistingSpread } from './types';
 
 export async function getSpreadsForUser(
 	userId: number,
@@ -48,7 +60,13 @@ export function dbToExistingSpread(
 ): ExistingSpread {
 	return {
 		...spread,
-		positions: spread.positions.map(dbToSpreadPosition),
+		positions: spread.positions.map((position) => ({
+			id: position.id,
+			name: position.name,
+			reversed: position.reversed,
+			card: cardFromPosition(position),
+			notes: position.notes,
+		})),
 		photo: dbToSpreadMedia(spread.media, 'photo'),
 		audio: dbToSpreadMedia(spread.media, 'audio'),
 		notes: spread.notes,
@@ -79,13 +97,27 @@ function dbToSpreadMedia(
 	};
 }
 
-export function dbToSpreadPosition(position: Position): SpreadPosition {
+function cardFromPosition(position: Position): GenericOrTarotCard | null {
 	if (!position.card) {
-		return { ...position, card: null };
+		return null;
 	}
-	const card = getCardFromName(position.card);
-	return {
-		...position,
-		card,
-	};
+
+	if (isMajorCard(position.card) && !position.suit) {
+		return {
+			name: position.card,
+			suit: MajorSuit,
+		} satisfies MajorTarotCard;
+	}
+	if (
+		isMinorCardWithoutSuit(position.card) &&
+		position.suit &&
+		isSuit(position.suit)
+	) {
+		return {
+			name: getFullNameFromSuitAndCard(position.suit, position.card),
+			shortName: position.card,
+			suit: position.suit,
+		} satisfies MinorTarotCard;
+	}
+	return { name: position.card } satisfies GenericCard;
 }
