@@ -7,7 +7,7 @@ import type { OracleCardBaseProps } from '../types';
 import type { BaseSpreadPosition } from 'lib/spreads/types';
 
 export interface OracleCardEditingProps extends OracleCardBaseProps {
-	onSave?: (spread: BaseSpreadPosition) => void;
+	onSave: (spread: BaseSpreadPosition) => void;
 	isCardAllowed?: boolean;
 }
 

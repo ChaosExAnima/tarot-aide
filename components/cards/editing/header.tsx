@@ -21,12 +21,11 @@ export default function OracleCardHeaderEditing({
 		if (!editName || (!card && !isCardAllowed)) {
 			return;
 		}
-		onSave &&
-			onSave({
-				...spread,
-				name: editName,
-				card,
-			});
+		onSave({
+			...spread,
+			name: editName,
+			card,
+		});
 	};
 	return (
 		<CardHeader className="gap-2">
