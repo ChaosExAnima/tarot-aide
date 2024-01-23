@@ -9,8 +9,7 @@ import type {
 } from './constants';
 import type { Entity } from 'lib/types';
 
-export interface GenericCard extends Entity {
-	id?: number;
+export interface GenericCard {
 	name: string;
 	references?: CardReference[];
 }
@@ -36,7 +35,7 @@ export type TarotCard = MajorTarotCard | MinorTarotCard;
 export type GenericOrTarotCard = GenericCard | TarotCard;
 
 export interface CardReference extends Entity {
-	id?: number;
+	id: number;
 	text: string;
 	keywords: string[];
 	reversed: boolean;

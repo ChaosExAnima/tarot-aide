@@ -13,3 +13,9 @@ export interface Entity {
 }
 
 export type LoadedEntity<T> = T & { id: number };
+
+export type LoadedRecursively<T> = T extends Entity
+	? LoadedEntity<T>
+	: T extends Entity
+		? { [K in keyof T]: LoadedRecursively<T[K]> }
+		: T;

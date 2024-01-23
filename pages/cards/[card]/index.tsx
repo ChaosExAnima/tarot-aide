@@ -1,6 +1,6 @@
 import { Link } from '@nextui-org/react';
 
-import CardReferenceDisplay from 'components/cards/reference';
+import { CardReferences } from 'components/cards/references';
 import Page from 'components/page';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
 import { getCardReferences } from 'lib/cards/db';
@@ -12,6 +12,7 @@ import {
 	isMinorTarotCard,
 } from 'lib/cards/utils';
 import { slugify } from 'lib/text';
+import { LoadedRecursively } from 'lib/types';
 
 import type {
 	GetStaticPathsResult,
@@ -24,13 +25,12 @@ export type CardPageContext = {
 };
 
 export interface CardPageProps {
-	card: CardWithRefs;
+	card: LoadedRecursively<CardWithRefs>;
 	reversed: boolean;
 }
 
 export default function CardPage({ card, reversed }: CardPageProps) {
 	const name = displayCardFullName(card);
-	const refs = card.references;
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 	return (
 		<Page
@@ -54,14 +54,7 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</p>
-			<section className="flex flex-col gap-4">
-				{refs.map((cardRef) => (
-					<CardReferenceDisplay
-						key={cardRef.text}
-						cardRef={cardRef}
-					/>
-				))}
-			</section>
+			<CardReferences card={card} />
 		</Page>
 	);
 }
@@ -81,7 +74,7 @@ export async function getStaticProps(
 		props: {
 			card: {
 				...card,
-				references: await getCardReferences(card.name),
+				references: await getCardReferences(card.name, false),
 			},
 			reversed: false,
 		},
