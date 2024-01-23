@@ -12,16 +12,26 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 		return null;
 	}
 	return (
-		<Accordion as="section">
+		<Accordion as="section" defaultExpandedKeys={[references[0].id]}>
 			{references.map((ref) => {
 				const title = ref.keywords.join(', ');
+				const lines = ref.text.trim().split('\n').filter(Boolean);
 				return (
 					<AccordionItem
 						title={title}
 						aria-label={title}
 						key={ref.id}
 					>
-						<CardReferenceDisplay cardRef={ref} />
+						<blockquote>
+							{lines.map((line) => (
+								<p key={line}>{line}</p>
+							))}
+							{ref.source && (
+								<cite className="text-right italic">
+									- {ref.source}
+								</cite>
+							)}
+						</blockquote>
 					</AccordionItem>
 				);
 			})}
