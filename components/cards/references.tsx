@@ -1,6 +1,6 @@
 import { Accordion, AccordionItem } from '@nextui-org/react';
 
-import type { CardReference, GenericCard } from 'lib/cards/types';
+import type { GenericCard } from 'lib/cards/types';
 import type { LoadedRecursively } from 'lib/types';
 
 interface CardReferenceProps {
@@ -36,23 +36,5 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 				);
 			})}
 		</Accordion>
-	);
-}
-
-interface CardReferenceDisplayProps {
-	cardRef: CardReference;
-}
-
-export function CardReferenceDisplay({ cardRef }: CardReferenceDisplayProps) {
-	const lines = cardRef.text.trim().split('\n').filter(Boolean);
-	return (
-		<blockquote>
-			{lines.map((line) => (
-				<p key={line}>{line}</p>
-			))}
-			{cardRef.source && (
-				<cite className="text-right italic">- {cardRef.source}</cite>
-			)}
-		</blockquote>
 	);
 }
