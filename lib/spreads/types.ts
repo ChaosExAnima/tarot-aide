@@ -1,8 +1,8 @@
 import { GenericOrTarotCard } from 'lib/cards/types';
 import { Audio, Photo } from 'lib/media';
-import { Nullable } from 'lib/types';
+import { Entity, Nullable } from 'lib/types';
 
-export interface BaseSpreadPosition {
+export interface BaseSpreadPosition extends Entity {
 	id?: number;
 	name?: string;
 	reversed?: boolean;

@@ -7,8 +7,9 @@ import type {
 	Suit,
 	SuitWithMajor,
 } from './constants';
+import type { Entity } from 'lib/types';
 
-export interface GenericCard {
+export interface GenericCard extends Entity {
 	id?: number;
 	name: string;
 	references?: CardReference[];
@@ -34,7 +35,8 @@ export type TarotCard = MajorTarotCard | MinorTarotCard;
 
 export type GenericOrTarotCard = GenericCard | TarotCard;
 
-export interface CardReference {
+export interface CardReference extends Entity {
+	id?: number;
 	text: string;
 	keywords: string[];
 	reversed: boolean;

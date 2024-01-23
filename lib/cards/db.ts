@@ -38,7 +38,9 @@ function dbToCardReference(
 	reference: Prisma.CardReferenceGetPayload<null>,
 ): CardReference {
 	return {
-		...reference,
+		id: reference.id,
+		text: reference.text,
+		reversed: reference.reversed,
 		source: reference.source ?? undefined,
 		keywords: (reference.keywords ?? '')
 			.split(',')

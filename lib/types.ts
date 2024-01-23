@@ -7,3 +7,9 @@ export function includes<T>(array: readonly T[], item: unknown): item is T {
 export interface ClassNameProps {
 	className?: string;
 }
+
+export interface Entity {
+	id?: number;
+}
+
+export type LoadedEntity<T> = T & { id: number };
