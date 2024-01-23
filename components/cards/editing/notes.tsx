@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { queryCardReferences } from 'lib/cards/api';
 import { displayCardFullName } from 'lib/cards/utils';
 
-import CardReferenceDisplay from '../reference';
+import { CardReferences } from '../references';
 
 import { OracleCardEditingProps } from './index';
 
@@ -67,12 +67,7 @@ export default function OracleCardNotesEditable({
 							References for {displayCardFullName(spread.card)}
 						</ModalHeader>
 						<ModalBody>
-							{data?.references[spread.card.name].map((ref) => (
-								<CardReferenceDisplay
-									key={ref.text}
-									cardRef={ref}
-								/>
-							))}
+							<CardReferences card={spread.card} />
 						</ModalBody>
 					</ModalContent>
 				</Modal>
