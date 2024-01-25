@@ -11,7 +11,7 @@ export default function Photo({ photo, ...props }: PhotoProps & ImageProps) {
 	if (!photo) {
 		return null;
 	}
-	const base = process.env.BASE_URL ?? '';
+	const base = process.env.BASE_PATH ?? '';
 	return (
 		<Image
 			as={NextImage}

@@ -28,6 +28,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV DATABASE_URL file:./dev.db
 
+ENV BASE_PATH /tarot
+
 RUN yarn prisma generate
 
 RUN yarn build
