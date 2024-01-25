@@ -12,13 +12,18 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 		return null;
 	}
 	return (
-		<Accordion as="section" defaultExpandedKeys={[references[0].id]}>
+		<Accordion
+			as="section"
+			defaultExpandedKeys={[references[0].id]}
+			variant="splitted"
+		>
 			{references.map((ref) => {
 				const title = ref.keywords.join(', ');
 				const lines = ref.text.trim().split('\n').filter(Boolean);
 				return (
 					<AccordionItem
 						title={title}
+						subtitle={ref.source}
 						aria-label={title}
 						key={ref.id}
 					>
@@ -26,11 +31,6 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 							{lines.map((line) => (
 								<p key={line}>{line}</p>
 							))}
-							{ref.source && (
-								<cite className="text-right italic">
-									- {ref.source}
-								</cite>
-							)}
 						</blockquote>
 					</AccordionItem>
 				);
