@@ -47,7 +47,7 @@ export default function Page({
 					stiffness: 260,
 					damping: 20,
 				}}
-				className="container grow flex flex-col gap-4 p-4"
+				className="container grow flex flex-col gap-4 p-4 mx-auto"
 			>
 				{children}
 			</motion.main>

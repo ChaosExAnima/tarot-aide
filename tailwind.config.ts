@@ -1,6 +1,6 @@
 import { nextui } from '@nextui-org/react';
+import { Config } from 'tailwindcss';
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: [
 		'./components/**/*.{ts,tsx}',
@@ -8,7 +8,10 @@ module.exports = {
 		'./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
 	],
 	theme: {
-		extend: {},
+		screens: {
+			sm: '640px',
+			md: '768px',
+		},
 	},
 	darkMode: 'class',
 	plugins: [
@@ -48,4 +51,4 @@ module.exports = {
 			},
 		}),
 	],
-};
+} satisfies Config;
