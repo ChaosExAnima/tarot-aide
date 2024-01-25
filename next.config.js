@@ -7,6 +7,11 @@ const nextConfig = {
 	images: {
 		remotePatterns: [{ protocol: 'https', hostname: 'picsum.photos' }],
 	},
+	output: 'standalone',
+	basePath: '/tarot',
+	env: {
+		BASE_URL: '/tarot',
+	}
 };
 
 export default nextConfig;

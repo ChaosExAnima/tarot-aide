@@ -45,7 +45,8 @@ export async function fetchFromApi<
 			...(options ?? {}),
 		};
 	}
-	const response = await fetch(`/api${path}`, options);
+	const base = process.env.BASE_URL ?? '';
+	const response = await fetch(`${base}/api${path}`, options);
 	const body: ResponseWithError<Response> = await response.json();
 	if (!response.ok) {
 		body.success = false;

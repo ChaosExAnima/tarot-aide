@@ -70,6 +70,6 @@ export async function getStaticPaths(): Promise<
 		paths: AllSuitsWithMajor.map((suit) => ({
 			params: { suit: suit.replaceAll(' ', '-') },
 		})),
-		fallback: true,
+		fallback: false,
 	};
 }

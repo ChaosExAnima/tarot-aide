@@ -11,10 +11,11 @@ export default function Photo({ photo, ...props }: PhotoProps & ImageProps) {
 	if (!photo) {
 		return null;
 	}
+	const base = process.env.BASE_URL ?? '';
 	return (
 		<Image
 			as={NextImage}
-			src={`/images/${photo.path}`}
+			src={`${base}/images/${photo.path}`}
 			width={photo.width}
 			height={photo.width}
 			alt={props.alt ?? 'Tarot spread'}
