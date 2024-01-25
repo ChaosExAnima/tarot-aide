@@ -149,7 +149,7 @@ export function headersFromRequest(
 		}
 	}
 	if (process.env.NODE_ENV === 'development') {
-		headers.set('remote-email', 'admin@example.com');
+		headers.set('remote-email', 'admin@localhost');
 		headers.set('remote-name', 'Admin');
 		headers.set('remote-groups', 'admin');
 	}
