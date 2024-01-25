@@ -13,6 +13,7 @@ import {
 } from 'lib/cards/utils';
 import { slugify } from 'lib/text';
 import { LoadedRecursively } from 'lib/types';
+import { userFromServerContext } from 'lib/users';
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
@@ -66,11 +67,12 @@ export async function getServerSideProps(
 		};
 	}
 
+	const user = await userFromServerContext(context);
 	return {
 		props: {
 			card: {
 				...card,
-				references: await getCardReferences(card.name, false),
+				references: await getCardReferences(card.name, false, user.id),
 			},
 			reversed: false,
 		},
