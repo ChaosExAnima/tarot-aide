@@ -2,7 +2,7 @@ import { Link } from '@nextui-org/react';
 
 import { CardReferences } from 'components/cards/references';
 import Page from 'components/page';
-import { AllCards, MajorSuit } from 'lib/cards/constants';
+import { MajorSuit } from 'lib/cards/constants';
 import { getCardReferences } from 'lib/cards/db';
 import { CardWithRefs } from 'lib/cards/types';
 import {
@@ -14,11 +14,7 @@ import {
 import { slugify } from 'lib/text';
 import { LoadedRecursively } from 'lib/types';
 
-import type {
-	GetStaticPathsResult,
-	GetStaticPropsContext,
-	GetStaticPropsResult,
-} from 'next';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 export type CardPageContext = {
 	card: string;
@@ -59,9 +55,9 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 	);
 }
 
-export async function getStaticProps(
-	context: GetStaticPropsContext<CardPageContext>,
-): Promise<GetStaticPropsResult<CardPageProps>> {
+export async function getServerSideProps(
+	context: GetServerSidePropsContext<CardPageContext>,
+): Promise<GetServerSidePropsResult<CardPageProps>> {
 	const cardName = context.params?.card?.replaceAll('-', ' ') ?? '';
 	const card = getCardFromName(cardName);
 	if (!card) {
@@ -78,16 +74,5 @@ export async function getStaticProps(
 			},
 			reversed: false,
 		},
-	};
-}
-
-export async function getStaticPaths(): Promise<
-	GetStaticPathsResult<CardPageContext>
-> {
-	return {
-		paths: AllCards.map((card) => ({
-			params: { card: card.replaceAll(' ', '-') },
-		})),
-		fallback: true,
 	};
 }

@@ -1,3 +1,5 @@
+import { IncomingMessage } from 'http';
+import { NextRequest } from 'next/server';
 import { parse, stringify } from 'superjson';
 import { ZodError } from 'zod';
 
@@ -43,7 +45,7 @@ export async function fetchFromApi<
 			...(options ?? {}),
 		};
 	}
-	const response = await fetch(path, options);
+	const response = await fetch(`/api${path}`, options);
 	const body: ResponseWithError<Response> = await response.json();
 	if (!response.ok) {
 		body.success = false;
@@ -128,4 +130,28 @@ export class ApiError extends Error {
 	) {
 		super(message);
 	}
+}
+
+export function headersFromRequest(
+	req: NextRequest | IncomingMessage,
+): Headers {
+	let headers = new Headers();
+	if (req instanceof NextRequest) {
+		headers = req.headers;
+	}
+	if (req instanceof IncomingMessage) {
+		for (const [key, value] of Object.entries(req.headers)) {
+			if (Array.isArray(value)) {
+				value.forEach((v) => headers.append(key, v));
+			} else {
+				headers.set(key, value as string);
+			}
+		}
+	}
+	if (process.env.NODE_ENV === 'development') {
+		headers.set('remote-email', 'admin@example.com');
+		headers.set('remote-name', 'Admin');
+		headers.set('remote-groups', 'admin');
+	}
+	return headers;
 }
