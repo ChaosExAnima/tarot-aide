@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import serveStatic from 'serve-static';
 
-import { getCurrentUserId } from 'lib/users';
+import { userFromApiRequest } from 'lib/users';
 
 export const config = {
 	api: {
@@ -16,8 +16,8 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
-	const userId = getCurrentUserId();
-	req.url = req.url?.replace('/images', `/${userId}`);
+	const user = await userFromApiRequest(req);
+	req.url = req.url?.replace('/images', `/${user.id}`);
 
 	serve(req, res, (err) => {
 		if (err) {

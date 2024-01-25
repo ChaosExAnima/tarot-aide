@@ -5,7 +5,7 @@ import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { dbToExistingSpread } from 'lib/spreads/db';
 import { ExistingSpread } from 'lib/spreads/types';
-import { getCurrentUserId } from 'lib/users';
+import { userFromApiRequest } from 'lib/users';
 
 import type { Prisma } from '@prisma/client';
 
@@ -41,7 +41,8 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 	if (!spreadId) {
 		throw new ApiError(400, 'Missing spread ID');
 	}
-	const userId = getCurrentUserId();
+	const user = await userFromApiRequest(req);
+	const userId = user.id;
 	let spread = null;
 	switch (req.method) {
 		case 'GET':

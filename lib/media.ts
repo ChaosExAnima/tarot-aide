@@ -4,7 +4,7 @@ import { promisify } from 'util';
 import { z } from 'zod';
 
 import prisma from './db';
-import { getCurrentUserId } from './users';
+import { userFromApiRequest } from './users';
 
 import type { NextApiRequest } from 'next';
 
@@ -56,7 +56,7 @@ export const ALLOWED_IMAGE_TYPES = ['jpg', 'png', 'webp'];
 export async function processPhoto(
 	file: File,
 	spreadId: number,
-	userId = getCurrentUserId(),
+	userId: number,
 ): Promise<Photo> {
 	const image = await asyncSizeOf(file.filepath);
 	if (!image) {
@@ -83,11 +83,7 @@ export async function processPhoto(
 	};
 }
 
-export function deleteMedia(
-	spreadId: number,
-	type: MediaType,
-	userId = getCurrentUserId(),
-) {
+export function deleteMedia(spreadId: number, type: MediaType, userId: number) {
 	return prisma.media.updateMany({
 		where: {
 			spreadId,
@@ -99,11 +95,13 @@ export function deleteMedia(
 		},
 	});
 }
-export function parseForm<FieldKey extends string, FileKey extends string>(
-	req: NextApiRequest,
-) {
+export async function parseForm<
+	FieldKey extends string,
+	FileKey extends string,
+>(req: NextApiRequest) {
+	const user = await userFromApiRequest(req);
 	const form = new Formidable({
-		uploadDir: `uploads/${getCurrentUserId()}`,
+		uploadDir: `uploads/${user.id}`,
 		keepExtensions: true,
 		allowEmptyFiles: false,
 		maxFiles: 1,

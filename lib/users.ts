@@ -2,12 +2,15 @@ import { ApiError, headersFromRequest } from './api';
 import prisma from './db';
 
 import type { User } from '@prisma/client';
-import type { GetServerSidePropsContext } from 'next';
-
-let userId = 0;
+import type { GetServerSidePropsContext, NextApiRequest } from 'next';
 
 export function userFromServerContext(context: GetServerSidePropsContext) {
 	const headers = headersFromRequest(context.req);
+	return loadUserFromHeaders(headers);
+}
+
+export function userFromApiRequest(req: NextApiRequest) {
+	const headers = headersFromRequest(req);
 	return loadUserFromHeaders(headers);
 }
 
@@ -19,18 +22,13 @@ export async function loadUserFromHeaders(headers: Headers) {
 		throw new ApiError(400, 'Headers not found');
 	}
 
-	let user = await loadUserFromEmail(email);
-	if (!user) {
-		user = await createUser(email, name, groups?.includes('admin'));
-	}
-	userId = user.id;
-	return user;
-}
-
-export function loadUserFromEmail(email: string): Promise<User | null> {
-	return prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: { email },
 	});
+	if (user) {
+		return user;
+	}
+	return await createUser(email, name, groups?.includes('admin'));
 }
 
 export function createUser(
@@ -41,8 +39,4 @@ export function createUser(
 	return prisma.user.create({
 		data: { email, name, admin },
 	});
-}
-
-export function getCurrentUserId(): number {
-	return userId;
 }

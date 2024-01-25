@@ -10,7 +10,7 @@ import {
 	Media,
 } from 'lib/media';
 import { includes } from 'lib/types';
-import { getCurrentUserId } from 'lib/users';
+import { userFromApiRequest } from 'lib/users';
 
 export interface SpreadMediaUploadResponse extends ResponseBody {
 	media: Media;
@@ -18,10 +18,10 @@ export interface SpreadMediaUploadResponse extends ResponseBody {
 
 const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
-	const userId = getCurrentUserId();
+	const user = await userFromApiRequest(req);
 
 	if (req.method === 'DELETE') {
-		return handleDelete(spreadId, userId, req);
+		return handleDelete(spreadId, user.id, req);
 	}
 	const [fields, files] = await parseForm<'type', 'media'>(req);
 	const type = fields.type?.at(0);
@@ -33,10 +33,10 @@ const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 		throw new ApiError(400, 'Missing photo or audio');
 	}
 	// Delete old media, if it exists
-	await deleteMedia(spreadId, type, userId);
+	await deleteMedia(spreadId, type, user.id);
 	let newMedia: Media;
 	if (type === 'photo') {
-		newMedia = await processPhoto(media, spreadId, userId);
+		newMedia = await processPhoto(media, spreadId, user.id);
 	} else {
 		throw new ApiError(501, 'Audio not implemented');
 	}

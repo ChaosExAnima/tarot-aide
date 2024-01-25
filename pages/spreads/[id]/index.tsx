@@ -12,7 +12,7 @@ import Photo from 'components/photo';
 import { mutateDeleteSpread } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
-import { getCurrentUserId } from 'lib/users';
+import { userFromServerContext } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
@@ -86,8 +86,8 @@ export async function getServerSideProps(
 	if (!id || isNaN(id)) {
 		return { notFound: true };
 	}
-	const currentUserId = getCurrentUserId();
-	const spread = await getSpreadById(id, currentUserId);
+	const user = await userFromServerContext(context);
+	const spread = await getSpreadById(id, user.id);
 	if (!spread) {
 		return { notFound: true };
 	}

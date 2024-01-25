@@ -1,6 +1,5 @@
 import prisma from 'lib/db';
 import { isFilledPosition, type SpreadPosition } from 'lib/spreads/types';
-import { getCurrentUserId } from 'lib/users';
 
 import { getDefaultCardReference } from './references';
 import { isCard } from './utils';
@@ -8,9 +7,13 @@ import { isCard } from './utils';
 import type { CardReference, CardReferenceMap } from './types';
 import type { Prisma } from '@prisma/client';
 
-export async function getCardReferences(cardName: string, reversed = false) {
+export async function getCardReferences(
+	cardName: string,
+	reversed = false,
+	userId: number,
+) {
 	const dbReferences = await prisma.cardReference.findMany({
-		where: { card: cardName, reversed, userId: getCurrentUserId() },
+		where: { card: cardName, reversed, userId },
 	});
 	const references = dbReferences.map(dbToCardReference);
 	if (isCard(cardName)) {
@@ -21,12 +24,17 @@ export async function getCardReferences(cardName: string, reversed = false) {
 
 export async function getCardReferenceMap(
 	positions: SpreadPosition[],
+	userId: number,
 ): Promise<CardReferenceMap> {
 	const references = await Promise.all(
 		positions
 			.filter(isFilledPosition)
 			.map((position) =>
-				getCardReferences(position.card.name, position.reversed),
+				getCardReferences(
+					position.card.name,
+					position.reversed,
+					userId,
+				),
 			),
 	);
 	return Object.fromEntries(

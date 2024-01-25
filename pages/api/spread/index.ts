@@ -5,7 +5,7 @@ import { ResponseBody, handlerWithError } from 'lib/api';
 import { getCardFromName } from 'lib/cards/utils';
 import prisma from 'lib/db';
 import { parseForm, processPhoto } from 'lib/media';
-import { getCurrentUserId } from 'lib/users';
+import { userFromApiRequest } from 'lib/users';
 
 import type { SuperJSONValue } from 'superjson/dist/types';
 
@@ -40,11 +40,12 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 	async (req) => {
 		const [fields, files] = await parseForm(req);
 		const { cards, ...spreadBody } = bodySchema.parse(fields);
+		const user = await userFromApiRequest(req);
 
 		const spread = await prisma.spread.create({
 			data: {
 				...spreadBody,
-				userId: getCurrentUserId(),
+				userId: user.id,
 				name: spreadBody.name ?? `${cards.length}-card spread`,
 			},
 		});
@@ -65,7 +66,7 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 		}
 
 		if (files.photo?.length) {
-			await processPhoto(files.photo[0], spread.id);
+			await processPhoto(files.photo[0], spread.id, user.id);
 		}
 
 		return {
