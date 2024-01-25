@@ -1,9 +1,15 @@
-import { ApiError } from './api';
+import { ApiError, headersFromRequest } from './api';
 import prisma from './db';
 
 import type { User } from '@prisma/client';
+import type { GetServerSidePropsContext } from 'next';
 
 let userId = 0;
+
+export function userFromServerContext(context: GetServerSidePropsContext) {
+	const headers = headersFromRequest(context.req);
+	return loadUserFromHeaders(headers);
+}
 
 export async function loadUserFromHeaders(headers: Headers) {
 	const email = headers.get('remote-email');

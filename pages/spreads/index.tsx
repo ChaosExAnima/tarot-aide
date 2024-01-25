@@ -2,11 +2,10 @@ import React from 'react';
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
-import { headersFromRequest } from 'lib/api';
 import { getSpreadsForUser } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { displayRelativeDate } from 'lib/text';
-import { loadUserFromHeaders } from 'lib/users';
+import { userFromServerContext } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
@@ -39,8 +38,7 @@ export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 export async function getServerSideProps(
 	context: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<SpreadsPageProps>> {
-	const headers = headersFromRequest(context.req);
-	const user = await loadUserFromHeaders(headers);
+	const user = await userFromServerContext(context);
 	return {
 		props: {
 			spreads: await getSpreadsForUser(user.id),
