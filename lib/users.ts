@@ -14,21 +14,32 @@ export function userFromApiRequest(req: NextApiRequest) {
 	return loadUserFromHeaders(headers);
 }
 
-export async function loadUserFromHeaders(headers: Headers) {
+export function loadUserFromHeaders(headers: Headers) {
 	const email = headers.get('remote-email');
 	const name = headers.get('remote-name');
 	const groups = headers.get('remote-groups');
 	if (!email || !name) {
-		throw new ApiError(400, 'Headers not found');
+		if (process.env.NODE_ENV === 'development') {
+			return findOrCreateUser('admin@localhost', 'Admin', true);
+		}
+		throw new ApiError(400, 'User headers not found');
 	}
 
+	return findOrCreateUser(email, name, groups?.includes('admin'));
+}
+
+export async function findOrCreateUser(
+	email: string,
+	name?: string,
+	admin = false,
+): Promise<User> {
 	const user = await prisma.user.findUnique({
 		where: { email },
 	});
 	if (user) {
 		return user;
 	}
-	return await createUser(email, name, groups?.includes('admin'));
+	return await createUser(email, name, admin);
 }
 
 export function createUser(
