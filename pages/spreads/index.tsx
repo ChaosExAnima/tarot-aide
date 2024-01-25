@@ -2,13 +2,14 @@ import React from 'react';
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
+import { headersFromRequest } from 'lib/api';
 import { getSpreadsForUser } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { displayRelativeDate } from 'lib/text';
-import { getCurrentUserId } from 'lib/users';
+import { loadUserFromHeaders } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
-import type { GetServerSidePropsResult } from 'next';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 interface SpreadsPageProps {
 	spreads: ExistingSpread[];
@@ -35,13 +36,14 @@ export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 	);
 }
 
-export async function getServerSideProps(): Promise<
-	GetServerSidePropsResult<SpreadsPageProps>
-> {
-	const userId = getCurrentUserId();
+export async function getServerSideProps(
+	context: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<SpreadsPageProps>> {
+	const headers = headersFromRequest(context.req);
+	const user = await loadUserFromHeaders(headers);
 	return {
 		props: {
-			spreads: await getSpreadsForUser(userId),
+			spreads: await getSpreadsForUser(user.id),
 		},
 	};
 }
