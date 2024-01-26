@@ -1,5 +1,6 @@
 FROM --platform=linux/amd64 node:21-alpine AS base
 
+ENV BASE_PATH /tarot
 ENV DATABASE_URL file:/db/tarot.db
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV UPLOADS_PATH /uploads
