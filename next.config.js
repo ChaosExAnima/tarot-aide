@@ -7,8 +7,6 @@ const nextConfig = {
 	images: {
 		remotePatterns: [{ protocol: 'https', hostname: 'picsum.photos' }],
 	},
-	output: 'standalone',
-	basePath: process.env.BASE_PATH,
 };
 
 export default nextConfig;

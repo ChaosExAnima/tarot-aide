@@ -3,8 +3,6 @@ services:
   tarot:
     build: .
     image: chaosexanima/tarot-aide
-    environment:
-      BYPASS_AUTH: 1
     volumes:
       - ./prisma/dev.db:/db/tarot.db
       - ./uploads:/uploads
