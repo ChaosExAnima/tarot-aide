@@ -11,8 +11,9 @@
 		"test": "vitest",
 		"storybook": "storybook dev -p 6006 -s ./public",
 		"build-storybook": "storybook build -s public",
-		"prisma": "dotenv -e .env.local prisma",
-		"docker:build": "docker build -t tarot-aide ."
+		"prisma:dev": "dotenv -e .env.local prisma",
+		"docker:build": "docker context use default && docker build . -t=chaosexanima/tarot-aide",
+		"docker:push": "docker push chaosexanima/tarot-aide"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
