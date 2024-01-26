@@ -19,7 +19,10 @@ export function loadUserFromHeaders(headers: Headers) {
 	const name = headers.get('remote-name');
 	const groups = headers.get('remote-groups');
 	if (!email || !name) {
-		if (process.env.NODE_ENV === 'development') {
+		if (
+			process.env.NODE_ENV === 'development' ||
+			process.env.BYPASS_AUTH === '1'
+		) {
 			return findOrCreateUser('admin@localhost', 'Admin', true);
 		}
 		throw new ApiError(400, 'User headers not found');
