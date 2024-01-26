@@ -6,7 +6,8 @@ ENV UPLOADS_PATH /uploads
 
 WORKDIR /app
 RUN yarn global add pnpm
-COPY package.json pnpm-lock.yaml ./
+RUN ls -lah && pwd
+COPY ./package.json ./pnpm-lock.yaml ./
 
 # Builder
 FROM base AS builder
@@ -29,7 +30,11 @@ RUN adduser --system --uid 1001 nextjs
 
 WORKDIR /app
 COPY --from=builder --chown=nextjs:nodejs /app/.next .next
+COPY --from=builder --chown=nextjs:nodejs /app/public public
+COPY --from=builder --chown=nextjs:nodejs /app/prisma prisma
 RUN pnpm install --frozen-lockfile --prod
+RUN mkdir /db && chown -R nextjs:nodejs /db && \
+	mkdir /uploads && chown -R nextjs:nodejs /uploads
 
 USER nextjs
 
@@ -41,5 +46,7 @@ ENV HOSTNAME "0.0.0.0"
 
 VOLUME /db
 VOLUME /uploads
+
+RUN pnpm prisma migrate deploy
 
 CMD ["pnpm", "start"]
