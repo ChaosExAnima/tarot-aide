@@ -11,7 +11,7 @@ import {
 	displayCardFullName,
 	displaySuitName,
 	getCardsFromSuit,
-	isSuit,
+	isSuitWithMajor,
 } from 'lib/cards/utils';
 import { displayCase } from 'lib/text';
 
@@ -51,7 +51,7 @@ export async function getStaticProps(
 	context: GetStaticPropsContext<SuitPageContext>,
 ): Promise<GetStaticPropsResult<SuitPageProps>> {
 	const { suit } = context.params ?? {};
-	if (!suit || !isSuit(suit)) {
+	if (!suit || !isSuitWithMajor(suit)) {
 		return {
 			notFound: true,
 		};
@@ -68,7 +68,7 @@ export async function getStaticPaths(): Promise<
 > {
 	return {
 		paths: AllSuitsWithMajor.map((suit) => ({
-			params: { suit: suit.replaceAll(' ', '-') },
+			params: { suit },
 		})),
 		fallback: false,
 	};
