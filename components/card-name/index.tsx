@@ -1,13 +1,12 @@
 import { ReactNode } from 'react';
 
+import SuitIcon from 'components/icons/suit';
 import {
 	displayCardFullName,
 	displayCardShortName,
 	isMajorTarotCard,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-
-import SuitIcon from '../icons/suit';
 
 import type { GenericCard } from 'lib/cards/types';
 
