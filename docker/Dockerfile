@@ -8,7 +8,7 @@ ENV UPLOADS_PATH /uploads
 WORKDIR /app
 RUN yarn global add pnpm
 RUN ls -lah && pwd
-COPY ./package.json ./pnpm-lock.yaml ./
+COPY ./package.json ./pnpm-lock.yaml ./.env.production ./
 
 # Builder
 FROM base AS builder
