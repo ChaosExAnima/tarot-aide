@@ -39,6 +39,6 @@ next-env.d.ts
 !.vscode/tasks.json
 *.code-workspace
 
-prisma/*.db*
+*.db
 uploads/*
 !.gitkeep

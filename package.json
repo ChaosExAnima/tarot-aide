@@ -12,8 +12,10 @@
 		"storybook": "storybook dev -p 6006 -s ./public",
 		"build-storybook": "storybook build -s public",
 		"prisma:dev": "dotenv -e .env.local prisma",
-		"docker:build": "docker context use default && docker build . -t=chaosexanima/tarot-aide",
-		"docker:push": "docker push chaosexanima/tarot-aide"
+		"docker": "docker context use default && docker compose -f docker/docker-compose.yml -p tarot-aide",
+		"docker:build": "pnpm docker build",
+		"docker:start": "pnpm docker up -d",
+		"docker:push": "pnpm docker push"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -34,6 +36,7 @@
 		"image-size": "^1.1.1",
 		"next": "14.0.4",
 		"next-superjson-plugin": "^0.5.10",
+		"prisma": "^5.8.1",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"serve-static": "^1.15.0",
@@ -81,7 +84,6 @@
 		"jsdom": "^23.1.0",
 		"postcss": "^8.4.32",
 		"prettier": "^3.1.1",
-		"prisma": "^5.8.1",
 		"storybook": "7.6.7",
 		"storybook-dark-mode": "^3.0.3",
 		"tailwindcss": "^3.4.0",

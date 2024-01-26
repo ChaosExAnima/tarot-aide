@@ -18,12 +18,6 @@
 			"script": "test",
 			"problemMatcher": [],
 			"label": "Run Tests"
-		},
-		{
-			"type": "npm",
-			"script": "docker:build",
-			"problemMatcher": [],
-			"label": "Build Docker Image"
 		}
 	]
 }

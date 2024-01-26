@@ -101,7 +101,7 @@ export async function parseForm<
 >(req: NextApiRequest) {
 	const user = await userFromApiRequest(req);
 	const form = new Formidable({
-		uploadDir: `${process.env.UPLOAD_DIR ?? 'uploads'}/${user.id}`,
+		uploadDir: `${process.env.UPLOAD_PATH ?? 'uploads'}/${user.id}`,
 		keepExtensions: true,
 		allowEmptyFiles: false,
 		maxFiles: 1,

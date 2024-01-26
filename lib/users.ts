@@ -1,3 +1,5 @@
+import { format } from 'util';
+
 import { ApiError, headersFromRequest } from './api';
 import prisma from './db';
 
@@ -25,7 +27,13 @@ export function loadUserFromHeaders(headers: Headers) {
 		) {
 			return findOrCreateUser('admin@localhost', 'Admin', true);
 		}
-		throw new ApiError(400, 'User headers not found');
+		throw new ApiError(
+			400,
+			format(
+				'User headers not found: %o',
+				Object.fromEntries(headers.entries()),
+			),
+		);
 	}
 
 	return findOrCreateUser(email, name, groups?.includes('admin'));
