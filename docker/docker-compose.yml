@@ -6,7 +6,7 @@ services:
       dockerfile: docker/Dockerfile
     image: chaosexanima/tarot-aide
     environment:
-      BASE_PATH: /tarot
+      # BASE_PATH: /tarot
       DATABASE_URL: file:/db/tarot.db
       UPLOAD_PATH: /uploads
     volumes:
