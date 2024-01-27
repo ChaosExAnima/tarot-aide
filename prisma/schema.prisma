@@ -64,7 +64,8 @@ model CardReference {
     userId    Int
     user      User     @relation(fields: [userId], references: [id])
 
-    @@index([card, reversed])
+    @@index([userId, card])
+    @@index([userId, source])
 }
 
 // TODO: Add deck models to support differently named cards

@@ -22,6 +22,17 @@ export async function getCardReferences(
 	return references;
 }
 
+export async function listReferenceSources(userId: number): Promise<string[]> {
+	const dbSources = await prisma.cardReference.findMany({
+		where: { userId, source: { not: null } },
+		select: { source: true },
+		distinct: ['source'],
+	});
+	return dbSources
+		.map((source) => source.source)
+		.filter((source): source is string => !!source);
+}
+
 export function dbToCardReference(
 	reference: Prisma.CardReferenceGetPayload<null>,
 ): CardReference {
