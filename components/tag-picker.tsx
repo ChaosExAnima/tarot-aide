@@ -1,5 +1,5 @@
 import { Chip, Input, InputProps } from '@nextui-org/react';
-import { useState, KeyboardEvent } from 'react';
+import { useState, KeyboardEvent, useEffect } from 'react';
 
 interface TagPickerProps {
 	tags?: string[];
@@ -13,23 +13,23 @@ export default function TagPicker({
 }: TagPickerProps & Omit<InputProps, 'onChange'>) {
 	const [tagInput, setTagInput] = useState('');
 	const [tags, setTags] = useState(initialTags);
-	const handleTags = (cb: (tags: string[]) => string[]) => {
-		setTags((tags) => {
-			const newTags = cb(tags);
-			onChange(newTags);
-			return newTags;
-		});
-	};
+
+	useEffect(() => {
+		onChange(tags);
+	}, [onChange, tags]);
 
 	const handleKeywordChange = (text: string) => {
-		const newTags = text
-			.replaceAll(/(and|or)+/g, '')
-			.split(',')
-			.map((t) => t.trim())
-			.filter((t) => !!t); // Remove empty strings.
+		const newTags = text.split(',');
 
 		if (newTags.length > 1) {
-			handleTags((tags) => Array.from(new Set(tags.concat(newTags))));
+			const filteredTags = newTags
+				.map((t) => t.replaceAll(/(and|or)+/g, '').trim())
+				.filter((t) => !!t);
+			if (filteredTags.length > 0) {
+				setTags((tags) =>
+					Array.from(new Set(tags.concat(filteredTags))),
+				);
+			}
 			setTagInput('');
 		} else {
 			setTagInput(text);
@@ -37,7 +37,7 @@ export default function TagPicker({
 	};
 	const handleBackspace = (event: KeyboardEvent) => {
 		if (event.key === 'Backspace' && !tagInput) {
-			handleTags((tags) => tags.slice(0, -1));
+			setTags((tags) => tags.slice(0, -1));
 		}
 	};
 
@@ -45,7 +45,7 @@ export default function TagPicker({
 		<Chip
 			key={tag}
 			size="sm"
-			onClose={() => handleTags((tags) => tags.filter((t) => t !== tag))}
+			onClose={() => setTags((tags) => tags.filter((t) => t !== tag))}
 		>
 			{tag}
 		</Chip>
@@ -55,12 +55,17 @@ export default function TagPicker({
 		<Input
 			startContent={
 				chips.length > 0 && (
-					<span className="flex flex-nowrap gap-1">{chips}</span>
+					<span className="flex flex-wrap gap-1">{chips}</span>
 				)
 			}
+			classNames={{
+				inputWrapper: 'h-auto pt-6',
+				innerWrapper: '!items-start',
+				label: 'top-4',
+			}}
 			onValueChange={handleKeywordChange}
 			value={tagInput}
-			onClear={() => handleTags(() => [])}
+			onClear={() => setTags(() => [])}
 			onKeyDown={handleBackspace}
 			{...props}
 		/>
