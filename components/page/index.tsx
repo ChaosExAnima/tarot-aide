@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import Head from 'next/head';
 
 import PageBreadcrumbs, { BreadcrumbProps } from './breadcrumbs';
+import PageFooter from './footer';
 import Nav from './nav';
 
 import type { PropsWithChildren } from 'react';
@@ -54,6 +55,7 @@ export default function Page({
 			>
 				{children}
 			</motion.main>
+			<PageFooter />
 		</>
 	);
 }
