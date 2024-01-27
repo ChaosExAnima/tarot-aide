@@ -6,12 +6,12 @@ import { MajorSuit } from 'lib/cards/constants';
 import { getCardReferences } from 'lib/cards/db';
 import { CardWithRefs } from 'lib/cards/types';
 import {
+	cardUrl,
 	displayCardFullName,
 	displaySuitName,
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-import { slugify } from 'lib/text';
 import { LoadedRecursively } from 'lib/types';
 import { userFromServerContext } from 'lib/users';
 
@@ -34,30 +34,21 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 			title={name}
 			breadcrumbs={[
 				{ label: displaySuitName(suit), href: `/suits/${suit}` },
-				{ label: name, href: `/cards/${slugify(card.name)}` },
+				{ label: name, href: cardUrl(card.name) },
 				reversed && {
 					label: 'Reversed',
-					href: `/cards/${slugify(card.name)}/reversed`,
+					href: cardUrl(card.name, true),
 				},
 			]}
 		>
 			<h1 className="text-6xl font-bold text-center mb-2">{name}</h1>
 			<p className="text-2xl text-center">
-				<Link
-					href={`/cards/${slugify(card.name)}${
-						!reversed ? '/reversed' : ''
-					}`}
-				>
+				<Link href={cardUrl(card.name, !reversed)}>
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</p>
 			<CardReferences card={card} />
-			<Button
-				as={Link}
-				href={`/cards/${slugify(card.name)}${
-					reversed ? '/reversed' : ''
-				}/reference`}
-			>
+			<Button as={Link} href={cardUrl(card.name, reversed, true)}>
 				Add a reference
 			</Button>
 		</Page>
