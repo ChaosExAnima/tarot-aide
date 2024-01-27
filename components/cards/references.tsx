@@ -1,7 +1,10 @@
-import { Accordion, AccordionItem } from '@nextui-org/react';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Accordion, AccordionItem, Button } from '@nextui-org/react';
+import Link from 'next/link';
 
 import MaybeLink from 'components/maybe-link';
-import { displayDomain } from 'lib/text';
+import { displayDomain, slugify } from 'lib/text';
 
 import type { GenericCard } from 'lib/cards/types';
 import type { LoadedRecursively } from 'lib/types';
@@ -10,12 +13,21 @@ interface CardReferenceProps {
 	card: LoadedRecursively<GenericCard>;
 }
 
-export function CardReferences({ card: { references } }: CardReferenceProps) {
+export function CardReferences({
+	card: { name, references },
+}: CardReferenceProps) {
 	if (!references || !references.length) {
 		return null;
 	}
 	return (
-		<Accordion as="section" defaultExpandedKeys={['0']} variant="splitted">
+		<Accordion
+			as="section"
+			defaultExpandedKeys={['0']}
+			variant="splitted"
+			itemClasses={{
+				content: 'flex flex-col gap-2 pb-4',
+			}}
+		>
 			{references.map((ref) => {
 				const title = ref.keywords.join(', ');
 				const lines = ref.text.trim().split('\n').filter(Boolean);
@@ -35,6 +47,18 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 								<p key={line}>{line}</p>
 							))}
 						</blockquote>
+						{ref.id > 0 && (
+							<Button
+								as={Link}
+								href={`/cards/${slugify(name)}/references/${
+									ref.id
+								}`}
+								startContent={<FontAwesomeIcon icon={faEdit} />}
+								className="ml-auto bg-primary-500"
+							>
+								Edit
+							</Button>
+						)}
 					</AccordionItem>
 				);
 			})}
