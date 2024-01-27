@@ -16,12 +16,21 @@ export async function queryCardReferences(
 	);
 }
 
-export async function mutateUpsertCardReference(
+export async function mutateCreateCardReference(
 	reference: CardReferenceSchema,
-	id?: number,
 ) {
 	return fetchFromApi<CardReferenceResponse, CardReferenceSchema>(
-		`/references${id ? `/${id}` : ''}`,
+		'/references',
+		reference,
+	);
+}
+
+export async function mutateUpdateCardReference(
+	reference: Partial<CardReferenceSchema>,
+	id: number,
+) {
+	return fetchFromApi<CardReferenceResponse, Partial<CardReferenceSchema>>(
+		`/references/${id}`,
 		reference,
 	);
 }

@@ -52,6 +52,7 @@ export function dbToCardReference(
 		card: reference.card,
 		reversed: reference.reversed,
 		source: reference.source ?? undefined,
+		starred: reference.starred,
 		keywords: (reference.keywords ?? '')
 			.split(',')
 			.map((keyword) => keyword.trim()),

@@ -63,6 +63,7 @@ model CardReference {
     reversed  Boolean  @default(false)
     userId    Int
     user      User     @relation(fields: [userId], references: [id])
+    starred   Boolean  @default(false)
 
     @@index([userId, card])
     @@index([userId, source])

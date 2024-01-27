@@ -17,6 +17,7 @@ export const referenceSchema = z.object({
 	keywords: z.array(z.string()).optional(),
 	reversed: z.boolean().default(false),
 	source: z.string().optional(),
+	starred: z.boolean().default(false).optional(),
 });
 export type CardReferenceSchema = z.infer<typeof referenceSchema>;
 

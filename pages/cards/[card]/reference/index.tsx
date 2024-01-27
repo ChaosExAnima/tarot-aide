@@ -24,8 +24,9 @@ import Page from 'components/page';
 import TagPicker from 'components/tag-picker';
 import { ApiError } from 'lib/api';
 import {
+	mutateCreateCardReference,
 	mutateDeleteCardReference,
-	mutateUpsertCardReference,
+	mutateUpdateCardReference,
 } from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
 import { cardReference } from 'lib/cards/db';
@@ -77,17 +78,19 @@ export default function EditCardReference({
 		isSuccess: isUpdateSuccess,
 		mutate: updateReference,
 	} = useMutation({
-		mutationFn: (_dest: string) =>
-			mutateUpsertCardReference(
-				{
-					card: card.name,
-					text,
-					source,
-					reversed,
-					keywords,
-				},
-				reference?.id,
-			),
+		mutationFn: (_dest: string) => {
+			const body = {
+				card: card.name,
+				text,
+				source,
+				reversed,
+				keywords,
+			};
+			if (reference) {
+				return mutateUpdateCardReference(body, reference.id);
+			}
+			return mutateCreateCardReference(body);
+		},
 		onSuccess(_, dest) {
 			router.push(dest);
 		},

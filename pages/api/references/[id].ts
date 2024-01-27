@@ -20,14 +20,12 @@ const handler = handlerWithError<CardReferenceResponse>(
 		if (req.method === 'DELETE') {
 			await prisma.cardReference.delete({ where: { id } });
 		} else if (req.method === 'POST') {
-			const schema = referenceSchema.parse(req.body);
+			const schema = referenceSchema.partial().parse(req.body);
 			const updatedReference = await prisma.cardReference.update({
 				where: { id },
 				data: {
 					...schema,
-					keywords:
-						schema.keywords?.join(',') ??
-						reference.keywords.join(','),
+					keywords: schema.keywords?.join(','),
 					userId: user.id,
 				},
 			});
