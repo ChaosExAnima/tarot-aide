@@ -5,12 +5,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Input, Link, Textarea } from '@nextui-org/react';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
+import { mutateCreateCardReference } from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
 import {
 	cardUrl,
@@ -23,16 +25,27 @@ import {
 import { CardPageProps } from './index';
 
 export default function NewCardReference({ card, reversed }: CardPageProps) {
+	const name = displayCardFullName(card);
+	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
+
+	// Card lookups
 	const cardIndex = AllCards.findIndex((c) => c === card.name);
 	const prevCard = cardIndex > 0 ? AllCards[cardIndex - 1] : null;
 	const nextCard =
 		cardIndex < AllCards.length - 1 ? AllCards[cardIndex + 1] : null;
-	const name = displayCardFullName(card);
-	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
+
+	// State management
 	const router = useRouter();
 	const [source, setSouce] = useState('');
 	const [text, setText] = useState('');
-	const disabled = !text;
+
+	const { isPending } = useMutation({
+		mutationFn: () =>
+			mutateCreateCardReference(card.name, { text, source, reversed }),
+		onSuccess: () => {},
+	});
+	const disabled = !text || isPending;
+
 	return (
 		<Page
 			title={`New Reference - ${name}`}
@@ -66,13 +79,14 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 				value={source}
 				onValueChange={setSouce}
 			/>
+			<Input label="Keywords" />
 			<Textarea
 				label="Text"
 				isRequired
 				value={text}
 				onValueChange={setText}
 			/>
-			<p className="text-center text-sm text-default-400">Save and:</p>
+			<p className="text-center text-sm text-default-300">Save and:</p>
 			<div className="flex gap-4 justify-center" role="group">
 				<CardNavButton
 					card={prevCard}

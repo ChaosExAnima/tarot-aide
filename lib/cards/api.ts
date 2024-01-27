@@ -1,13 +1,26 @@
 import { fetchFromApi } from 'lib/api';
 
-import type { CardReferencesResponseBody } from 'pages/api/cards/[slug]/references';
+import type {
+	CardReferenceSchema,
+	CardReferencesResponseBody,
+} from 'pages/api/cards/[slug]/references';
 
 export async function queryCardReferences(
-	name: string,
+	cardName: string,
 	reversed = false,
 	limit = 0,
 ) {
 	return fetchFromApi<CardReferencesResponseBody>(
-		`/cards/${name}/references?reversed=${reversed}&limit=${limit}`,
+		`/cards/${cardName}/references?reversed=${reversed}&limit=${limit}`,
+	);
+}
+
+export async function mutateCreateCardReference(
+	cardName: string,
+	reference: CardReferenceSchema,
+) {
+	return fetchFromApi<CardReferencesResponseBody, CardReferenceSchema>(
+		`/cards/${cardName}/references`,
+		reference,
 	);
 }
