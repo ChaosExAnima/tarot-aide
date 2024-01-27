@@ -68,13 +68,18 @@ export async function getServerSideProps(
 	}
 
 	const user = await userFromServerContext(context);
+	const reversed = context.resolvedUrl.endsWith('/reversed');
 	return {
 		props: {
 			card: {
 				...card,
-				references: await getCardReferences(card.name, false, user.id),
+				references: await getCardReferences(
+					card.name,
+					reversed,
+					user.id,
+				),
 			},
-			reversed: false,
+			reversed,
 		},
 	};
 }
