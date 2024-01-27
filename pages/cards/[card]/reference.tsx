@@ -4,7 +4,14 @@ import {
 	faSave,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Input, Link, Textarea } from '@nextui-org/react';
+import {
+	Button,
+	ButtonProps,
+	CircularProgress,
+	Input,
+	Link,
+	Textarea,
+} from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -12,6 +19,7 @@ import { useState } from 'react';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
+import TagPicker from 'components/tag-picker';
 import { mutateCreateCardReference } from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
 import {
@@ -37,12 +45,20 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 	// State management
 	const router = useRouter();
 	const [source, setSouce] = useState('');
+	const [keywords, setKeywords] = useState<string[]>([]);
 	const [text, setText] = useState('');
 
-	const { isPending } = useMutation({
-		mutationFn: () =>
-			mutateCreateCardReference(card.name, { text, source, reversed }),
-		onSuccess: () => {},
+	const { isPending, mutate } = useMutation({
+		mutationFn: (_dest: string) =>
+			mutateCreateCardReference(card.name, {
+				text,
+				source,
+				reversed,
+				keywords,
+			}),
+		onSuccess(_, dest) {
+			router.push(dest);
+		},
 	});
 	const disabled = !text || isPending;
 
@@ -79,24 +95,32 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 				value={source}
 				onValueChange={setSouce}
 			/>
-			<Input label="Keywords" />
+			<TagPicker
+				tags={keywords}
+				onChange={setKeywords}
+				label="Keywords"
+			/>
 			<Textarea
 				label="Text"
 				isRequired
 				value={text}
 				onValueChange={setText}
 			/>
-			<p className="text-center text-sm text-default-300">Save and:</p>
+			{!isPending && (
+				<p className="text-center text-sm text-default-300">
+					Save and:
+				</p>
+			)}
+			{isPending && <CircularProgress className="mx-auto" />}
 			<div className="flex gap-4 justify-center" role="group">
 				<CardNavButton
 					card={prevCard}
 					reversed={reversed}
 					isDisabled={disabled}
+					onPress={() => mutate(cardUrl(prevCard!, reversed, true))}
 				/>
 				<CardPicker
-					onPick={({ name }) => {
-						router.push(cardUrl(name, reversed, true));
-					}}
+					onPick={({ name }) => mutate(cardUrl(name, reversed, true))}
 					startContent={<CardsIcon />}
 					color="success"
 					isDisabled={disabled}
@@ -104,8 +128,7 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 					<span className="hidden sm:block">Jump to card</span>
 				</CardPicker>
 				<Button
-					as={Link}
-					href={cardUrl(card.name, reversed)}
+					onPress={() => mutate(cardUrl(card.name, reversed))}
 					color="success"
 					isDisabled={disabled}
 					startContent={<FontAwesomeIcon icon={faSave} />}
@@ -117,6 +140,7 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 					reversed={reversed}
 					next
 					isDisabled={disabled}
+					onPress={() => mutate(cardUrl(nextCard!, reversed, true))}
 				/>
 			</div>
 		</Page>
@@ -127,21 +151,20 @@ interface CardNavButtonProps {
 	card: string | null;
 	reversed: boolean;
 	next?: boolean;
-	isDisabled?: boolean;
 }
 
 function CardNavButton({
 	card,
-	reversed,
 	next = false,
-	isDisabled = false,
-}: CardNavButtonProps) {
+	...props
+}: CardNavButtonProps & ButtonProps) {
 	if (!card) {
 		return (
 			<Button
-				isDisabled
 				startContent={!next && <FontAwesomeIcon icon={faChevronLeft} />}
 				endContent={next && <FontAwesomeIcon icon={faChevronRight} />}
+				{...props}
+				isDisabled
 			>
 				{next ? 'Last card' : 'First card'}
 			</Button>
@@ -149,12 +172,10 @@ function CardNavButton({
 	}
 	return (
 		<Button
-			as={Link}
-			href={cardUrl(card, reversed, true)}
 			startContent={!next && <FontAwesomeIcon icon={faChevronLeft} />}
 			endContent={next && <FontAwesomeIcon icon={faChevronRight} />}
 			color="success"
-			isDisabled={isDisabled}
+			{...props}
 		>
 			{displayCardShortName({ name: card })}
 		</Button>
