@@ -1,4 +1,4 @@
-import { displayCase } from 'lib/text';
+import { displayCase, slugify } from 'lib/text';
 import { includes } from 'lib/types';
 
 import * as constants from './constants';
@@ -146,4 +146,19 @@ export function getCardsFromSuit(suit: constants.SuitWithMajor): TarotCard[] {
 		shortName: name,
 		suit,
 	}));
+}
+
+export function cardUrl(
+	name: string,
+	reversed = false,
+	reference = false,
+): string {
+	let url = `/cards/${slugify(name)}`;
+	if (reversed) {
+		url += '/reversed';
+	}
+	if (reference) {
+		url += '/reference';
+	}
+	return url;
 }

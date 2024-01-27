@@ -1,4 +1,4 @@
-import { Link } from '@nextui-org/react';
+import { Button, Link } from '@nextui-org/react';
 
 import { CardReferences } from 'components/cards/references';
 import Page from 'components/page';
@@ -52,6 +52,14 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 				</Link>
 			</p>
 			<CardReferences card={card} />
+			<Button
+				as={Link}
+				href={`/cards/${slugify(card.name)}${
+					reversed ? '/reversed' : ''
+				}/reference`}
+			>
+				Add a reference
+			</Button>
 		</Page>
 	);
 }
@@ -68,7 +76,7 @@ export async function getServerSideProps(
 	}
 
 	const user = await userFromServerContext(context);
-	const reversed = context.resolvedUrl.endsWith('/reversed');
+	const reversed = context.resolvedUrl.includes('/reversed');
 	return {
 		props: {
 			card: {
