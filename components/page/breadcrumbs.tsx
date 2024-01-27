@@ -14,7 +14,7 @@ export default function PageBreadcrumbs({
 		return null;
 	}
 	return (
-		<Breadcrumbs className="mt-2 mx-auto container">
+		<Breadcrumbs className="mt-2 mx-auto px-4 container">
 			<BreadcrumbItem href="/">Home</BreadcrumbItem>
 			{breadcrumbs
 				.filter((b): b is BreadcrumbProps => !!b)

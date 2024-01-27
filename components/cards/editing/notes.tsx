@@ -2,7 +2,6 @@ import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	Button,
-	ButtonGroup,
 	CardBody,
 	Modal,
 	ModalBody,
@@ -81,18 +80,16 @@ export default function OracleCardNotesEditable({
 							{data.references[0].keywords.slice(0, 3).join(', ')}
 						</p>
 					)}
-					<ButtonGroup>
-						{spread.card && (
-							<Button
-								isIconOnly
-								onPress={() => setShowRefs(true)}
-								isLoading={isLoading}
-								isDisabled={isLoading}
-							>
-								<FontAwesomeIcon icon={faQuestion} />
-							</Button>
-						)}
-					</ButtonGroup>
+					{spread.card && (
+						<Button
+							isIconOnly
+							onPress={() => setShowRefs(true)}
+							isLoading={isLoading}
+							isDisabled={isLoading}
+						>
+							<FontAwesomeIcon icon={faQuestion} />
+						</Button>
+					)}
 				</div>
 			)}
 		</CardBody>
