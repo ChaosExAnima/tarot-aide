@@ -4,7 +4,8 @@ import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import Link from 'next/link';
 
 import MaybeLink from 'components/maybe-link';
-import { displayDomain, slugify } from 'lib/text';
+import { cardUrl } from 'lib/cards/utils';
+import { displayDomain } from 'lib/text';
 
 import type { GenericCard } from 'lib/cards/types';
 import type { LoadedRecursively } from 'lib/types';
@@ -50,9 +51,7 @@ export function CardReferences({
 						{ref.id > 0 && (
 							<Button
 								as={Link}
-								href={`/cards/${slugify(name)}/references/${
-									ref.id
-								}`}
+								href={`${cardUrl(name, false, true)}/${ref.id}`}
 								startContent={<FontAwesomeIcon icon={faEdit} />}
 								className="ml-auto bg-primary-500"
 							>

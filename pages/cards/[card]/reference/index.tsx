@@ -22,7 +22,6 @@ import Page from 'components/page';
 import TagPicker from 'components/tag-picker';
 import { mutateCreateCardReference } from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
-import { cardReference } from 'lib/cards/db';
 import {
 	cardUrl,
 	displayCardFullName,
@@ -31,20 +30,17 @@ import {
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-import { userFromServerContext } from 'lib/users';
 
 import type { CardPageContext, CardPageProps } from '../index';
 import type { CardReference, GenericOrTarotCard } from 'lib/cards/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
-type CardReferencePageContext = CardPageContext & { id?: string };
-
-interface CardReferencePageProps extends Omit<CardPageProps, 'card'> {
+export interface CardReferencePageProps extends Omit<CardPageProps, 'card'> {
 	card: GenericOrTarotCard;
 	reference?: CardReference;
 }
 
-export default function NewCardReference({
+export default function EditCardReference({
 	card,
 	reversed,
 	reference,
@@ -145,6 +141,7 @@ export default function NewCardReference({
 				>
 					<span className="hidden sm:block">Jump to card</span>
 				</CardPicker>
+				{reference && <Button color="danger">Delete</Button>}
 				<Button
 					onPress={() => mutate(cardUrl(card.name, reversed))}
 					color="success"
@@ -201,47 +198,20 @@ function CardNavButton({
 }
 
 export async function getServerSideProps(
-	context: GetServerSidePropsContext<CardReferencePageContext>,
+	context: GetServerSidePropsContext<CardPageContext>,
 ): Promise<GetServerSidePropsResult<CardReferencePageProps>> {
-	const refId = Number.parseInt(context.params?.id ?? '');
-	if (!refId) {
-		const cardName = context.params?.card?.replaceAll('-', ' ') ?? '';
-		const card = getCardFromName(cardName);
-		if (!card) {
-			return {
-				notFound: true,
-			};
-		}
-
-		return {
-			props: {
-				card,
-				reversed: context.resolvedUrl.includes('/reversed'),
-			},
-		};
-	}
-
-	const user = await userFromServerContext(context);
-	const reference = await cardReference(refId, user.id);
-	if (!reference) {
-		return {
-			notFound: true,
-		};
-	}
-	const card = getCardFromName(reference.card);
+	const cardName = context.params?.card?.replaceAll('-', ' ') ?? '';
+	const card = getCardFromName(cardName);
 	if (!card) {
-		console.warn(
-			`Card ${reference.card} on reference ${reference.id} not found.`,
-		);
 		return {
 			notFound: true,
 		};
 	}
+
 	return {
 		props: {
 			card,
-			reference,
-			reversed: reference.reversed,
+			reversed: context.resolvedUrl.includes('/reversed'),
 		},
 	};
 }
