@@ -6,6 +6,16 @@ import { isCard } from './utils';
 import type { CardReference } from './types';
 import type { Prisma } from '@prisma/client';
 
+export async function cardReference(id: number, userId: number) {
+	const dbReference = await prisma.cardReference.findFirst({
+		where: { id, userId },
+	});
+	if (!dbReference) {
+		throw new Error('Card reference not found');
+	}
+	return dbToCardReference(dbReference);
+}
+
 export async function getCardReferences(
 	cardName: string,
 	reversed = false,
@@ -39,6 +49,7 @@ export function dbToCardReference(
 	return {
 		id: reference.id,
 		text: reference.text,
+		card: reference.card,
 		reversed: reference.reversed,
 		source: reference.source ?? undefined,
 		keywords: (reference.keywords ?? '')

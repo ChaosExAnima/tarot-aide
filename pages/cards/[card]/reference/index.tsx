@@ -22,17 +22,33 @@ import Page from 'components/page';
 import TagPicker from 'components/tag-picker';
 import { mutateCreateCardReference } from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
+import { cardReference } from 'lib/cards/db';
 import {
 	cardUrl,
 	displayCardFullName,
 	displayCardShortName,
 	displaySuitName,
+	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
+import { userFromServerContext } from 'lib/users';
 
-import { CardPageProps } from './index';
+import type { CardPageContext, CardPageProps } from '../index';
+import type { CardReference, GenericOrTarotCard } from 'lib/cards/types';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
-export default function NewCardReference({ card, reversed }: CardPageProps) {
+type CardReferencePageContext = CardPageContext & { id?: string };
+
+interface CardReferencePageProps extends Omit<CardPageProps, 'card'> {
+	card: GenericOrTarotCard;
+	reference?: CardReference;
+}
+
+export default function NewCardReference({
+	card,
+	reversed,
+	reference,
+}: CardReferencePageProps) {
 	const name = displayCardFullName(card);
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 
@@ -43,11 +59,13 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 		cardIndex < AllCards.length - 1 ? AllCards[cardIndex + 1] : null;
 
 	// State management
-	const router = useRouter();
-	const [source, setSouce] = useState('');
-	const [keywords, setKeywords] = useState<string[]>([]);
-	const [text, setText] = useState('');
+	const [source, setSouce] = useState(reference?.source ?? '');
+	const [keywords, setKeywords] = useState<string[]>(
+		reference?.keywords ?? [],
+	);
+	const [text, setText] = useState(reference?.text ?? '');
 
+	const router = useRouter();
 	const { isPending, mutate } = useMutation({
 		mutationFn: (_dest: string) =>
 			mutateCreateCardReference(card.name, {
@@ -182,4 +200,48 @@ function CardNavButton({
 	);
 }
 
-export { getServerSideProps } from './index';
+export async function getServerSideProps(
+	context: GetServerSidePropsContext<CardReferencePageContext>,
+): Promise<GetServerSidePropsResult<CardReferencePageProps>> {
+	const refId = Number.parseInt(context.params?.id ?? '');
+	if (!refId) {
+		const cardName = context.params?.card?.replaceAll('-', ' ') ?? '';
+		const card = getCardFromName(cardName);
+		if (!card) {
+			return {
+				notFound: true,
+			};
+		}
+
+		return {
+			props: {
+				card,
+				reversed: context.resolvedUrl.includes('/reversed'),
+			},
+		};
+	}
+
+	const user = await userFromServerContext(context);
+	const reference = await cardReference(refId, user.id);
+	if (!reference) {
+		return {
+			notFound: true,
+		};
+	}
+	const card = getCardFromName(reference.card);
+	if (!card) {
+		console.warn(
+			`Card ${reference.card} on reference ${reference.id} not found.`,
+		);
+		return {
+			notFound: true,
+		};
+	}
+	return {
+		props: {
+			card,
+			reference,
+			reversed: reference.reversed,
+		},
+	};
+}
