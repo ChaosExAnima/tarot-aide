@@ -1,10 +1,10 @@
 import { AnyCard } from './constants';
 import { CardReference } from './types';
 
-type CardReferenceNoReversal = Omit<CardReference, 'reversed'>;
+type CardReferenceSimple = Omit<CardReference, 'card' | 'reversed'>;
 type CardReferenceDualMeanings = {
-	upright: CardReferenceNoReversal;
-	reversed: CardReferenceNoReversal;
+	upright: CardReferenceSimple;
+	reversed: CardReferenceSimple;
 };
 
 export function getDefaultCardReference(
@@ -13,6 +13,7 @@ export function getDefaultCardReference(
 ): CardReference {
 	return {
 		...references[cardName][reversed ? 'reversed' : 'upright'],
+		card: cardName,
 		reversed,
 	};
 }
