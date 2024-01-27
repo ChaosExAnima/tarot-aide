@@ -23,7 +23,7 @@ export default function TagPicker({
 
 		if (newTags.length > 1) {
 			const filteredTags = newTags
-				.map((t) => t.replaceAll(/(and|or)+/g, '').trim())
+				.map((t) => t.trim())
 				.filter((t) => !!t);
 			if (filteredTags.length > 0) {
 				setTags((tags) =>
