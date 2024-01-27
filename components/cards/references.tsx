@@ -1,5 +1,8 @@
 import { Accordion, AccordionItem } from '@nextui-org/react';
 
+import MaybeLink from 'components/maybe-link';
+import { displayDomain } from 'lib/text';
+
 import type { GenericCard } from 'lib/cards/types';
 import type { LoadedRecursively } from 'lib/types';
 
@@ -19,7 +22,11 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 				return (
 					<AccordionItem
 						title={title}
-						subtitle={ref.source}
+						subtitle={
+							<MaybeLink href={ref.source}>
+								{displayDomain(ref.source ?? '')}
+							</MaybeLink>
+						}
 						aria-label={title}
 						key={ref.id}
 					>
