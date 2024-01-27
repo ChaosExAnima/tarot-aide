@@ -20,7 +20,7 @@ import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
 import TagPicker from 'components/tag-picker';
-import { mutateCreateCardReference } from 'lib/cards/api';
+import { mutateUpsertCardReference } from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
 import {
 	cardUrl,
@@ -64,12 +64,16 @@ export default function EditCardReference({
 	const router = useRouter();
 	const { isPending, mutate } = useMutation({
 		mutationFn: (_dest: string) =>
-			mutateCreateCardReference(card.name, {
-				text,
-				source,
-				reversed,
-				keywords,
-			}),
+			mutateUpsertCardReference(
+				{
+					card: card.name,
+					text,
+					source,
+					reversed,
+					keywords,
+				},
+				reference?.id,
+			),
 		onSuccess(_, dest) {
 			router.push(dest);
 		},

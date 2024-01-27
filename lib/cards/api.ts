@@ -1,9 +1,7 @@
 import { fetchFromApi } from 'lib/api';
 
-import type {
-	CardReferenceSchema,
-	CardReferencesResponseBody,
-} from 'pages/api/cards/[slug]/references';
+import type { CardReferencesResponseBody } from 'pages/api/cards/[slug]/references';
+import type { CardReferenceSchema } from 'pages/api/references';
 
 export async function queryCardReferences(
 	cardName: string,
@@ -15,12 +13,12 @@ export async function queryCardReferences(
 	);
 }
 
-export async function mutateCreateCardReference(
-	cardName: string,
+export async function mutateUpsertCardReference(
 	reference: CardReferenceSchema,
+	id?: number,
 ) {
 	return fetchFromApi<CardReferencesResponseBody, CardReferenceSchema>(
-		`/cards/${cardName}/references`,
+		`/references${id ? `/${id}` : ''}`,
 		reference,
 	);
 }
