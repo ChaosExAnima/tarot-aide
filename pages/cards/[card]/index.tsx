@@ -48,7 +48,11 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 				</Link>
 			</p>
 			<CardReferences card={card} />
-			<Button as={Link} href={cardUrl(card.name, reversed, true)}>
+			<Button
+				as={Link}
+				href={cardUrl(card.name, reversed, true)}
+				className="mx-2"
+			>
 				Add a reference
 			</Button>
 		</Page>
