@@ -17,6 +17,9 @@ export default function Page({
 	breadcrumbs,
 }: PropsWithChildren<PageProps>) {
 	let pageTitle = 'Tarot Aide';
+	if (process.env.NODE_ENV === 'development') {
+		pageTitle += ' (Dev)';
+	}
 	if (title) {
 		pageTitle = `${title} - ${pageTitle}`;
 	}
