@@ -1,12 +1,15 @@
 import {
 	faChevronLeft,
 	faChevronRight,
+	faSave,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, ButtonGroup, Input, Link, Textarea } from '@nextui-org/react';
+import { Button, Input, Link, Textarea } from '@nextui-org/react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
+import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
 import {
@@ -27,6 +30,9 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 	const name = displayCardFullName(card);
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 	const router = useRouter();
+	const [source, setSouce] = useState('');
+	const [text, setText] = useState('');
+	const disabled = !text;
 	return (
 		<Page
 			title={`New Reference - ${name}`}
@@ -54,19 +60,51 @@ export default function NewCardReference({ card, reversed }: CardPageProps) {
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</h2>
-			<Input label="Source" placeholder="Book or url" />
-			<Textarea label="Text" isRequired />
-			<ButtonGroup>
-				<CardNavButton card={prevCard} reversed={reversed} />
+			<Input
+				label="Source"
+				placeholder="Book or url"
+				value={source}
+				onValueChange={setSouce}
+			/>
+			<Textarea
+				label="Text"
+				isRequired
+				value={text}
+				onValueChange={setText}
+			/>
+			<p className="text-center text-sm text-default-400">Save and:</p>
+			<div className="flex gap-4 justify-center" role="group">
+				<CardNavButton
+					card={prevCard}
+					reversed={reversed}
+					isDisabled={disabled}
+				/>
 				<CardPicker
 					onPick={({ name }) => {
 						router.push(cardUrl(name, reversed, true));
 					}}
+					startContent={<CardsIcon />}
+					color="success"
+					isDisabled={disabled}
 				>
-					Pick a card
+					<span className="hidden sm:block">Jump to card</span>
 				</CardPicker>
-				<CardNavButton card={nextCard} reversed={reversed} next />
-			</ButtonGroup>
+				<Button
+					as={Link}
+					href={cardUrl(card.name, reversed)}
+					color="success"
+					isDisabled={disabled}
+					startContent={<FontAwesomeIcon icon={faSave} />}
+				>
+					<span className="hidden sm:block">Back to card</span>
+				</Button>
+				<CardNavButton
+					card={nextCard}
+					reversed={reversed}
+					next
+					isDisabled={disabled}
+				/>
+			</div>
 		</Page>
 	);
 }
@@ -75,9 +113,15 @@ interface CardNavButtonProps {
 	card: string | null;
 	reversed: boolean;
 	next?: boolean;
+	isDisabled?: boolean;
 }
 
-function CardNavButton({ card, reversed, next = false }: CardNavButtonProps) {
+function CardNavButton({
+	card,
+	reversed,
+	next = false,
+	isDisabled = false,
+}: CardNavButtonProps) {
 	if (!card) {
 		return (
 			<Button
@@ -95,6 +139,8 @@ function CardNavButton({ card, reversed, next = false }: CardNavButtonProps) {
 			href={cardUrl(card, reversed, true)}
 			startContent={!next && <FontAwesomeIcon icon={faChevronLeft} />}
 			endContent={next && <FontAwesomeIcon icon={faChevronRight} />}
+			color="success"
+			isDisabled={isDisabled}
 		>
 			{displayCardShortName({ name: card })}
 		</Button>
