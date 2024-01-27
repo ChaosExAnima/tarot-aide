@@ -1,8 +1,6 @@
 import { Chip, Input, InputProps } from '@nextui-org/react';
 import { useState, KeyboardEvent } from 'react';
 
-import { displayCase } from 'lib/text';
-
 interface TagPickerProps {
 	tags?: string[];
 	onChange: (tags: string[]) => void;
@@ -43,7 +41,7 @@ export default function TagPicker({
 			size="sm"
 			onClose={() => handleTags((tags) => tags.filter((t) => t !== tag))}
 		>
-			{displayCase(tag)}
+			{tag}
 		</Chip>
 	));
 
