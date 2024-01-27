@@ -21,12 +21,18 @@ export default function TagPicker({
 		});
 	};
 
-	const handleKeywordChange = (tag: string) => {
-		if (tag.endsWith(',')) {
-			handleTags((tags) => [...tags, tag.slice(0, -1).trim()]);
+	const handleKeywordChange = (text: string) => {
+		const newTags = text
+			.replaceAll(/(and|or)+/g, '')
+			.split(',')
+			.map((t) => t.trim())
+			.filter((t) => !!t); // Remove empty strings.
+
+		if (newTags.length > 1) {
+			handleTags((tags) => Array.from(new Set(tags.concat(newTags))));
 			setTagInput('');
 		} else {
-			setTagInput(tag);
+			setTagInput(text);
 		}
 	};
 	const handleBackspace = (event: KeyboardEvent) => {
