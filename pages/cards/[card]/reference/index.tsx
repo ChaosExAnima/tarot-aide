@@ -120,7 +120,7 @@ export default function EditCardReference({
 		isUpdatePending ||
 		isDeleteSuccess ||
 		isUpdateSuccess;
-	const disabled = !text || isPending;
+	const disabled = !text || !keywords.length || isPending;
 
 	return (
 		<Page
@@ -159,6 +159,7 @@ export default function EditCardReference({
 				tags={keywords}
 				onChange={setKeywords}
 				label="Keywords"
+				isRequired
 			/>
 			<Textarea
 				label="Text"
