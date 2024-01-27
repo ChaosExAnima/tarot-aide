@@ -7,7 +7,7 @@ export default function CardsIcon({ className }: ClassNameProps) {
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 24 24"
-			className={clsx('h-[1.2em]', className)}
+			className={clsx('h-[1.2em] min-w-[17px]', className)}
 		>
 			<path
 				fill="currentColor"
