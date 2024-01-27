@@ -40,12 +40,13 @@ import {
 } from 'lib/cards/utils';
 import { userFromServerContext } from 'lib/users';
 
-import type { CardPageContext, CardPageProps } from '../index';
+import type { CardPageContext } from '../index';
 import type { CardReference, GenericOrTarotCard } from 'lib/cards/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
-export interface CardReferencePageProps extends Omit<CardPageProps, 'card'> {
+export interface CardReferencePageProps {
 	card: GenericOrTarotCard;
+	reversed: boolean;
 	reference?: CardReference;
 	defaultSource?: string;
 }

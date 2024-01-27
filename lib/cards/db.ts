@@ -23,11 +23,12 @@ export async function getCardReferences(
 ) {
 	const dbReferences = await prisma.cardReference.findMany({
 		where: { card: cardName, reversed, userId },
-		orderBy: { createdAt: 'desc' },
+		orderBy: [{ starred: 'desc' }, { createdAt: 'desc' }],
 	});
 	const references = dbReferences.map(dbToCardReference);
 	if (isCard(cardName)) {
-		references.unshift(getDefaultCardReference(cardName, reversed));
+		const defaultRef = getDefaultCardReference(cardName, reversed);
+		references.push(defaultRef);
 	}
 	return references;
 }

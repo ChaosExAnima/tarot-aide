@@ -24,9 +24,14 @@ export type CardPageContext = {
 export interface CardPageProps {
 	card: LoadedRecursively<CardWithRefs>;
 	reversed: boolean;
+	defaultReference: number;
 }
 
-export default function CardPage({ card, reversed }: CardPageProps) {
+export default function CardPage({
+	card,
+	reversed,
+	defaultReference,
+}: CardPageProps) {
 	const name = displayCardFullName(card);
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 	return (
@@ -47,7 +52,7 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</p>
-			<CardReferences card={card} />
+			<CardReferences card={card} defaultId={defaultReference} />
 			<Button
 				as={Link}
 				href={cardUrl(card.name, reversed, true)}
@@ -72,6 +77,8 @@ export async function getServerSideProps(
 
 	const user = await userFromServerContext(context);
 	const reversed = context.resolvedUrl.includes('/reversed');
+	const references = await getCardReferences(card.name, reversed, user.id);
+	const lastStarred = references.find((ref) => ref.starred);
 	return {
 		props: {
 			card: {
@@ -82,6 +89,7 @@ export async function getServerSideProps(
 					user.id,
 				),
 			},
+			defaultReference: lastStarred?.id ?? 0,
 			reversed,
 		},
 	};
