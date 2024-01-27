@@ -8,7 +8,7 @@ import { userFromApiRequest } from 'lib/users';
 import { CardReferenceResponse, referenceSchema } from './index';
 
 const handler = handlerWithError<CardReferenceResponse>(
-	['GET', 'POST'],
+	['GET', 'POST', 'DELETE'],
 	async (req) => {
 		const id = z.coerce.number().parse(req.query.id);
 		const user = await userFromApiRequest(req);
@@ -17,7 +17,9 @@ const handler = handlerWithError<CardReferenceResponse>(
 			throw new ApiError(404, 'Card reference not found');
 		}
 
-		if (req.method === 'POST') {
+		if (req.method === 'DELETE') {
+			await prisma.cardReference.delete({ where: { id } });
+		} else if (req.method === 'POST') {
 			const schema = referenceSchema.parse(req.body);
 			const updatedReference = await prisma.cardReference.update({
 				where: { id },

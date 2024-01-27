@@ -1,7 +1,10 @@
 import { fetchFromApi } from 'lib/api';
 
 import type { CardReferencesResponseBody } from 'pages/api/cards/[slug]/references';
-import type { CardReferenceSchema } from 'pages/api/references';
+import type {
+	CardReferenceResponse,
+	CardReferenceSchema,
+} from 'pages/api/references';
 
 export async function queryCardReferences(
 	cardName: string,
@@ -17,8 +20,14 @@ export async function mutateUpsertCardReference(
 	reference: CardReferenceSchema,
 	id?: number,
 ) {
-	return fetchFromApi<CardReferencesResponseBody, CardReferenceSchema>(
+	return fetchFromApi<CardReferenceResponse, CardReferenceSchema>(
 		`/references${id ? `/${id}` : ''}`,
 		reference,
 	);
+}
+
+export async function mutateDeleteCardReference(id: number) {
+	return fetchFromApi<CardReferenceResponse>(`/references/${id}`, undefined, {
+		method: 'DELETE',
+	});
 }

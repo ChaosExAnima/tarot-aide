@@ -1,7 +1,9 @@
 import {
+	faCancel,
 	faChevronLeft,
 	faChevronRight,
 	faSave,
+	faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -20,8 +22,13 @@ import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
 import TagPicker from 'components/tag-picker';
-import { mutateUpsertCardReference } from 'lib/cards/api';
+import { ApiError } from 'lib/api';
+import {
+	mutateDeleteCardReference,
+	mutateUpsertCardReference,
+} from 'lib/cards/api';
 import { AllCards, MajorSuit } from 'lib/cards/constants';
+import { cardReference } from 'lib/cards/db';
 import {
 	cardUrl,
 	displayCardFullName,
@@ -30,6 +37,7 @@ import {
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
+import { userFromServerContext } from 'lib/users';
 
 import type { CardPageContext, CardPageProps } from '../index';
 import type { CardReference, GenericOrTarotCard } from 'lib/cards/types';
@@ -38,12 +46,14 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 export interface CardReferencePageProps extends Omit<CardPageProps, 'card'> {
 	card: GenericOrTarotCard;
 	reference?: CardReference;
+	defaultSource?: string;
 }
 
 export default function EditCardReference({
 	card,
 	reversed,
 	reference,
+	defaultSource = '',
 }: CardReferencePageProps) {
 	const name = displayCardFullName(card);
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
@@ -55,14 +65,18 @@ export default function EditCardReference({
 		cardIndex < AllCards.length - 1 ? AllCards[cardIndex + 1] : null;
 
 	// State management
-	const [source, setSouce] = useState(reference?.source ?? '');
+	const [source, setSouce] = useState(reference?.source ?? defaultSource);
 	const [keywords, setKeywords] = useState<string[]>(
 		reference?.keywords ?? [],
 	);
 	const [text, setText] = useState(reference?.text ?? '');
 
 	const router = useRouter();
-	const { isPending, mutate } = useMutation({
+	const {
+		isPending: isUpdatePending,
+		isSuccess: isUpdateSuccess,
+		mutate: updateReference,
+	} = useMutation({
 		mutationFn: (_dest: string) =>
 			mutateUpsertCardReference(
 				{
@@ -78,6 +92,30 @@ export default function EditCardReference({
 			router.push(dest);
 		},
 	});
+	const {
+		isPending: isDeletePending,
+		isSuccess: isDeleteSuccess,
+		mutate: deleteReference,
+	} = useMutation({
+		mutationFn: () => {
+			if (!reference) {
+				throw new Error('No reference to delete');
+			}
+			return mutateDeleteCardReference(reference.id);
+		},
+		onSuccess() {
+			router.push(cardUrl(card.name, reversed));
+		},
+		onError(err) {
+			if (err instanceof ApiError) {
+			}
+		},
+	});
+	const isPending =
+		isDeletePending ||
+		isUpdatePending ||
+		isDeleteSuccess ||
+		isUpdateSuccess;
 	const disabled = !text || isPending;
 
 	return (
@@ -129,38 +167,64 @@ export default function EditCardReference({
 					Save and:
 				</p>
 			)}
-			{isPending && <CircularProgress className="mx-auto" />}
-			<div className="flex gap-4 justify-center" role="group">
+			{isPending && (
+				<CircularProgress className="mx-auto" label="Loading…" />
+			)}
+			<div className="grid grid-cols-3 gap-4" role="group">
 				<CardNavButton
 					card={prevCard}
 					reversed={reversed}
 					isDisabled={disabled}
-					onPress={() => mutate(cardUrl(prevCard!, reversed, true))}
+					onPress={() =>
+						updateReference(cardUrl(prevCard!, reversed, true))
+					}
 				/>
-				<CardPicker
-					onPick={({ name }) => mutate(cardUrl(name, reversed, true))}
-					startContent={<CardsIcon />}
-					color="success"
-					isDisabled={disabled}
-				>
-					<span className="hidden sm:block">Jump to card</span>
-				</CardPicker>
-				{reference && <Button color="danger">Delete</Button>}
-				<Button
-					onPress={() => mutate(cardUrl(card.name, reversed))}
+				<CollapsibleButton
+					onPress={() =>
+						updateReference(cardUrl(card.name, reversed))
+					}
 					color="success"
 					isDisabled={disabled}
 					startContent={<FontAwesomeIcon icon={faSave} />}
 				>
-					<span className="hidden sm:block">Back to card</span>
-				</Button>
+					Save
+				</CollapsibleButton>
 				<CardNavButton
 					card={nextCard}
 					reversed={reversed}
 					next
 					isDisabled={disabled}
-					onPress={() => mutate(cardUrl(nextCard!, reversed, true))}
+					onPress={() =>
+						updateReference(cardUrl(nextCard!, reversed, true))
+					}
 				/>
+				<CardPicker
+					onPick={({ name }) =>
+						updateReference(cardUrl(name, reversed, true))
+					}
+					startContent={<CardsIcon />}
+					color="success"
+					isDisabled={disabled}
+					className="px-0 sm:px-unit-4 min-w-0"
+				>
+					<span className="hidden sm:block">Jump to card</span>
+				</CardPicker>
+				<CollapsibleButton
+					color="primary"
+					startContent={<FontAwesomeIcon icon={faCancel} />}
+					onPress={() => router.push(cardUrl(card.name, reversed))}
+				>
+					Cancel
+				</CollapsibleButton>
+				{reference && (
+					<CollapsibleButton
+						color="danger"
+						startContent={<FontAwesomeIcon icon={faTrash} />}
+						onPress={() => deleteReference()}
+					>
+						Delete
+					</CollapsibleButton>
+				)}
 			</div>
 		</Page>
 	);
@@ -172,6 +236,17 @@ interface CardNavButtonProps {
 	next?: boolean;
 }
 
+function CollapsibleButton({ children, className, ...props }: ButtonProps) {
+	return (
+		<Button
+			{...props}
+			className={`px-0 sm:px-unit-4 min-w-0 ${className ?? ''}`}
+		>
+			{children && <span className="hidden sm:block">{children}</span>}
+		</Button>
+	);
+}
+
 function CardNavButton({
 	card,
 	next = false,
@@ -179,25 +254,25 @@ function CardNavButton({
 }: CardNavButtonProps & ButtonProps) {
 	if (!card) {
 		return (
-			<Button
+			<CollapsibleButton
 				startContent={!next && <FontAwesomeIcon icon={faChevronLeft} />}
 				endContent={next && <FontAwesomeIcon icon={faChevronRight} />}
 				{...props}
 				isDisabled
 			>
 				{next ? 'Last card' : 'First card'}
-			</Button>
+			</CollapsibleButton>
 		);
 	}
 	return (
-		<Button
+		<CollapsibleButton
 			startContent={!next && <FontAwesomeIcon icon={faChevronLeft} />}
 			endContent={next && <FontAwesomeIcon icon={faChevronRight} />}
 			color="success"
 			{...props}
 		>
 			{displayCardShortName({ name: card })}
-		</Button>
+		</CollapsibleButton>
 	);
 }
 
@@ -212,10 +287,22 @@ export async function getServerSideProps(
 		};
 	}
 
+	let defaultSource = undefined;
+	if (context.resolvedUrl.includes('?')) {
+		const query = new URLSearchParams(context.resolvedUrl.split('?')[1]);
+		const fromId = Number.parseInt(query.get('from') ?? '');
+		const user = await userFromServerContext(context);
+		if (fromId > 0) {
+			const fromReference = await cardReference(fromId, user.id);
+			defaultSource = fromReference.source;
+		}
+	}
+
 	return {
 		props: {
 			card,
 			reversed: context.resolvedUrl.includes('/reversed'),
+			defaultSource,
 		},
 	};
 }
