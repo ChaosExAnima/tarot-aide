@@ -32,7 +32,7 @@ export async function mutateCreateSpread(
 	}
 
 	const response = await fetchFromApi<SpreadCreatedResponse>(
-		'/api/spread',
+		'/spread',
 		null,
 		{ body: formData, method: 'POST' },
 	);
@@ -44,13 +44,13 @@ export async function mutateUpdateSpread(
 	body: SpreadUpdateRequestBody,
 ) {
 	return fetchFromApi<Required<SpreadUpdateResponseBody>>(
-		`/api/spread/${spreadId}`,
+		`/spread/${spreadId}`,
 		body,
 	);
 }
 
 export async function mutateDeleteSpread(spreadId: number) {
-	return fetchFromApi(`/api/spread/${spreadId}`, null, {
+	return fetchFromApi(`/spread/${spreadId}`, null, {
 		method: 'DELETE',
 	});
 }
@@ -60,7 +60,7 @@ export async function mutateDeleteSpreadMedia(
 	type: MediaType,
 ) {
 	return fetchFromApi(
-		`/api/spread/${spreadId}/media`,
+		`/spread/${spreadId}/media`,
 		{ type },
 		{
 			method: 'DELETE',
@@ -77,7 +77,7 @@ export async function mutateUploadSpreadMedia(
 	formData.set('type', type);
 	formData.set('media', media);
 	return fetchFromApi<SpreadMediaUploadResponse>(
-		`/api/spread/${spreadId}/media`,
+		`/spread/${spreadId}/media`,
 		null,
 		{
 			body: formData,
