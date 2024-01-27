@@ -30,8 +30,9 @@ export default function OracleCardNotesEditable({
 
 	const [showRefs, setShowRefs] = useState(false);
 	const { data, isLoading } = useQuery({
-		queryKey: queryCardReferences.key([spread]),
-		queryFn: () => queryCardReferences([spread]),
+		queryKey: ['cards', 'references', spread.card?.name],
+		queryFn: () =>
+			queryCardReferences(spread.card!.name, spread.reversed, 1),
 		enabled: !!spread.card,
 	});
 	const handleNotesChange = (newNotes: string) => {
@@ -75,12 +76,11 @@ export default function OracleCardNotesEditable({
 
 			{inFocus && (
 				<div className="flex items-center">
-					<p className="grow text-content4 text-sm">
-						{spread.card &&
-							data?.references[spread.card.name][0].keywords
-								.slice(0, 3)
-								.join(', ')}
-					</p>
+					{!!data && (
+						<p className="grow text-content4 text-sm">
+							{data.references[0].keywords.slice(0, 3).join(', ')}
+						</p>
+					)}
 					<ButtonGroup>
 						{spread.card && (
 							<Button
