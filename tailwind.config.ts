@@ -31,7 +31,7 @@ module.exports = {
 							700: '#470082',
 							800: '#2b0050',
 							900: '#100020',
-							DEFAULT: '#8100e6',
+							DEFAULT: '#b14cff',
 						},
 						secondary: {
 							50: '#fffada',
