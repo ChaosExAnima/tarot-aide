@@ -4,8 +4,8 @@ import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
+import useRefresh from 'components/hooks/use-refresh';
 import MaybeLink from 'components/maybe-link';
 import { mutateUpdateCardReference } from 'lib/cards/api';
 import { cardUrl } from 'lib/cards/utils';
@@ -23,17 +23,16 @@ export function CardReferences({
 	card: { name, references },
 	defaultId = 0,
 }: CardReferenceProps) {
-	const router = useRouter();
+	const { isRefreshing, refresh } = useRefresh(references ?? []);
 	const { mutate, isPending } = useMutation({
 		mutationFn: (ref: CardReference) =>
 			mutateUpdateCardReference({ starred: !ref.starred }, ref.id),
-		onSuccess: () => {
-			router.replace(router.asPath);
-		},
+		onSuccess: refresh,
 	});
 	if (!references || !references.length) {
 		return null;
 	}
+	const isStarring = isPending || isRefreshing;
 	return (
 		<Accordion
 			as="section"
@@ -82,7 +81,7 @@ export function CardReferences({
 										<FontAwesomeIcon icon={faStar} />
 									}
 									onPress={() => mutate(ref)}
-									isLoading={isPending}
+									isDisabled={isStarring}
 									className={clsx(
 										ref.starred
 											? 'bg-secondary-800 text-secondary'
