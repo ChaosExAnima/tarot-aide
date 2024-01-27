@@ -12,11 +12,7 @@ export function CardReferences({ card: { references } }: CardReferenceProps) {
 		return null;
 	}
 	return (
-		<Accordion
-			as="section"
-			defaultExpandedKeys={[references[0].id]}
-			variant="splitted"
-		>
+		<Accordion as="section" defaultExpandedKeys={['0']} variant="splitted">
 			{references.map((ref) => {
 				const title = ref.keywords.join(', ');
 				const lines = ref.text.trim().split('\n').filter(Boolean);
