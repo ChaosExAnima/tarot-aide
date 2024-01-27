@@ -43,7 +43,7 @@ export function CardReferences({
 						aria-label={title}
 						key={ref.id}
 					>
-						<blockquote>
+						<blockquote className="flex flex-col gap-2">
 							{lines.map((line) => (
 								<p key={line}>{line}</p>
 							))}
