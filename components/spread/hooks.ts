@@ -46,12 +46,6 @@ export function useEditSpread(initial: ExistingSpread) {
 					notes: pos.notes,
 				})),
 			};
-			console.log(
-				'updatedSpread',
-				spread.positions,
-				updatedSpread.positions,
-			);
-
 			return mutateUpdateSpread(initial.id, updatedSpread);
 		},
 		async onSuccess() {

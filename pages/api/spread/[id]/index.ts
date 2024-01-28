@@ -71,11 +71,11 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 				data: {
 					...body,
 					positions: {
-						create: body.positions?.filter(
-							(pos) => !pos.id || pos.id < 0,
-						),
+						create: body.positions
+							?.filter((pos) => !pos.id || pos.id < 0)
+							.map((pos) => ({ ...pos, id: undefined })),
 						update: body.positions
-							?.filter((pos) => !!pos.id)
+							?.filter((pos) => !!pos.id && pos.id > 0)
 							.map((pos) => ({
 								where: { id: pos.id },
 								data: bodyToDb(pos),

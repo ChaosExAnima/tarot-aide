@@ -1,16 +1,12 @@
-import { faEdit, faSort, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCancel, faSave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonGroup } from '@nextui-org/react';
-import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
+import { ButtonGroup, Link } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 
 import { CollapsibleButton } from 'components/buttons/collapsible';
-import OracleCardStatic from 'components/cards/static';
-import ConfirmationModal from 'components/confirmation-modal';
 import Page from 'components/page';
 import Photo from 'components/photo';
-import { mutateDeleteSpread } from 'lib/spreads/api';
+import { cardUrl, displayCardFullName } from 'lib/cards/utils';
 import { getSpreadById } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { userFromServerContext } from 'lib/users';
@@ -22,12 +18,8 @@ export interface SpreadPageProps {
 	spread: ExistingSpread;
 }
 
-export default function SpreadPage({ spread }: SpreadPageProps) {
+export default function SpreadSortPage({ spread }: SpreadPageProps) {
 	const router = useRouter();
-	const deleteSpread = useMutation({
-		mutationFn: () => mutateDeleteSpread(spread.id),
-		onSuccess: () => router.push('/spreads'),
-	});
 	return (
 		<Page
 			breadcrumbs={[
@@ -36,6 +28,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 					label: displaySpreadName(spread),
 					href: `/spreads/${spread.id}`,
 				},
+				{ label: 'Sort', href: `/spreads/${spread.id}/sort` },
 			]}
 		>
 			<header className="flex flex-col">
@@ -43,46 +36,43 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 					<h1 className="grow font-bold text-2xl">
 						{displaySpreadName(spread)}
 					</h1>
-					<ButtonGroup isDisabled={deleteSpread.isPending}>
+					<ButtonGroup>
 						<CollapsibleButton
-							as={Link}
-							href={`/spreads/${spread.id}/edit`}
-							color="primary"
-							startContent={<FontAwesomeIcon icon={faEdit} />}
+							color="success"
+							startContent={<FontAwesomeIcon icon={faSave} />}
 						>
-							Edit
+							Save
 						</CollapsibleButton>
 						<CollapsibleButton
 							as={Link}
-							href={`/spreads/${spread.id}/sort`}
-							color="primary"
-							startContent={<FontAwesomeIcon icon={faSort} />}
+							href={`/spreads/${spread.id}`}
+							color="danger"
+							startContent={<FontAwesomeIcon icon={faCancel} />}
 						>
-							Sort
+							Cancel
 						</CollapsibleButton>
-						<ConfirmationModal
-							onConfirm={deleteSpread.mutate}
-							header="Delete this spread?"
-							body="This is permanent!"
-							startContent={<FontAwesomeIcon icon={faTrash} />}
-							className="px-0 sm:px-unit-4 min-w-unit-10"
-						>
-							<span className="hidden sm:block">Delete</span>
-						</ConfirmationModal>
 					</ButtonGroup>
 				</div>
-				{spread.notes
-					?.split('\n')
-					.filter(Boolean)
-					.map((line) => (
-						<p key={line} className="text-content4 text-sm">
-							{line.trim()}
-						</p>
-					))}
 			</header>
 			{spread.photo && <Photo photo={spread.photo} />}
-			{spread.positions.map((spread) => (
-				<OracleCardStatic key={spread.id} spread={spread} />
+			{spread.positions.map(({ id, name, card, reversed }) => (
+				<div key={id} className="flex gap-4 p-3 bg-content1 rounded-xl">
+					<div className="flex-grow">
+						{card && (
+							<Link href={cardUrl(card.name, reversed)}>
+								{displayCardFullName(card)}
+							</Link>
+						)}
+						{name && card ? (
+							<span className="text-content4 ml-2">{name}</span>
+						) : (
+							name
+						)}
+					</div>
+					{reversed && (
+						<span className="text-content4">Reversed</span>
+					)}
+				</div>
 			))}
 		</Page>
 	);
