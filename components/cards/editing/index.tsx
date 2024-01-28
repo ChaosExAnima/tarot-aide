@@ -1,4 +1,5 @@
 import { Card } from '@nextui-org/react';
+import { useState } from 'react';
 
 import OracleCardHeader from './header';
 import OracleCardNotes from './notes';
@@ -12,10 +13,11 @@ export interface OracleCardEditingProps extends OracleCardBaseProps {
 }
 
 export default function OracleCardEditing(props: OracleCardEditingProps) {
+	const [card, setCard] = useState(props.spread.card ?? null);
 	return (
 		<Card className="w-full">
-			<OracleCardHeader {...props} />
-			<OracleCardNotes {...props} />
+			<OracleCardHeader {...props} card={card} setCard={setCard} />
+			<OracleCardNotes {...props} card={card} />
 		</Card>
 	);
 }

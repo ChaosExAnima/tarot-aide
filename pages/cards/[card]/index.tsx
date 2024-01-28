@@ -78,7 +78,7 @@ export async function getServerSideProps(
 	const user = await userFromServerContext(context);
 	const reversed = context.resolvedUrl.includes('/reversed');
 	const references = await getCardReferences(card.name, reversed, user.id);
-	const lastStarred = references.find((ref) => ref.starred);
+	const firstStarred = references.find((ref) => ref.starred);
 	return {
 		props: {
 			card: {
@@ -89,7 +89,7 @@ export async function getServerSideProps(
 					user.id,
 				),
 			},
-			defaultReference: lastStarred?.id ?? 0,
+			defaultReference: firstStarred?.id ?? 0,
 			reversed,
 		},
 	};

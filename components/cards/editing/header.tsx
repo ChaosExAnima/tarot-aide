@@ -5,6 +5,7 @@ import { useState } from 'react';
 import CardName from 'components/card-name';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
+import { GenericCard } from 'lib/cards/types';
 
 import { OracleCardEditingProps } from './index';
 
@@ -12,9 +13,13 @@ export default function OracleCardHeaderEditing({
 	spread,
 	onSave,
 	isCardAllowed = true,
-}: OracleCardEditingProps) {
+	card,
+	setCard,
+}: OracleCardEditingProps & {
+	card: GenericCard | null;
+	setCard: (card: GenericCard | null) => void;
+}) {
 	const [editName, setEditName] = useState(spread.name ?? '');
-	const [card, setCard] = useState(spread.card ?? null);
 	const [reversed, setReversed] = useState(spread.reversed ?? false);
 	const nameChangeHandler = (newName: string) => {
 		setEditName(newName);

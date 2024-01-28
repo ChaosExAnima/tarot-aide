@@ -1,6 +1,6 @@
 import { fetchFromApi } from 'lib/api';
 
-import type { CardReferencesResponseBody } from 'pages/api/cards/[slug]/references';
+import type { CardReferencesResponse } from 'pages/api/cards/[slug]/references';
 import type {
 	CardReferenceResponse,
 	CardReferenceSchema,
@@ -11,7 +11,7 @@ export async function queryCardReferences(
 	reversed = false,
 	limit = 0,
 ) {
-	return fetchFromApi<CardReferencesResponseBody>(
+	return fetchFromApi<CardReferencesResponse>(
 		`/cards/${cardName}/references?reversed=${reversed}&limit=${limit}`,
 	);
 }

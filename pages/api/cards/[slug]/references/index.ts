@@ -6,19 +6,25 @@ import { userFromApiRequest } from 'lib/users';
 
 import type { CardReference } from 'lib/cards/types';
 
-export interface CardReferencesResponseBody extends ResponseBody {
+export interface CardReferencesResponse extends ResponseBody {
 	references: CardReference[];
+	defaultReference: number;
 }
 
-const handler = handlerWithError<CardReferencesResponseBody>(
+const handler = handlerWithError<CardReferencesResponse>(
 	['GET'],
 	async (req) => {
-		const name = z.coerce.string().parse(req.query.slug);
+		const name = z.coerce
+			.string()
+			.parse(req.query.slug)
+			.replaceAll('-', ' ');
 		const user = await userFromApiRequest(req);
 		const references = await getCardReferences(name, false, user.id);
+		const firstStarred = references.find((ref) => ref.starred);
 		return {
 			success: true,
 			references,
+			defaultReference: firstStarred?.id ?? 0,
 		};
 	},
 );

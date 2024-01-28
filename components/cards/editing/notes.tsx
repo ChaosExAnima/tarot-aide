@@ -10,7 +10,7 @@ import {
 	Textarea,
 } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import clsx from 'clsx';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import { queryCardReferences } from 'lib/cards/api';
@@ -20,20 +20,23 @@ import { CardReferences } from '../references';
 
 import { OracleCardEditingProps } from './index';
 
+import type { GenericCard } from 'lib/cards/types';
+import type { Nullable } from 'lib/types';
+
 export default function OracleCardNotesEditable({
 	spread,
 	onSave,
-}: OracleCardEditingProps) {
+	card,
+}: OracleCardEditingProps & { card: Nullable<GenericCard> }) {
 	const notes = spread?.notes ?? '';
 	const [inFocus, setInFocus] = useState(false);
 	const [editNotes, setEditNotes] = useState(notes);
 
 	const [showRefs, setShowRefs] = useState(false);
-	const { data, isLoading } = useQuery({
-		queryKey: ['cards', 'references', spread.card?.name],
-		queryFn: () =>
-			queryCardReferences(spread.card!.name, spread.reversed, 1),
-		enabled: !!spread.card,
+	const { data: cardRefs, isLoading } = useQuery({
+		queryKey: ['cards', 'references', card?.name, spread.reversed ?? false],
+		queryFn: () => queryCardReferences(card!.name, spread.reversed),
+		enabled: !!card,
 	});
 	const handleNotesChange = (newNotes: string) => {
 		setEditNotes(newNotes);
@@ -53,31 +56,38 @@ export default function OracleCardNotesEditable({
 				onFocus={() => setInFocus(true)}
 				onBlur={() => setInFocus(false)}
 			/>
-			<div
-				className={clsx(
-					'items-center flex overflow-hidden transition-height',
-					!inFocus && 'h-0 delay-500',
-					inFocus && 'h-14 pt-4',
-				)}
+			<motion.div
+				initial={{ height: 0 }}
+				animate={{ height: inFocus ? 56 : 0 }}
+				exit={{ height: 0 }}
+				transition={{
+					ease: 'easeIn',
+					delay: inFocus ? 0 : 0.7,
+				}}
+				className="overflow-hidden"
 			>
-				{!!data && (
-					<p className="grow text-content4 text-sm">
-						{data.references[0].keywords.slice(0, 3).join(', ')}
-					</p>
-				)}
-				{spread.card && (
-					<Button
-						isIconOnly
-						onPress={() => setShowRefs(true)}
-						isLoading={isLoading}
-						isDisabled={isLoading}
-					>
-						<FontAwesomeIcon icon={faQuestion} />
-					</Button>
-				)}
-			</div>
+				<div className="mt-4 flex gap-4 items-center">
+					{!!cardRefs && (
+						<p className="grow text-content4 text-sm">
+							{cardRefs.references[0].keywords
+								.slice(0, 3)
+								.join(', ')}
+						</p>
+					)}
+					{spread.card && (
+						<Button
+							isIconOnly
+							onPress={() => setShowRefs(true)}
+							isLoading={isLoading}
+							isDisabled={isLoading}
+						>
+							<FontAwesomeIcon icon={faQuestion} />
+						</Button>
+					)}
+				</div>
+			</motion.div>
 
-			{spread.card && (
+			{card && (
 				<Modal
 					isOpen={showRefs}
 					onOpenChange={setShowRefs}
@@ -85,14 +95,23 @@ export default function OracleCardNotesEditable({
 					backdrop="blur"
 					classNames={{
 						wrapper: 'top-10',
+						base: 'bg-transparent shadow-none rounded-none',
+						body: 'px-0',
+						header: 'bg-content1 rounded-xl shadow-medium mx-2',
+						closeButton: 'top-[calc(30px-(1em))] right-4',
 					}}
 				>
 					<ModalContent>
 						<ModalHeader>
-							References for {displayCardFullName(spread.card)}
+							References for {displayCardFullName(card)}
 						</ModalHeader>
 						<ModalBody>
-							<CardReferences card={spread.card} />
+							<CardReferences
+								card={{
+									...card,
+									...cardRefs,
+								}}
+							/>
 						</ModalBody>
 					</ModalContent>
 				</Modal>
