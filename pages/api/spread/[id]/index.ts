@@ -27,7 +27,7 @@ export const spreadSchema = z.object({
 		})
 		.optional(),
 	notes: z.string().optional().nullable(),
-	positions: z.array(positionSchema),
+	positions: z.array(positionSchema).optional(),
 });
 
 export type SpreadUpdateRequest = z.infer<typeof spreadSchema>;

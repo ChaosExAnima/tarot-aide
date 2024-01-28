@@ -1,19 +1,23 @@
 import { Card } from '@nextui-org/react';
 import { useState } from 'react';
 
+import { GenericCard } from 'lib/cards/types';
+
 import OracleCardHeader from './header';
 import OracleCardNotes from './notes';
 
 import type { OracleCardBaseProps } from '../types';
-import type { FilledSpreadPosition } from 'lib/spreads/types';
+import type { SpreadPosition } from 'lib/spreads/types';
 
 export interface OracleCardEditingProps extends OracleCardBaseProps {
-	onSave: (spread: FilledSpreadPosition) => void;
+	onSave: (spread: SpreadPosition) => void;
 	isCardAllowed?: boolean;
 }
 
 export default function OracleCardEditing(props: OracleCardEditingProps) {
-	const [card, setCard] = useState(props.spread.card ?? null);
+	const [card, setCard] = useState<null | GenericCard>(
+		props.spread.card ?? null,
+	);
 	return (
 		<Card className="w-full group">
 			<OracleCardHeader {...props} card={card} setCard={setCard} />

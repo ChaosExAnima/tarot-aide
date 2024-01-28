@@ -39,7 +39,7 @@ export interface PatternSpread extends GenericSpread {
 export interface ExistingSpread extends GenericSpread {
 	id: number;
 	date: Date;
-	positions: FilledSpreadPosition[];
+	positions: SpreadPosition[];
 	notes?: Nullable<string>;
 	photo?: Nullable<Photo>;
 	audio?: Nullable<Audio>;

@@ -1,5 +1,3 @@
-import { stringify } from 'superjson';
-
 import { fetchFromApi } from 'lib/api';
 import { MediaType } from 'lib/media';
 
@@ -10,30 +8,8 @@ import type {
 } from 'pages/api/spread/[id]';
 import type { SpreadMediaUploadResponse } from 'pages/api/spread/[id]/media';
 
-export async function mutateCreateSpread(
-	{ name, positions = [], date }: SpreadUpdateRequest,
-	photo: Blob | null,
-) {
-	const formData = new FormData();
-	formData.append('date', stringify(date));
-	if (name) {
-		formData.append('name', name);
-	}
-
-	for (const position of positions) {
-		formData.append('positions', JSON.stringify(position));
-	}
-
-	if (photo) {
-		formData.append('photo', photo);
-	}
-
-	const response = await fetchFromApi<SpreadCreatedResponse>(
-		'/spread',
-		null,
-		{ body: formData, method: 'POST' },
-	);
-	return response;
+export function mutateCreateSpread() {
+	return fetchFromApi<SpreadCreatedResponse>('/spread', {});
 }
 
 export async function mutateUpdateSpread(

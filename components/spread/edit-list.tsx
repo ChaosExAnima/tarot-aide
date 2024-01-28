@@ -2,11 +2,11 @@ import CardPicker from 'components/card-picker';
 import OracleCardEditing from 'components/cards/editing';
 import { GenericCard } from 'lib/cards/types';
 
-import type { FilledSpreadPosition } from 'lib/spreads/types';
+import type { SpreadPosition } from 'lib/spreads/types';
 
 interface EditSpreadListProps {
-	positions: FilledSpreadPosition[];
-	onUpdate: (positions: FilledSpreadPosition[]) => void;
+	positions: SpreadPosition[];
+	onUpdate: (positions: SpreadPosition[]) => void;
 	isDisabled?: boolean;
 }
 
@@ -15,7 +15,7 @@ export default function EditSpreadList({
 	onUpdate,
 	isDisabled,
 }: EditSpreadListProps) {
-	const updatePosition = (updatedPosition: FilledSpreadPosition) => {
+	const updatePosition = (updatedPosition: SpreadPosition) => {
 		const newPositions = positions.map((position) =>
 			position.id === updatedPosition.id ? updatedPosition : position,
 		);
@@ -29,7 +29,9 @@ export default function EditSpreadList({
 			<CardPicker
 				color="primary"
 				onPick={addPosition}
-				disabledCards={positions.map(({ card }) => card.name)}
+				disabledCards={positions
+					.map(({ card }) => card?.name)
+					.filter((c): c is string => !!c)}
 				isDisabled={isDisabled}
 			>
 				Add Card

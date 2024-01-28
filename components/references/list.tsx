@@ -8,8 +8,8 @@ import {
 } from '@nextui-org/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import Link from 'next/link';
 
+import ButtonLink from 'components/button-link';
 import MaybeLink from 'components/maybe-link';
 import { useCardReferences } from 'components/references/hooks';
 import { mutateUpdateCardReference } from 'lib/cards/api';
@@ -74,8 +74,7 @@ export default function ReferencesList({
 						</blockquote>
 						{ref.id > 0 && (
 							<div className="flex gap-2 justify-end">
-								<Button
-									as={Link}
+								<ButtonLink
 									href={`${cardUrl(name, false, true)}/${
 										ref.id
 									}`}
@@ -85,7 +84,7 @@ export default function ReferencesList({
 									className="ml-auto bg-primary-500"
 								>
 									Edit
-								</Button>
+								</ButtonLink>
 								<Button
 									startContent={
 										<FontAwesomeIcon icon={faStar} />
