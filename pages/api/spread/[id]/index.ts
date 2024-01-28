@@ -66,6 +66,23 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 				body.positions
 					?.map(({ id }) => id)
 					.filter((id): id is number => !!id && id > 0) ?? [];
+			let positions = undefined;
+			if (body.positions) {
+				positions = {
+					create: body.positions
+						.filter((pos) => !pos.id || pos.id < 0)
+						.map((pos) => ({ ...pos, id: undefined })),
+					update: body.positions
+						.filter((pos) => !!pos.id && pos.id > 0)
+						.map((pos) => ({
+							where: { id: pos.id },
+							data: bodyToDb(pos),
+						})),
+					delete: spread.positions.filter(
+						(pos) => !updatePositionIds.includes(pos.id),
+					),
+				};
+			}
 			spread = await prisma.spread.update({
 				where: {
 					id: Number(spreadId),
@@ -73,20 +90,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 				},
 				data: {
 					...body,
-					positions: {
-						create: body.positions
-							?.filter((pos) => !pos.id || pos.id < 0)
-							.map((pos) => ({ ...pos, id: undefined })),
-						update: body.positions
-							?.filter((pos) => !!pos.id && pos.id > 0)
-							.map((pos) => ({
-								where: { id: pos.id },
-								data: bodyToDb(pos),
-							})),
-						delete: spread.positions.filter(
-							(pos) => !updatePositionIds.includes(pos.id),
-						),
-					},
+					positions,
 				},
 				include: { positions: true, media: true },
 			});
