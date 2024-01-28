@@ -10,6 +10,7 @@ import {
 	Textarea,
 } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { useState } from 'react';
 
 import { queryCardReferences } from 'lib/cards/api';
@@ -43,7 +44,7 @@ export default function OracleCardNotesEditable({
 	};
 
 	return (
-		<CardBody className="gap-4">
+		<CardBody className="gap-0">
 			<Textarea
 				minRows={1}
 				placeholder="Notes go here"
@@ -52,6 +53,30 @@ export default function OracleCardNotesEditable({
 				onFocus={() => setInFocus(true)}
 				onBlur={() => setInFocus(false)}
 			/>
+			<div
+				className={clsx(
+					'items-center flex overflow-hidden transition-height',
+					!inFocus && 'h-0 delay-500',
+					inFocus && 'h-14 pt-4',
+				)}
+			>
+				{!!data && (
+					<p className="grow text-content4 text-sm">
+						{data.references[0].keywords.slice(0, 3).join(', ')}
+					</p>
+				)}
+				{spread.card && (
+					<Button
+						isIconOnly
+						onPress={() => setShowRefs(true)}
+						isLoading={isLoading}
+						isDisabled={isLoading}
+					>
+						<FontAwesomeIcon icon={faQuestion} />
+					</Button>
+				)}
+			</div>
+
 			{spread.card && (
 				<Modal
 					isOpen={showRefs}
@@ -71,26 +96,6 @@ export default function OracleCardNotesEditable({
 						</ModalBody>
 					</ModalContent>
 				</Modal>
-			)}
-
-			{inFocus && (
-				<div className="flex items-center">
-					{!!data && (
-						<p className="grow text-content4 text-sm">
-							{data.references[0].keywords.slice(0, 3).join(', ')}
-						</p>
-					)}
-					{spread.card && (
-						<Button
-							isIconOnly
-							onPress={() => setShowRefs(true)}
-							isLoading={isLoading}
-							isDisabled={isLoading}
-						>
-							<FontAwesomeIcon icon={faQuestion} />
-						</Button>
-					)}
-				</div>
 			)}
 		</CardBody>
 	);
