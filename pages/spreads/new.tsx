@@ -5,14 +5,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import CardPicker from 'components/card-picker';
 import DatePicker from 'components/date-picker';
 import Page from 'components/page';
 import EditSpreadList from 'components/spread/edit-list';
 import UploadControls from 'components/upload';
 import { mutateCreateSpread } from 'lib/spreads/api';
 
-import type { GenericCard } from 'lib/cards/types';
 import type { FilledSpreadPosition } from 'lib/spreads/types';
 
 export default function NewSpreadPage() {
@@ -40,9 +38,6 @@ export default function NewSpreadPage() {
 	});
 	const disable = saveSpread.isPending || saveSpread.isSuccess;
 
-	const addPosition = (card: GenericCard) => {
-		setPositions((positions) => [...positions, { card }]);
-	};
 	return (
 		<Page>
 			{saveSpread.isError && (
@@ -73,15 +68,6 @@ export default function NewSpreadPage() {
 				</Button>
 			</section>
 			<UploadControls onSelect={setPhoto} isDisabled={disable} />
-
-			<CardPicker
-				color="primary"
-				onPick={addPosition}
-				disabledCards={positions.map(({ card }) => card.name)}
-				isDisabled={disable}
-			>
-				Add Card
-			</CardPicker>
 
 			<section className="flex flex-col gap-4">
 				<EditSpreadList

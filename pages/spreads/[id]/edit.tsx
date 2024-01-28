@@ -130,6 +130,7 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 					isDisabled={uploadMedia.isPending}
 				/>
 			)}
+
 			<EditSpreadList
 				positions={spread.positions}
 				onUpdate={set('positions')}
