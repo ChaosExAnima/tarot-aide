@@ -21,6 +21,13 @@ export default function OracleCardHeaderEditing({
 }) {
 	const [editName, setEditName] = useState(spread.name ?? '');
 	const [reversed, setReversed] = useState(spread.reversed ?? false);
+	const cardPickHandler = (card: GenericCard) => {
+		setCard(card);
+		onSave({
+			...spread,
+			card,
+		});
+	};
 	const nameChangeHandler = (newName: string) => {
 		setEditName(newName);
 		if (!newName || (!card && !isCardAllowed)) {
@@ -43,7 +50,7 @@ export default function OracleCardHeaderEditing({
 		<CardHeader className="gap-2 pb-0">
 			{isCardAllowed && (
 				<CardPicker
-					onPick={setCard}
+					onPick={cardPickHandler}
 					disabledCards={card ? [card.name] : []}
 					isIconOnly={!card}
 					className={clsx(
