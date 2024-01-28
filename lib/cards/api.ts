@@ -12,7 +12,9 @@ export async function queryCardReferences(
 	limit = 0,
 ) {
 	return fetchFromApi<CardReferencesResponse>(
-		`/cards/${cardName}/references?reversed=${reversed}&limit=${limit}`,
+		`/cards/${cardName}/references?reversed=${
+			reversed ? '1' : '0'
+		}&limit=${limit}`,
 	);
 }
 

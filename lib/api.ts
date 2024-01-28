@@ -151,3 +151,7 @@ export function headersFromRequest(
 	}
 	return headers;
 }
+
+export function urlToQueryParams(url: string) {
+	return new URLSearchParams(url.split('?')[1]);
+}

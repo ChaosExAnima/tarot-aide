@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { ResponseBody, handlerWithError } from 'lib/api';
+import { ResponseBody, handlerWithError, urlToQueryParams } from 'lib/api';
 import { getCardReferences } from 'lib/cards/db';
 import { userFromApiRequest } from 'lib/users';
 
@@ -18,8 +18,10 @@ const handler = handlerWithError<CardReferencesResponse>(
 			.string()
 			.parse(req.query.slug)
 			.replaceAll('-', ' ');
+		const query = urlToQueryParams(req.url ?? '');
+		const reversed = query.get('reversed') === '1';
 		const user = await userFromApiRequest(req);
-		const references = await getCardReferences(name, false, user.id);
+		const references = await getCardReferences(name, reversed, user.id);
 		const firstStarred = references.find((ref) => ref.starred);
 		return {
 			success: true,

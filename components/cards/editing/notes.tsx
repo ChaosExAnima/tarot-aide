@@ -104,6 +104,7 @@ export default function OracleCardNotesEditable({
 					<ModalContent>
 						<ModalHeader>
 							References for {displayCardFullName(card)}
+							{spread.reversed && ' (reversed)'}
 						</ModalHeader>
 						<ModalBody>
 							<CardReferences

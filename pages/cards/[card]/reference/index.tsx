@@ -22,7 +22,7 @@ import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
 import Page from 'components/page';
 import TagPicker from 'components/tag-picker';
-import { ApiError } from 'lib/api';
+import { ApiError, urlToQueryParams } from 'lib/api';
 import {
 	mutateCreateCardReference,
 	mutateDeleteCardReference,
@@ -294,7 +294,7 @@ export async function getServerSideProps(
 
 	let defaultSource = undefined;
 	if (context.resolvedUrl.includes('?')) {
-		const query = new URLSearchParams(context.resolvedUrl.split('?')[1]);
+		const query = urlToQueryParams(context.resolvedUrl);
 		const fromId = Number.parseInt(query.get('from') ?? '');
 		const user = await userFromServerContext(context);
 		if (fromId > 0) {
