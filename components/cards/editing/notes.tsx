@@ -69,9 +69,9 @@ export default function OracleCardNotesEditable({
 				<div className="mt-4 flex gap-4 items-center">
 					{!!cardRefs && (
 						<p className="grow text-content4 text-sm">
-							{cardRefs.references[0].keywords
-								.slice(0, 3)
-								.join(', ')}
+							{cardRefs.references
+								.find((r) => r.id === cardRefs.defaultReference)
+								?.keywords.join(', ')}
 						</p>
 					)}
 					{spread.card && (

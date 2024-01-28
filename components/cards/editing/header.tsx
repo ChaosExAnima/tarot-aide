@@ -40,7 +40,7 @@ export default function OracleCardHeaderEditing({
 		});
 	};
 	return (
-		<CardHeader className="gap-2">
+		<CardHeader className="gap-2 pb-0">
 			{isCardAllowed && (
 				<CardPicker
 					onPick={setCard}
