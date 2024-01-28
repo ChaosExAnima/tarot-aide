@@ -43,13 +43,12 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 	}
 	const user = await userFromApiRequest(req);
 	const userId = user.id;
-	let spread = null;
+	let spread = await prisma.spread.findFirstOrThrow({
+		where: { id: spreadId, userId },
+		include: { positions: true, media: true },
+	});
 	switch (req.method) {
 		case 'GET':
-			spread = await prisma.spread.findFirstOrThrow({
-				where: { id: spreadId, userId },
-				include: { positions: true, media: true },
-			});
 			break;
 		case 'DELETE':
 			await prisma.spread.delete({
@@ -63,6 +62,10 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 		case 'PATCH':
 		case 'POST':
 			const body = spreadSchema.parse(req.body);
+			const updatePositionIds =
+				body.positions
+					?.map(({ id }) => id)
+					.filter((id): id is number => !!id && id > 0) ?? [];
 			spread = await prisma.spread.update({
 				where: {
 					id: Number(spreadId),
@@ -80,6 +83,9 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 								where: { id: pos.id },
 								data: bodyToDb(pos),
 							})),
+						delete: spread.positions.filter(
+							(pos) => !updatePositionIds.includes(pos.id),
+						),
 					},
 				},
 				include: { positions: true, media: true },
