@@ -22,7 +22,7 @@ export default function EditSpreadList({
 		onUpdate(newPositions);
 	};
 	const addPosition = (card: GenericCard) => {
-		onUpdate([...positions, { card }]);
+		onUpdate([...positions, { card, id: positions.length * -1 }]);
 	};
 	return (
 		<>
