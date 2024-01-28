@@ -136,10 +136,7 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 				/>
 			)}
 
-			<EditSpreadList
-				positions={spread.positions}
-				onUpdate={set('positions')}
-			/>
+			<EditSpreadList spread={spread} onUpdate={set('positions')} />
 		</Page>
 	);
 }

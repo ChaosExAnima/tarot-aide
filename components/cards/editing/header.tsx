@@ -10,7 +10,7 @@ import { GenericCard } from 'lib/cards/types';
 import { OracleCardEditingProps } from './index';
 
 export default function OracleCardHeaderEditing({
-	spread,
+	position: spread,
 	onSave,
 	card,
 	setCard,

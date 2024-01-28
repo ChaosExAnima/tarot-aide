@@ -1,7 +1,10 @@
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CardBody, Textarea } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import ConfirmationModal from 'components/confirmation-modal';
 import ReferencesModal from 'components/references/modal';
 import { queryCardReferences } from 'lib/cards/api';
 
@@ -11,22 +14,28 @@ import type { GenericCard } from 'lib/cards/types';
 import type { Nullable } from 'lib/types';
 
 export default function OracleCardNotesEditable({
-	spread,
+	position,
 	onSave,
+	onDelete,
 	card,
 }: OracleCardEditingProps & { card: Nullable<GenericCard> }) {
-	const notes = spread?.notes ?? '';
+	const notes = position?.notes ?? '';
 	const [editNotes, setEditNotes] = useState(notes);
 
 	const { data: cardRefs } = useQuery({
-		queryKey: ['cards', 'references', card?.name, spread.reversed ?? false],
-		queryFn: () => queryCardReferences(card!.name, spread.reversed),
+		queryKey: [
+			'cards',
+			'references',
+			card?.name,
+			position.reversed ?? false,
+		],
+		queryFn: () => queryCardReferences(card!.name, position.reversed),
 		enabled: !!card,
 	});
 	const handleNotesChange = (newNotes: string) => {
 		setEditNotes(newNotes);
 		onSave({
-			...spread,
+			...position,
 			notes: newNotes,
 		});
 	};
@@ -51,8 +60,17 @@ export default function OracleCardNotesEditable({
 					{card && (
 						<ReferencesModal
 							card={card}
-							reversed={spread.reversed}
+							reversed={position.reversed}
 						/>
+					)}
+					{onDelete && (
+						<ConfirmationModal
+							onConfirm={() => onDelete(position)}
+							isIconOnly
+							body="This will permanently delete this position."
+						>
+							<FontAwesomeIcon icon={faTrash} />
+						</ConfirmationModal>
 					)}
 				</div>
 			</div>

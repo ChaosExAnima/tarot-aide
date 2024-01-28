@@ -6,7 +6,7 @@ import { cardUrl, displayCardFullName } from 'lib/cards/utils';
 import type { OracleCardBaseProps } from '../types';
 
 export default function OracleCardStatic({
-	spread: { card, notes, name: spreadName, reversed },
+	position: { card, notes, name: spreadName, reversed },
 }: OracleCardBaseProps) {
 	return (
 		<Card className="w-full">

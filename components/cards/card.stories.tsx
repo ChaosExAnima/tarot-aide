@@ -18,7 +18,7 @@ type Story = StoryObj<typeof OracleCardEditing>;
 
 export const EmptySpread: Story = {
 	args: {
-		spread: {
+		position: {
 			name: '',
 		},
 	},
@@ -27,7 +27,7 @@ export const EmptySpread: Story = {
 export const TemplateSpread: Story = {
 	args: {
 		isCardAllowed: false,
-		spread: {
+		position: {
 			name: 'Past',
 		},
 	},
@@ -35,7 +35,7 @@ export const TemplateSpread: Story = {
 
 export const FilledSpread: Story = {
 	args: {
-		spread: {
+		position: {
 			name: 'Past',
 			card: {
 				name: 'fool',
@@ -47,7 +47,7 @@ export const FilledSpread: Story = {
 
 export const StaticSpread: Story = {
 	args: {
-		spread: {
+		position: {
 			name: 'Past',
 			card: {
 				name: 'fool',
