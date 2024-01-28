@@ -10,8 +10,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import useCardReferences from 'components/hooks/use-references';
 import MaybeLink from 'components/maybe-link';
+import { useCardReferences } from 'components/references/hooks';
 import { mutateUpdateCardReference } from 'lib/cards/api';
 import { cardUrl } from 'lib/cards/utils';
 import { displayDomain } from 'lib/text';
