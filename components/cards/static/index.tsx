@@ -1,8 +1,9 @@
 import { Card, CardBody, CardHeader, Divider } from '@nextui-org/react';
 
+import ReferencesModal from 'components/references-modal';
 import { displayCardFullName } from 'lib/cards/utils';
 
-import { OracleCardBaseProps } from '../types';
+import type { OracleCardBaseProps } from '../types';
 
 export default function OracleCardStatic({
 	spread: { card, notes, name: spreadName, reversed },
@@ -19,6 +20,7 @@ export default function OracleCardStatic({
 					)}
 				</div>
 				{reversed && <span className="text-content4">Reversed</span>}
+				<ReferencesModal card={card} reversed={reversed} />
 			</CardHeader>
 			{notes && <Divider />}
 			{notes && (
