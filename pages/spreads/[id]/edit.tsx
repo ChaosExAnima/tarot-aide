@@ -5,21 +5,23 @@ import {
 	faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input, Textarea, ButtonGroup, Button } from '@nextui-org/react';
+import { Input, Textarea, ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 
+import { CollapsibleButton } from 'components/buttons/collapsible';
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
 import Page from 'components/page';
 import Photo from 'components/photo';
+import EditSpreadList from 'components/spread/edit-list';
 import { useEditSpread } from 'components/spread/hooks';
-import SpreadList from 'components/spread/list';
 import UploadControls from 'components/upload';
 import {
 	mutateDeleteSpreadMedia,
 	mutateUploadSpreadMedia,
 } from 'lib/spreads/api';
+import { displaySpreadName } from 'lib/spreads/utils';
 import { displayDate } from 'lib/text';
 
 import type { SpreadPageProps } from './index';
@@ -43,7 +45,11 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 		<Page
 			breadcrumbs={[
 				{ label: 'Spreads', href: '/spreads' },
-				{ label: initial.name, href: `/spreads/${initial.id}` },
+				{
+					label: displaySpreadName(spread),
+					href: `/spreads/${initial.id}`,
+					disabled: !spread.name,
+				},
 				{ label: 'Edit', href: `/spreads/${initial.id}/edit` },
 			]}
 		>
@@ -82,23 +88,22 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 						isDisabled={disable}
 						className="grow justify-end"
 					>
-						<Button
+						<CollapsibleButton
 							onPress={save}
-							isLoading={disable}
 							color="success"
-							isDisabled={!dirty}
-							isIconOnly
+							isDisabled={!dirty || disable}
+							startContent={<FontAwesomeIcon icon={faSave} />}
 						>
-							<FontAwesomeIcon icon={faSave} />
-						</Button>
-						<Button
+							Save
+						</CollapsibleButton>
+						<CollapsibleButton
 							as={Link}
 							href={`/spreads/${spread.id}`}
 							color="danger"
-							isIconOnly
+							startContent={<FontAwesomeIcon icon={faCancel} />}
 						>
-							<FontAwesomeIcon icon={faCancel} />
-						</Button>
+							Cancel
+						</CollapsibleButton>
 					</ButtonGroup>
 				</div>
 				{issues('date') && (
@@ -130,7 +135,8 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 					isDisabled={uploadMedia.isPending}
 				/>
 			)}
-			<SpreadList
+
+			<EditSpreadList
 				positions={spread.positions}
 				onUpdate={set('positions')}
 			/>

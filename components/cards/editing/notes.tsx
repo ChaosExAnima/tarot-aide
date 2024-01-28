@@ -1,38 +1,27 @@
-import { faQuestion } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-	Button,
-	ButtonGroup,
-	CardBody,
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalHeader,
-	Textarea,
-} from '@nextui-org/react';
+import { CardBody, Textarea } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import ReferencesModal from 'components/references/modal';
 import { queryCardReferences } from 'lib/cards/api';
-import { displayCardFullName } from 'lib/cards/utils';
-
-import { CardReferences } from '../references';
 
 import { OracleCardEditingProps } from './index';
+
+import type { GenericCard } from 'lib/cards/types';
+import type { Nullable } from 'lib/types';
 
 export default function OracleCardNotesEditable({
 	spread,
 	onSave,
-}: OracleCardEditingProps) {
+	card,
+}: OracleCardEditingProps & { card: Nullable<GenericCard> }) {
 	const notes = spread?.notes ?? '';
-	const [inFocus, setInFocus] = useState(false);
 	const [editNotes, setEditNotes] = useState(notes);
 
-	const [showRefs, setShowRefs] = useState(false);
-	const { data, isLoading } = useQuery({
-		queryKey: queryCardReferences.key([spread]),
-		queryFn: () => queryCardReferences([spread]),
-		enabled: !!spread.card,
+	const { data: cardRefs } = useQuery({
+		queryKey: ['cards', 'references', card?.name, spread.reversed ?? false],
+		queryFn: () => queryCardReferences(card!.name, spread.reversed),
+		enabled: !!card,
 	});
 	const handleNotesChange = (newNotes: string) => {
 		setEditNotes(newNotes);
@@ -43,58 +32,30 @@ export default function OracleCardNotesEditable({
 	};
 
 	return (
-		<CardBody className="gap-4">
+		<CardBody className="gap-0">
 			<Textarea
 				minRows={1}
 				placeholder="Notes go here"
 				value={editNotes}
 				onValueChange={handleNotesChange}
-				onFocus={() => setInFocus(true)}
-				onBlur={() => setInFocus(false)}
 			/>
-			{spread.card && (
-				<Modal
-					isOpen={showRefs}
-					onOpenChange={setShowRefs}
-					placement="top-center"
-					backdrop="blur"
-					classNames={{
-						wrapper: 'top-10',
-					}}
-				>
-					<ModalContent>
-						<ModalHeader>
-							References for {displayCardFullName(spread.card)}
-						</ModalHeader>
-						<ModalBody>
-							<CardReferences card={spread.card} />
-						</ModalBody>
-					</ModalContent>
-				</Modal>
-			)}
-
-			{inFocus && (
-				<div className="flex items-center">
-					<p className="grow text-content4 text-sm">
-						{spread.card &&
-							data?.references[spread.card.name][0].keywords
-								.slice(0, 3)
-								.join(', ')}
-					</p>
-					<ButtonGroup>
-						{spread.card && (
-							<Button
-								isIconOnly
-								onPress={() => setShowRefs(true)}
-								isLoading={isLoading}
-								isDisabled={isLoading}
-							>
-								<FontAwesomeIcon icon={faQuestion} />
-							</Button>
-						)}
-					</ButtonGroup>
+			<div className="overflow-hidden transition-height delay-700 h-0 group-focus-within:h-14 group-focus-within:delay-0">
+				<div className="mt-4 flex gap-4 items-center">
+					{!!cardRefs && (
+						<p className="grow text-content4 text-sm">
+							{cardRefs.references
+								.find((r) => r.id === cardRefs.defaultReference)
+								?.keywords.join(', ')}
+						</p>
+					)}
+					{card && (
+						<ReferencesModal
+							card={card}
+							reversed={spread.reversed}
+						/>
+					)}
 				</div>
-			)}
+			</div>
 		</CardBody>
 	);
 }

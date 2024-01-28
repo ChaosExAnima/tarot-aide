@@ -63,8 +63,10 @@ model CardReference {
     reversed  Boolean  @default(false)
     userId    Int
     user      User     @relation(fields: [userId], references: [id])
+    starred   Boolean  @default(false)
 
-    @@index([card, reversed])
+    @@index([userId, card])
+    @@index([userId, source])
 }
 
 // TODO: Add deck models to support differently named cards

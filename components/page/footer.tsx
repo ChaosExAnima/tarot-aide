@@ -5,9 +5,16 @@ const devLinks = [
 		label: 'Font Awesome',
 		href: 'https://fontawesome.com/search?q=&o=r&m=free',
 	},
-	{ label: 'NextUI', href: 'https://nextui.org/' },
+	{ label: 'NextUI', href: 'https://nextui.org/docs/customization/colors' },
 	{ label: 'Next.js', href: 'https://nextjs.org/' },
-	{ label: 'TailwindCSS', href: 'https://tailwindcss.com/' },
+	{
+		label: 'Prisma',
+		href: 'https://www.prisma.io/docs/concepts/components/prisma-client',
+	},
+	{
+		label: 'Tailwind',
+		href: 'https://tailwindcss.com/docs/customizing-colors',
+	},
 	{ label: 'TypeScript', href: 'https://www.typescriptlang.org/' },
 ];
 

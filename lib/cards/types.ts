@@ -36,10 +36,12 @@ export type GenericOrTarotCard = GenericCard | TarotCard;
 
 export interface CardReference extends Entity {
 	id: number;
+	card: string;
 	text: string;
 	keywords: string[];
 	reversed: boolean;
 	source?: string;
+	starred: boolean;
 }
 
 export type CardWithRefs<CardType extends GenericCard = GenericCard> = Omit<

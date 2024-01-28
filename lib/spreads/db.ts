@@ -20,6 +20,7 @@ import { ExistingSpread } from './types';
 
 export async function getSpreadsForUser(
 	userId: number,
+	skip = 0,
 ): Promise<ExistingSpread[]> {
 	const spreads = await prisma.spread.findMany({
 		where: { userId },
@@ -30,6 +31,8 @@ export async function getSpreadsForUser(
 			},
 		},
 		orderBy: { date: 'desc' },
+		take: 10,
+		skip,
 	});
 	return spreads.map(dbToExistingSpread);
 }
@@ -59,7 +62,9 @@ export function dbToExistingSpread(
 	}>,
 ): ExistingSpread {
 	return {
-		...spread,
+		id: spread.id,
+		name: spread.name,
+		date: spread.date,
 		positions: spread.positions.map((position) => ({
 			id: position.id,
 			name: position.name,

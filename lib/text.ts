@@ -83,3 +83,23 @@ export function pluralize(number: number, noun = ''): string {
 export function slugify(input: string): string {
 	return encodeURIComponent(input.replaceAll(/\s+/g, '-').toLowerCase());
 }
+
+export function isUrl(input?: string): boolean {
+	if (!input) {
+		return false;
+	}
+	try {
+		new URL(input);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export function displayDomain(url: string): string {
+	try {
+		return new URL(url).hostname;
+	} catch {
+		return url;
+	}
+}

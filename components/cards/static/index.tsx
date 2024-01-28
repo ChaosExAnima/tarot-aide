@@ -1,24 +1,30 @@
-import { Card, CardBody, CardHeader, Divider } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Divider, Link } from '@nextui-org/react';
 
-import { displayCardFullName } from 'lib/cards/utils';
+import ReferencesModal from 'components/references/modal';
+import { cardUrl, displayCardFullName } from 'lib/cards/utils';
 
-import { OracleCardBaseProps } from '../types';
+import type { OracleCardBaseProps } from '../types';
 
 export default function OracleCardStatic({
 	spread: { card, notes, name: spreadName, reversed },
 }: OracleCardBaseProps) {
-	const title = card ? displayCardFullName(card) : spreadName ?? '';
-	const subTitle = !!card && spreadName;
 	return (
 		<Card className="w-full">
 			<CardHeader className="gap-2 flex-nowrap">
 				<div className="flex-grow">
-					{title}
-					{subTitle && (
-						<span className="text-content4 ml-2">{subTitle}</span>
+					{card && (
+						<Link href={cardUrl(card.name, reversed)}>
+							{displayCardFullName(card)}
+						</Link>
+					)}
+					{spreadName && card ? (
+						<span className="text-content4 ml-2">{spreadName}</span>
+					) : (
+						spreadName
 					)}
 				</div>
 				{reversed && <span className="text-content4">Reversed</span>}
+				<ReferencesModal card={card} reversed={reversed} />
 			</CardHeader>
 			{notes && <Divider />}
 			{notes && (

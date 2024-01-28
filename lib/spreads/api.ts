@@ -1,47 +1,20 @@
-import { stringify } from 'superjson';
-
 import { fetchFromApi } from 'lib/api';
 import { MediaType } from 'lib/media';
 
+import type { SpreadCreatedResponse } from 'pages/api/spread';
 import type {
-	SpreadCreateRequestBody,
-	SpreadCreatedResponse,
-} from 'pages/api/spread';
-import type {
-	SpreadUpdateRequestBody,
+	SpreadUpdateRequest,
 	SpreadUpdateResponseBody,
 } from 'pages/api/spread/[id]';
 import type { SpreadMediaUploadResponse } from 'pages/api/spread/[id]/media';
 
-export async function mutateCreateSpread(
-	{ name, cards, date }: SpreadCreateRequestBody,
-	photo: Blob | null,
-) {
-	const formData = new FormData();
-	formData.append('date', stringify(date));
-	if (name) {
-		formData.append('name', name);
-	}
-
-	for (let i = 0; i < cards.length; i++) {
-		formData.append('cards', cards[i]);
-	}
-
-	if (photo) {
-		formData.append('photo', photo);
-	}
-
-	const response = await fetchFromApi<SpreadCreatedResponse>(
-		'/spread',
-		null,
-		{ body: formData, method: 'POST' },
-	);
-	return response;
+export function mutateCreateSpread() {
+	return fetchFromApi<SpreadCreatedResponse>('/spread', {});
 }
 
 export async function mutateUpdateSpread(
 	spreadId: number,
-	body: SpreadUpdateRequestBody,
+	body: SpreadUpdateRequest,
 ) {
 	return fetchFromApi<Required<SpreadUpdateResponseBody>>(
 		`/spread/${spreadId}`,

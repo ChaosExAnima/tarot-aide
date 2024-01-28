@@ -28,9 +28,6 @@ export default function ConfirmationModal({
 	...props
 }: ConfirmationModalProps & ButtonProps) {
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-	if (!isOpen) {
-		return <Button color="danger" {...props} onPress={onOpen} />;
-	}
 
 	const handleClose = () => {
 		if (onCancel) {
@@ -43,7 +40,7 @@ export default function ConfirmationModal({
 		<>
 			<Button color="danger" {...props} onPress={onOpen} />
 			<Modal
-				isOpen
+				isOpen={isOpen}
 				onOpenChange={onOpenChange}
 				placement="top-center"
 				backdrop="blur"

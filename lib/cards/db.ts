@@ -1,11 +1,20 @@
 import prisma from 'lib/db';
-import { isFilledPosition, type SpreadPosition } from 'lib/spreads/types';
 
 import { getDefaultCardReference } from './references';
 import { isCard } from './utils';
 
-import type { CardReference, CardReferenceMap } from './types';
+import type { CardReference } from './types';
 import type { Prisma } from '@prisma/client';
+
+export async function cardReference(id: number, userId: number) {
+	const dbReference = await prisma.cardReference.findFirst({
+		where: { id, userId },
+	});
+	if (!dbReference) {
+		throw new Error('Card reference not found');
+	}
+	return dbToCardReference(dbReference);
+}
 
 export async function getCardReferences(
 	cardName: string,
@@ -14,42 +23,37 @@ export async function getCardReferences(
 ) {
 	const dbReferences = await prisma.cardReference.findMany({
 		where: { card: cardName, reversed, userId },
+		orderBy: [{ starred: 'desc' }, { createdAt: 'desc' }],
 	});
 	const references = dbReferences.map(dbToCardReference);
 	if (isCard(cardName)) {
-		references.push(getDefaultCardReference(cardName, reversed));
+		const defaultRef = getDefaultCardReference(cardName, reversed);
+		references.push(defaultRef);
 	}
 	return references;
 }
 
-export async function getCardReferenceMap(
-	positions: SpreadPosition[],
-	userId: number,
-): Promise<CardReferenceMap> {
-	const references = await Promise.all(
-		positions
-			.filter(isFilledPosition)
-			.map((position) =>
-				getCardReferences(
-					position.card.name,
-					position.reversed,
-					userId,
-				),
-			),
-	);
-	return Object.fromEntries(
-		positions.map((position, index) => [position.id, references[index]]),
-	);
+export async function listReferenceSources(userId: number): Promise<string[]> {
+	const dbSources = await prisma.cardReference.findMany({
+		where: { userId, source: { not: null } },
+		select: { source: true },
+		distinct: ['source'],
+	});
+	return dbSources
+		.map((source) => source.source)
+		.filter((source): source is string => !!source);
 }
 
-function dbToCardReference(
+export function dbToCardReference(
 	reference: Prisma.CardReferenceGetPayload<null>,
 ): CardReference {
 	return {
 		id: reference.id,
 		text: reference.text,
+		card: reference.card,
 		reversed: reference.reversed,
 		source: reference.source ?? undefined,
+		starred: reference.starred,
 		keywords: (reference.keywords ?? '')
 			.split(',')
 			.map((keyword) => keyword.trim()),

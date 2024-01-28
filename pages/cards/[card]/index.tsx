@@ -1,20 +1,17 @@
 import { Button, Link } from '@nextui-org/react';
 
-import { CardReferences } from 'components/cards/references';
 import Page from 'components/page';
+import ReferencesList from 'components/references/list';
 import { MajorSuit } from 'lib/cards/constants';
-import { getCardReferences } from 'lib/cards/db';
-import { CardWithRefs } from 'lib/cards/types';
 import {
+	cardUrl,
 	displayCardFullName,
 	displaySuitName,
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-import { slugify } from 'lib/text';
-import { LoadedRecursively } from 'lib/types';
-import { userFromServerContext } from 'lib/users';
 
+import type { GenericCard } from 'lib/cards/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 export type CardPageContext = {
@@ -22,7 +19,7 @@ export type CardPageContext = {
 };
 
 export interface CardPageProps {
-	card: LoadedRecursively<CardWithRefs>;
+	card: GenericCard;
 	reversed: boolean;
 }
 
@@ -34,29 +31,24 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 			title={name}
 			breadcrumbs={[
 				{ label: displaySuitName(suit), href: `/suits/${suit}` },
-				{ label: name, href: `/cards/${slugify(card.name)}` },
+				{ label: name, href: cardUrl(card.name) },
 				reversed && {
 					label: 'Reversed',
-					href: `/cards/${slugify(card.name)}/reversed`,
+					href: cardUrl(card.name, true),
 				},
 			]}
 		>
 			<h1 className="text-6xl font-bold text-center mb-2">{name}</h1>
 			<p className="text-2xl text-center">
-				<Link
-					href={`/cards/${slugify(card.name)}${
-						!reversed ? '/reversed' : ''
-					}`}
-				>
+				<Link href={cardUrl(card.name, !reversed)}>
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</p>
-			<CardReferences card={card} />
+			<ReferencesList card={card} reversed={reversed} />
 			<Button
 				as={Link}
-				href={`/cards/${slugify(card.name)}${
-					reversed ? '/reversed' : ''
-				}/reference`}
+				href={cardUrl(card.name, reversed, true)}
+				className="mx-2"
 			>
 				Add a reference
 			</Button>
@@ -74,20 +66,10 @@ export async function getServerSideProps(
 			notFound: true,
 		};
 	}
-
-	const user = await userFromServerContext(context);
-	const reversed = context.resolvedUrl.includes('/reversed');
 	return {
 		props: {
-			card: {
-				...card,
-				references: await getCardReferences(
-					card.name,
-					reversed,
-					user.id,
-				),
-			},
-			reversed,
+			card,
+			reversed: context.resolvedUrl.includes('/reversed'),
 		},
 	};
 }

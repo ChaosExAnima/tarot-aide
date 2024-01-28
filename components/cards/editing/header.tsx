@@ -5,20 +5,31 @@ import { useState } from 'react';
 import CardName from 'components/card-name';
 import CardPicker from 'components/card-picker';
 import CardsIcon from 'components/icons/cards';
+import { GenericCard } from 'lib/cards/types';
 
 import { OracleCardEditingProps } from './index';
 
 export default function OracleCardHeaderEditing({
 	spread,
 	onSave,
-	isCardAllowed = true,
-}: OracleCardEditingProps) {
+	card,
+	setCard,
+}: OracleCardEditingProps & {
+	card: GenericCard | null;
+	setCard: (card: GenericCard | null) => void;
+}) {
 	const [editName, setEditName] = useState(spread.name ?? '');
-	const [card, setCard] = useState(spread.card ?? null);
 	const [reversed, setReversed] = useState(spread.reversed ?? false);
+	const cardPickHandler = (card: GenericCard) => {
+		setCard(card);
+		onSave({
+			...spread,
+			card,
+		});
+	};
 	const nameChangeHandler = (newName: string) => {
 		setEditName(newName);
-		if (!newName || (!card && !isCardAllowed)) {
+		if (!newName || !card) {
 			return;
 		}
 		onSave({
@@ -35,20 +46,19 @@ export default function OracleCardHeaderEditing({
 		});
 	};
 	return (
-		<CardHeader className="gap-2">
-			{isCardAllowed && (
-				<CardPicker
-					onPick={setCard}
-					disabledCards={card ? [card.name] : []}
-					isIconOnly={!card}
-					className={clsx(
-						'bg-default-100 hover:bg-default-200',
-						!!card && 'w-40',
-					)}
-				>
-					{card ? <CardName card={card} short icon /> : <CardsIcon />}
-				</CardPicker>
-			)}
+		<CardHeader className="gap-2 pb-0">
+			<CardPicker
+				onPick={cardPickHandler}
+				disabledCards={card ? [card.name] : []}
+				isIconOnly={!card}
+				className={clsx(
+					'bg-default-100 hover:bg-default-200',
+					!!card && 'w-40',
+				)}
+			>
+				{card ? <CardName card={card} short icon /> : <CardsIcon />}
+			</CardPicker>
+
 			<Input
 				value={editName}
 				placeholder="Position name"
@@ -56,17 +66,15 @@ export default function OracleCardHeaderEditing({
 				size="sm"
 				isRequired
 				classNames={{
-					inputWrapper: clsx('h-10 rounded-medium'),
+					inputWrapper: 'h-10 rounded-medium',
 				}}
 			/>
-			{isCardAllowed && (
-				<Checkbox
-					isSelected={reversed}
-					onValueChange={reversedChangeHandler}
-				>
-					Reversed
-				</Checkbox>
-			)}
+			<Checkbox
+				isSelected={reversed}
+				onValueChange={reversedChangeHandler}
+			>
+				Reversed
+			</Checkbox>
 		</CardHeader>
 	);
 }

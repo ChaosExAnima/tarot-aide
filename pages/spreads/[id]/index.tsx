@@ -1,10 +1,11 @@
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonGroup, Button } from '@nextui-org/react';
+import { ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { CollapsibleButton } from 'components/buttons/collapsible';
 import OracleCardStatic from 'components/cards/static';
 import ConfirmationModal from 'components/confirmation-modal';
 import Page from 'components/page';
@@ -31,7 +32,10 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 		<Page
 			breadcrumbs={[
 				{ label: 'Spreads', href: '/spreads' },
-				{ label: spread.name, href: `/spreads/${spread.id}` },
+				{
+					label: displaySpreadName(spread),
+					href: `/spreads/${spread.id}`,
+				},
 			]}
 		>
 			<header className="flex flex-col">
@@ -40,21 +44,22 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 						{displaySpreadName(spread)}
 					</h1>
 					<ButtonGroup isDisabled={deleteSpread.isPending}>
-						<Button
+						<CollapsibleButton
 							as={Link}
 							href={`/spreads/${spread.id}/edit`}
 							color="primary"
-							isIconOnly
+							startContent={<FontAwesomeIcon icon={faEdit} />}
 						>
-							<FontAwesomeIcon icon={faEdit} />
-						</Button>
+							Edit
+						</CollapsibleButton>
 						<ConfirmationModal
-							isIconOnly
 							onConfirm={deleteSpread.mutate}
 							header="Delete this spread?"
 							body="This is permanent!"
+							startContent={<FontAwesomeIcon icon={faTrash} />}
+							className="px-0 sm:px-unit-4 min-w-unit-10"
 						>
-							<FontAwesomeIcon icon={faTrash} />
+							<span className="hidden sm:block">Delete</span>
 						</ConfirmationModal>
 					</ButtonGroup>
 				</div>

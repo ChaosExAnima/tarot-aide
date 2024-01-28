@@ -1,26 +1,44 @@
 import { fetchFromApi } from 'lib/api';
-import { type BaseSpreadPosition, isFilledPosition } from 'lib/spreads/types';
 
+import type { CardReferencesResponse } from 'pages/api/cards/[slug]/references';
 import type {
-	CardReferencesRequest,
-	CardReferencesResponseBody,
-} from 'pages/api/cards/references';
+	CardReferenceResponse,
+	CardReferenceSchema,
+} from 'pages/api/references';
 
-export async function queryCardReferences(cards: BaseSpreadPosition[]) {
-	const body: CardReferencesRequest = cards
-		.filter(isFilledPosition)
-		.map(({ card, reversed }) => ({
-			name: card.name,
-			reversed: !!reversed,
-		}));
-	return fetchFromApi<CardReferencesResponseBody>(
-		`/api/cards/references`,
-		body,
+export async function queryCardReferences(
+	cardName: string,
+	reversed = false,
+	limit = 0,
+) {
+	return fetchFromApi<CardReferencesResponse>(
+		`/cards/${cardName}/references?reversed=${
+			reversed ? '1' : '0'
+		}&limit=${limit}`,
 	);
 }
-queryCardReferences.key = (cards: BaseSpreadPosition[]) =>
-	[
-		'cards',
-		'references',
-		cards.map(({ card }) => card?.name).filter(Boolean),
-	] as const;
+
+export async function mutateCreateCardReference(
+	reference: CardReferenceSchema,
+) {
+	return fetchFromApi<CardReferenceResponse, CardReferenceSchema>(
+		'/references',
+		reference,
+	);
+}
+
+export async function mutateUpdateCardReference(
+	reference: Partial<CardReferenceSchema>,
+	id: number,
+) {
+	return fetchFromApi<CardReferenceResponse, Partial<CardReferenceSchema>>(
+		`/references/${id}`,
+		reference,
+	);
+}
+
+export async function mutateDeleteCardReference(id: number) {
+	return fetchFromApi<CardReferenceResponse>(`/references/${id}`, undefined, {
+		method: 'DELETE',
+	});
+}
