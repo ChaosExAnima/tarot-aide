@@ -12,7 +12,6 @@ import { OracleCardEditingProps } from './index';
 export default function OracleCardHeaderEditing({
 	spread,
 	onSave,
-	isCardAllowed = true,
 	card,
 	setCard,
 }: OracleCardEditingProps & {
@@ -30,7 +29,7 @@ export default function OracleCardHeaderEditing({
 	};
 	const nameChangeHandler = (newName: string) => {
 		setEditName(newName);
-		if (!newName || (!card && !isCardAllowed)) {
+		if (!newName || !card) {
 			return;
 		}
 		onSave({
@@ -48,19 +47,18 @@ export default function OracleCardHeaderEditing({
 	};
 	return (
 		<CardHeader className="gap-2 pb-0">
-			{isCardAllowed && (
-				<CardPicker
-					onPick={cardPickHandler}
-					disabledCards={card ? [card.name] : []}
-					isIconOnly={!card}
-					className={clsx(
-						'bg-default-100 hover:bg-default-200',
-						!!card && 'w-40',
-					)}
-				>
-					{card ? <CardName card={card} short icon /> : <CardsIcon />}
-				</CardPicker>
-			)}
+			<CardPicker
+				onPick={cardPickHandler}
+				disabledCards={card ? [card.name] : []}
+				isIconOnly={!card}
+				className={clsx(
+					'bg-default-100 hover:bg-default-200',
+					!!card && 'w-40',
+				)}
+			>
+				{card ? <CardName card={card} short icon /> : <CardsIcon />}
+			</CardPicker>
+
 			<Input
 				value={editName}
 				placeholder="Position name"
@@ -71,14 +69,12 @@ export default function OracleCardHeaderEditing({
 					inputWrapper: 'h-10 rounded-medium',
 				}}
 			/>
-			{isCardAllowed && (
-				<Checkbox
-					isSelected={reversed}
-					onValueChange={reversedChangeHandler}
-				>
-					Reversed
-				</Checkbox>
-			)}
+			<Checkbox
+				isSelected={reversed}
+				onValueChange={reversedChangeHandler}
+			>
+				Reversed
+			</Checkbox>
 		</CardHeader>
 	);
 }

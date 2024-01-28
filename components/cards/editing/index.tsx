@@ -5,10 +5,10 @@ import OracleCardHeader from './header';
 import OracleCardNotes from './notes';
 
 import type { OracleCardBaseProps } from '../types';
-import type { BaseSpreadPosition } from 'lib/spreads/types';
+import type { FilledSpreadPosition } from 'lib/spreads/types';
 
 export interface OracleCardEditingProps extends OracleCardBaseProps {
-	onSave: (spread: BaseSpreadPosition) => void;
+	onSave: (spread: FilledSpreadPosition) => void;
 	isCardAllowed?: boolean;
 }
 

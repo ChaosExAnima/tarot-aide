@@ -1,5 +1,5 @@
-import { BaseSpreadPosition } from 'lib/spreads/types';
+import { FilledSpreadPosition } from 'lib/spreads/types';
 
 export interface OracleCardBaseProps {
-	spread: BaseSpreadPosition;
+	spread: FilledSpreadPosition;
 }

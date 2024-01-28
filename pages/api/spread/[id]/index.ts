@@ -9,16 +9,16 @@ import { userFromApiRequest } from 'lib/users';
 
 import type { Prisma } from '@prisma/client';
 
-const positionSchema = z.object({
+export const positionSchema = z.object({
 	id: z.number().optional(),
 	name: z.string().optional(),
 	card: z.string().optional().nullable(),
-	reversed: z.coerce.boolean(),
+	reversed: z.boolean().default(false).optional(),
 	notes: z.string().optional().nullable(),
 });
-type PositionUpdate = z.infer<typeof positionSchema>;
+export type PositionUpdate = z.infer<typeof positionSchema>;
 
-const patchSchema = z.object({
+export const spreadSchema = z.object({
 	name: z.string().optional(),
 	date: z
 		.date()
@@ -27,10 +27,10 @@ const patchSchema = z.object({
 		})
 		.optional(),
 	notes: z.string().optional().nullable(),
-	positions: z.array(positionSchema).optional(),
+	positions: z.array(positionSchema),
 });
 
-export type SpreadUpdateRequestBody = z.infer<typeof patchSchema>;
+export type SpreadUpdateRequest = z.infer<typeof spreadSchema>;
 
 export interface SpreadUpdateResponseBody extends ResponseBody {
 	spread?: ExistingSpread;
@@ -62,7 +62,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 		case 'PUT':
 		case 'PATCH':
 		case 'POST':
-			const body = patchSchema.parse(req.body);
+			const body = spreadSchema.parse(req.body);
 			spread = await prisma.spread.update({
 				where: {
 					id: Number(spreadId),

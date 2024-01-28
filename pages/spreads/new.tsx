@@ -6,9 +6,9 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import CardPicker from 'components/card-picker';
-import OracleCardStatic from 'components/cards/static';
 import DatePicker from 'components/date-picker';
 import Page from 'components/page';
+import EditSpreadList from 'components/spread/edit-list';
 import UploadControls from 'components/upload';
 import { mutateCreateSpread } from 'lib/spreads/api';
 
@@ -26,7 +26,10 @@ export default function NewSpreadPage() {
 			mutateCreateSpread(
 				{
 					name,
-					cards: positions.map(({ card }) => card.name),
+					positions: positions.map(({ card, ...rest }) => ({
+						...rest,
+						card: card?.name,
+					})),
 					date,
 				},
 				photo,
@@ -81,9 +84,10 @@ export default function NewSpreadPage() {
 			</CardPicker>
 
 			<section className="flex flex-col gap-4">
-				{positions.map((card) => (
-					<OracleCardStatic key={card.name} spread={card} />
-				))}
+				<EditSpreadList
+					positions={positions}
+					onUpdate={(spread) => setPositions(spread)}
+				/>
 			</section>
 
 			{positions.length > 0 && (

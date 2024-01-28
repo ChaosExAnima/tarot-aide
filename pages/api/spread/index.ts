@@ -7,6 +7,8 @@ import prisma from 'lib/db';
 import { parseForm, processPhoto } from 'lib/media';
 import { userFromApiRequest } from 'lib/users';
 
+import { positionSchema } from './[id]/index';
+
 import type { SuperJSONValue } from 'superjson/dist/types';
 
 const bodySchema = z.object({
@@ -16,12 +18,12 @@ const bodySchema = z.object({
 			message: 'Cannot create spreads in the future',
 		}),
 	),
-	cards: z.array(z.string()),
+	positions: z.array(positionSchema),
 	name: z.string().optional(),
 	template: z.boolean().optional(),
 	notes: z.string().optional(),
 });
-export type SpreadCreateRequestBody = z.infer<typeof bodySchema>;
+export type SpreadCreateRequest = z.infer<typeof bodySchema>;
 
 export const config = {
 	api: {
@@ -39,28 +41,29 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 	['POST'],
 	async (req) => {
 		const [fields, files] = await parseForm(req);
-		const { cards, ...spreadBody } = bodySchema.parse(fields);
+		const { positions, ...spreadBody } = bodySchema.parse(fields);
 		const user = await userFromApiRequest(req);
 
 		const spread = await prisma.spread.create({
 			data: {
 				...spreadBody,
 				userId: user.id,
-				name: spreadBody.name ?? `${cards.length}-card spread`,
+				name: spreadBody.name ?? `${positions.length}-card spread`,
 			},
 		});
 
-		for (const cardName of cards) {
-			const card = getCardFromName(cardName);
+		for (const position of positions) {
+			const card = getCardFromName(position.name ?? '');
 			if (!card) {
 				continue;
 			}
 			await prisma.position.create({
 				data: {
-					name: '',
+					name: position.name ?? '',
 					spreadId: spread.id,
 					card: 'shortName' in card ? card.shortName : card.name,
 					suit: 'suit' in card ? card.suit : null,
+					reversed: position.reversed,
 				},
 			});
 		}
