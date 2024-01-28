@@ -8,7 +8,7 @@ export function CollapsibleButton({
 	return (
 		<Button
 			{...props}
-			className={`px-0 sm:px-unit-4 min-w-0 ${className ?? ''}`}
+			className={`px-0 sm:px-unit-4 min-w-unit-10 ${className ?? ''}`}
 		>
 			{children && <span className="hidden sm:block">{children}</span>}
 		</Button>

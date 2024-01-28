@@ -5,10 +5,11 @@ import {
 	faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input, Textarea, ButtonGroup, Button } from '@nextui-org/react';
+import { Input, Textarea, ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 
+import { CollapsibleButton } from 'components/buttons/collapsible';
 import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
 import Page from 'components/page';
@@ -82,23 +83,23 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 						isDisabled={disable}
 						className="grow justify-end"
 					>
-						<Button
+						<CollapsibleButton
 							onPress={save}
 							isLoading={disable}
 							color="success"
 							isDisabled={!dirty}
-							isIconOnly
+							startContent={<FontAwesomeIcon icon={faSave} />}
 						>
-							<FontAwesomeIcon icon={faSave} />
-						</Button>
-						<Button
+							Save
+						</CollapsibleButton>
+						<CollapsibleButton
 							as={Link}
 							href={`/spreads/${spread.id}`}
 							color="danger"
-							isIconOnly
+							startContent={<FontAwesomeIcon icon={faCancel} />}
 						>
-							<FontAwesomeIcon icon={faCancel} />
-						</Button>
+							Cancel
+						</CollapsibleButton>
 					</ButtonGroup>
 				</div>
 				{issues('date') && (
