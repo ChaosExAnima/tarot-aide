@@ -32,7 +32,10 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 		<Page
 			breadcrumbs={[
 				{ label: 'Spreads', href: '/spreads' },
-				{ label: spread.name, href: `/spreads/${spread.id}` },
+				{
+					label: displaySpreadName(spread),
+					href: `/spreads/${spread.id}`,
+				},
 			]}
 		>
 			<header className="flex flex-col">

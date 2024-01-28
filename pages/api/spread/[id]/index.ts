@@ -11,7 +11,7 @@ import type { Prisma } from '@prisma/client';
 
 export const positionSchema = z.object({
 	id: z.number().optional(),
-	name: z.string().optional(),
+	name: z.string().optional().default(''),
 	card: z.string().optional().nullable(),
 	reversed: z.boolean().default(false).optional(),
 	notes: z.string().optional().nullable(),
@@ -71,13 +71,13 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 				data: {
 					...body,
 					positions: {
-						upsert: body.positions?.map((position) => {
-							return {
-								where: { id: position.id },
-								update: bodyToDb(position),
-								create: bodyToDb(position),
-							};
-						}),
+						create: body.positions?.filter((pos) => !pos.id),
+						update: body.positions
+							?.filter((pos) => !!pos.id)
+							.map((pos) => ({
+								where: { id: pos.id },
+								data: bodyToDb(pos),
+							})),
 					},
 				},
 				include: { positions: true, media: true },

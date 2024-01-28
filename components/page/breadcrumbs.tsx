@@ -5,6 +5,7 @@ import { PageProps } from './index';
 export interface BreadcrumbProps {
 	label: string;
 	href: string;
+	disabled?: boolean;
 }
 
 export default function PageBreadcrumbs({
@@ -18,8 +19,12 @@ export default function PageBreadcrumbs({
 			<BreadcrumbItem href="/">Home</BreadcrumbItem>
 			{breadcrumbs
 				.filter((b): b is BreadcrumbProps => !!b)
-				.map(({ label, href }) => (
-					<BreadcrumbItem key={href} href={href}>
+				.map(({ label, href, disabled = false }) => (
+					<BreadcrumbItem
+						key={href}
+						href={href}
+						isDisabled={disabled}
+					>
 						{label}
 					</BreadcrumbItem>
 				))}

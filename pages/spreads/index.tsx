@@ -23,7 +23,7 @@ export default function SpreadsPage({ spreads }: SpreadsPageProps) {
 	const { mutate, isPending, isSuccess } = useMutation({
 		mutationFn: () => mutateCreateSpread(),
 		onSuccess: ({ spreadId }) => {
-			router.push(`/spreads/${spreadId}`);
+			router.push(`/spreads/${spreadId}/edit`);
 		},
 	});
 	return (

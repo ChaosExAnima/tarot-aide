@@ -21,6 +21,7 @@ import {
 	mutateDeleteSpreadMedia,
 	mutateUploadSpreadMedia,
 } from 'lib/spreads/api';
+import { displaySpreadName } from 'lib/spreads/utils';
 import { displayDate } from 'lib/text';
 
 import type { SpreadPageProps } from './index';
@@ -44,7 +45,11 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 		<Page
 			breadcrumbs={[
 				{ label: 'Spreads', href: '/spreads' },
-				{ label: initial.name, href: `/spreads/${initial.id}` },
+				{
+					label: displaySpreadName(spread),
+					href: `/spreads/${initial.id}`,
+					disabled: !spread.name,
+				},
 				{ label: 'Edit', href: `/spreads/${initial.id}/edit` },
 			]}
 		>

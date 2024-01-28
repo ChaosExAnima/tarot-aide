@@ -5,7 +5,9 @@ import { ZodIssue } from 'zod';
 
 import { ApiError } from 'lib/api';
 import { mutateUpdateSpread } from 'lib/spreads/api';
-import { ExistingSpread } from 'lib/spreads/types';
+
+import type { ExistingSpread } from 'lib/spreads/types';
+import type { SpreadUpdateRequest } from 'pages/api/spread/[id]';
 
 type ErrorMap = Partial<Record<keyof ExistingSpread, string[]>>;
 type SpreadSetter = <Key extends keyof ExistingSpread>(
@@ -26,22 +28,36 @@ export function useEditSpread(initial: ExistingSpread) {
 		errors[key]?.join(', ') ?? null;
 
 	const router = useRouter();
-	const updateSpread = useMutation({
-		mutationFn: () =>
-			mutateUpdateSpread(initial.id, {
-				...spread,
+	const { isPending, isSuccess, mutate } = useMutation({
+		mutationFn() {
+			if (!spread.name) {
+				setErrors({ name: ['Please provide a name for your spread.'] });
+				throw new Error();
+			}
+			const updatedSpread: SpreadUpdateRequest = {
+				name: spread.name,
+				date: spread.date,
+				notes: spread.notes,
 				positions: spread.positions.map((pos) => ({
-					...pos,
+					id: pos.id,
+					name: pos.name ?? '',
 					card: pos.card?.name,
-					reversed: pos.reversed ?? false,
-					notes: pos.notes ?? null,
+					reversed: pos.reversed,
+					notes: pos.notes,
 				})),
-			}),
-		onSuccess: async () => {
-			await router.push(`/spreads/${spread.id}`);
-			setDirty(false);
+			};
+			console.log(
+				'updatedSpread',
+				spread.positions,
+				updatedSpread.positions,
+			);
+
+			return mutateUpdateSpread(initial.id, updatedSpread);
 		},
-		onError: (error) => {
+		async onSuccess() {
+			router.push(`/spreads/${spread.id}`);
+		},
+		onError(error) {
 			if (
 				error instanceof ApiError &&
 				Array.isArray(error.response?.details)
@@ -65,7 +81,7 @@ export function useEditSpread(initial: ExistingSpread) {
 		dirty,
 		set: changeFactory,
 		issues: errorFactory,
-		disable: updateSpread.isPending,
-		save: () => updateSpread.mutate(),
+		disable: isPending || isSuccess,
+		save: () => mutate(),
 	};
 }
