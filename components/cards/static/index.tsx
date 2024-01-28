@@ -1,6 +1,6 @@
 import { Card, CardBody, CardHeader, Divider, Link } from '@nextui-org/react';
 
-import ReferencesModal from 'components/references-modal';
+import ReferencesModal from 'components/references/modal';
 import { cardUrl, displayCardFullName } from 'lib/cards/utils';
 
 import type { OracleCardBaseProps } from '../types';

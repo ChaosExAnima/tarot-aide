@@ -9,7 +9,7 @@ import {
 	Button,
 } from '@nextui-org/react';
 
-import { CardReferences } from 'components/cards/references';
+import ReferencesList from 'components/references/list';
 import { displayCardFullName } from 'lib/cards/utils';
 
 import type { GenericCard } from 'lib/cards/types';
@@ -51,7 +51,7 @@ export default function ReferencesModal({
 						{reversed && ' (reversed)'}
 					</ModalHeader>
 					<ModalBody>
-						<CardReferences card={card} reversed={reversed} />
+						<ReferencesList card={card} reversed={reversed} />
 					</ModalBody>
 				</ModalContent>
 			</Modal>

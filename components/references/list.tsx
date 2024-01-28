@@ -23,7 +23,7 @@ interface CardReferenceProps {
 	reversed: boolean;
 }
 
-export function CardReferences({
+export default function ReferencesList({
 	card: { name },
 	reversed,
 }: CardReferenceProps) {

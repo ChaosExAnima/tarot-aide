@@ -2,7 +2,7 @@ import { CardBody, Textarea } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import ReferencesModal from 'components/references-modal';
+import ReferencesModal from 'components/references/modal';
 import { queryCardReferences } from 'lib/cards/api';
 
 import { OracleCardEditingProps } from './index';

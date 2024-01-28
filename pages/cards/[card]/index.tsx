@@ -1,7 +1,7 @@
 import { Button, Link } from '@nextui-org/react';
 
-import { CardReferences } from 'components/cards/references';
 import Page from 'components/page';
+import ReferencesList from 'components/references/list';
 import { MajorSuit } from 'lib/cards/constants';
 import {
 	cardUrl,
@@ -44,7 +44,7 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</p>
-			<CardReferences card={card} reversed={reversed} />
+			<ReferencesList card={card} reversed={reversed} />
 			<Button
 				as={Link}
 				href={cardUrl(card.name, reversed, true)}
