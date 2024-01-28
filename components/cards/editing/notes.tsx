@@ -10,7 +10,6 @@ import {
 	Textarea,
 } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import { queryCardReferences } from 'lib/cards/api';
@@ -29,7 +28,6 @@ export default function OracleCardNotesEditable({
 	card,
 }: OracleCardEditingProps & { card: Nullable<GenericCard> }) {
 	const notes = spread?.notes ?? '';
-	const [inFocus, setInFocus] = useState(false);
 	const [editNotes, setEditNotes] = useState(notes);
 
 	const [showRefs, setShowRefs] = useState(false);
@@ -53,19 +51,8 @@ export default function OracleCardNotesEditable({
 				placeholder="Notes go here"
 				value={editNotes}
 				onValueChange={handleNotesChange}
-				onFocus={() => setInFocus(true)}
-				onBlur={() => setInFocus(false)}
 			/>
-			<motion.div
-				initial={{ height: 0 }}
-				animate={{ height: inFocus ? 56 : 0 }}
-				exit={{ height: 0 }}
-				transition={{
-					ease: 'easeIn',
-					delay: inFocus ? 0 : 0.7,
-				}}
-				className="overflow-hidden"
-			>
+			<div className="overflow-hidden transition-height delay-700 h-0 group-focus-within:h-14 group-focus-within:delay-0">
 				<div className="mt-4 flex gap-4 items-center">
 					{!!cardRefs && (
 						<p className="grow text-content4 text-sm">
@@ -85,7 +72,7 @@ export default function OracleCardNotesEditable({
 						</Button>
 					)}
 				</div>
-			</motion.div>
+			</div>
 
 			{card && (
 				<Modal

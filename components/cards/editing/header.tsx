@@ -61,7 +61,7 @@ export default function OracleCardHeaderEditing({
 				size="sm"
 				isRequired
 				classNames={{
-					inputWrapper: clsx('h-10 rounded-medium'),
+					inputWrapper: 'h-10 rounded-medium',
 				}}
 			/>
 			{isCardAllowed && (

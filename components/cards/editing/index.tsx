@@ -15,7 +15,7 @@ export interface OracleCardEditingProps extends OracleCardBaseProps {
 export default function OracleCardEditing(props: OracleCardEditingProps) {
 	const [card, setCard] = useState(props.spread.card ?? null);
 	return (
-		<Card className="w-full">
+		<Card className="w-full group">
 			<OracleCardHeader {...props} card={card} setCard={setCard} />
 			<OracleCardNotes {...props} card={card} />
 		</Card>
