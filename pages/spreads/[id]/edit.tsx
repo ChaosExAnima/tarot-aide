@@ -85,9 +85,8 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 					>
 						<CollapsibleButton
 							onPress={save}
-							isLoading={disable}
 							color="success"
-							isDisabled={!dirty}
+							isDisabled={!dirty || disable}
 							startContent={<FontAwesomeIcon icon={faSave} />}
 						>
 							Save
