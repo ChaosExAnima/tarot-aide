@@ -1,49 +1,59 @@
 import { faEdit, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Accordion, AccordionItem, Button } from '@nextui-org/react';
-import { useMutation } from '@tanstack/react-query';
+import {
+	Accordion,
+	AccordionItem,
+	Button,
+	CircularProgress,
+} from '@nextui-org/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import useRefresh from 'components/hooks/use-refresh';
+import useCardReferences from 'components/hooks/use-references';
 import MaybeLink from 'components/maybe-link';
 import { mutateUpdateCardReference } from 'lib/cards/api';
 import { cardUrl } from 'lib/cards/utils';
 import { displayDomain } from 'lib/text';
 
 import type { CardReference, GenericCard } from 'lib/cards/types';
-import type { LoadedRecursively } from 'lib/types';
 
 interface CardReferenceProps {
-	card: LoadedRecursively<GenericCard>;
-	defaultId?: number;
+	card: GenericCard;
+	reversed: boolean;
 }
 
 export function CardReferences({
-	card: { name, references },
-	defaultId = 0,
+	card: { name },
+	reversed,
 }: CardReferenceProps) {
-	const { isRefreshing, refresh } = useRefresh(references ?? []);
-	const { mutate, isPending } = useMutation({
+	const { data, isLoading, key } = useCardReferences(name, reversed);
+	const queryClient = useQueryClient();
+	const { mutate, isPending: isStarring } = useMutation({
 		mutationFn: (ref: CardReference) =>
 			mutateUpdateCardReference({ starred: !ref.starred }, ref.id),
-		onSuccess: refresh,
+		onSuccess() {
+			queryClient.invalidateQueries({ queryKey: key });
+		},
 	});
-	if (!references || !references.length) {
-		return null;
+	if (isLoading || !data) {
+		return (
+			<div className="mt-4 mx-auto">
+				<CircularProgress label="Loading references…" />
+			</div>
+		);
 	}
-	const isStarring = isPending || isRefreshing;
 	return (
 		<Accordion
 			as="section"
-			defaultExpandedKeys={[defaultId.toString()]}
+			defaultExpandedKeys={[data.defaultReference.toString()]}
 			variant="splitted"
 			className="gap-4"
 			itemClasses={{
 				content: 'flex flex-col gap-2 pb-4',
 			}}
 		>
-			{references.map((ref) => {
+			{data.references.map((ref) => {
 				const title = ref.keywords.join(', ');
 				const lines = ref.text.trim().split('\n').filter(Boolean);
 				return (

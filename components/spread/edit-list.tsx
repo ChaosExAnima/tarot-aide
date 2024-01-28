@@ -2,13 +2,16 @@ import OracleCardEditing from 'components/cards/editing';
 
 import type { SpreadPosition } from 'lib/spreads/types';
 
-interface SpreadListProps {
+interface EditSpreadListProps {
 	positions: SpreadPosition[];
 	onUpdate: (positions: SpreadPosition[]) => void;
 	isDraggable?: boolean;
 }
 
-export default function SpreadList({ positions, onUpdate }: SpreadListProps) {
+export default function EditSpreadList({
+	positions,
+	onUpdate,
+}: EditSpreadListProps) {
 	const updatePosition = (updatedPosition: SpreadPosition) => {
 		const newPositions = positions.map((position) =>
 			position.id === updatedPosition.id ? updatedPosition : position,

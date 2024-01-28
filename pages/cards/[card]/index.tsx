@@ -3,8 +3,6 @@ import { Button, Link } from '@nextui-org/react';
 import { CardReferences } from 'components/cards/references';
 import Page from 'components/page';
 import { MajorSuit } from 'lib/cards/constants';
-import { getCardReferences } from 'lib/cards/db';
-import { CardWithRefs } from 'lib/cards/types';
 import {
 	cardUrl,
 	displayCardFullName,
@@ -12,9 +10,8 @@ import {
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-import { LoadedRecursively } from 'lib/types';
-import { userFromServerContext } from 'lib/users';
 
+import type { GenericCard } from 'lib/cards/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 export type CardPageContext = {
@@ -22,16 +19,11 @@ export type CardPageContext = {
 };
 
 export interface CardPageProps {
-	card: LoadedRecursively<CardWithRefs>;
+	card: GenericCard;
 	reversed: boolean;
-	defaultReference: number;
 }
 
-export default function CardPage({
-	card,
-	reversed,
-	defaultReference,
-}: CardPageProps) {
+export default function CardPage({ card, reversed }: CardPageProps) {
 	const name = displayCardFullName(card);
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 	return (
@@ -52,7 +44,7 @@ export default function CardPage({
 					{reversed ? 'Reversed' : 'Upright'}
 				</Link>
 			</p>
-			<CardReferences card={card} defaultId={defaultReference} />
+			<CardReferences card={card} reversed={reversed} />
 			<Button
 				as={Link}
 				href={cardUrl(card.name, reversed, true)}
@@ -74,23 +66,10 @@ export async function getServerSideProps(
 			notFound: true,
 		};
 	}
-
-	const user = await userFromServerContext(context);
-	const reversed = context.resolvedUrl.includes('/reversed');
-	const references = await getCardReferences(card.name, reversed, user.id);
-	const firstStarred = references.find((ref) => ref.starred);
 	return {
 		props: {
-			card: {
-				...card,
-				references: await getCardReferences(
-					card.name,
-					reversed,
-					user.id,
-				),
-			},
-			defaultReference: firstStarred?.id ?? 0,
-			reversed,
+			card,
+			reversed: context.resolvedUrl.includes('/reversed'),
 		},
 	};
 }

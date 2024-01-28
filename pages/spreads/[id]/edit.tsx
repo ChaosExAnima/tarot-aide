@@ -14,8 +14,8 @@ import ConfirmationModal from 'components/confirmation-modal';
 import DatePicker from 'components/date-picker';
 import Page from 'components/page';
 import Photo from 'components/photo';
+import EditSpreadList from 'components/spread/edit-list';
 import { useEditSpread } from 'components/spread/hooks';
-import SpreadList from 'components/spread/list';
 import UploadControls from 'components/upload';
 import {
 	mutateDeleteSpreadMedia,
@@ -130,7 +130,7 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 					isDisabled={uploadMedia.isPending}
 				/>
 			)}
-			<SpreadList
+			<EditSpreadList
 				positions={spread.positions}
 				onUpdate={set('positions')}
 			/>

@@ -8,10 +8,8 @@ import {
 	useDisclosure,
 	Button,
 } from '@nextui-org/react';
-import { useQuery } from '@tanstack/react-query';
 
 import { CardReferences } from 'components/cards/references';
-import { queryCardReferences } from 'lib/cards/api';
 import { displayCardFullName } from 'lib/cards/utils';
 
 import type { GenericCard } from 'lib/cards/types';
@@ -25,11 +23,6 @@ export default function ReferencesModal({
 	reversed?: boolean;
 }) {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
-	const { data: cardRefs } = useQuery({
-		queryKey: ['cards', 'references', card!.name, reversed ?? false],
-		queryFn: () => queryCardReferences(card!.name, reversed),
-		enabled: !!card,
-	});
 	if (!card) {
 		return null;
 	}
@@ -43,8 +36,9 @@ export default function ReferencesModal({
 				onOpenChange={onOpenChange}
 				placement="top-center"
 				backdrop="blur"
+				scrollBehavior="inside"
 				classNames={{
-					wrapper: 'top-10',
+					wrapper: 'overflow-hidden',
 					base: 'bg-transparent shadow-none rounded-none gap-0',
 					body: 'p-0',
 					header: 'bg-content1 rounded-xl shadow-medium mx-2 mb-4',
@@ -57,12 +51,7 @@ export default function ReferencesModal({
 						{reversed && ' (reversed)'}
 					</ModalHeader>
 					<ModalBody>
-						<CardReferences
-							card={{
-								...card,
-								...cardRefs,
-							}}
-						/>
+						<CardReferences card={card} reversed={reversed} />
 					</ModalBody>
 				</ModalContent>
 			</Modal>
