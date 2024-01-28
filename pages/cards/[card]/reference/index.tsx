@@ -7,7 +7,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-	Button,
 	ButtonProps,
 	CircularProgress,
 	Input,
@@ -39,6 +38,8 @@ import {
 	isMinorTarotCard,
 } from 'lib/cards/utils';
 import { userFromServerContext } from 'lib/users';
+
+import { CollapsibleButton } from '../../../../components/buttons/collapsible';
 
 import type { CardPageContext } from '../index';
 import type { CardReference, GenericOrTarotCard } from 'lib/cards/types';
@@ -239,17 +240,6 @@ interface CardNavButtonProps {
 	card: string | null;
 	reversed: boolean;
 	next?: boolean;
-}
-
-function CollapsibleButton({ children, className, ...props }: ButtonProps) {
-	return (
-		<Button
-			{...props}
-			className={`px-0 sm:px-unit-4 min-w-0 ${className ?? ''}`}
-		>
-			{children && <span className="hidden sm:block">{children}</span>}
-		</Button>
-	);
 }
 
 function CardNavButton({
