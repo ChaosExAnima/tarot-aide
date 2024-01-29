@@ -10,7 +10,7 @@ export default function OracleCardStatic({
 }: OracleCardBaseProps) {
 	return (
 		<Card className="w-full">
-			<CardHeader className="gap-2 flex-nowrap">
+			<CardHeader className="gap-3 flex-nowrap">
 				<div className="flex-grow">
 					{card && (
 						<Link href={cardUrl(card.name, reversed)}>

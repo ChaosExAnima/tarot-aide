@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ZodIssue } from 'zod';
 
 import { ApiError } from 'lib/api';
-import { mutateUpdateSpread } from 'lib/spreads/api';
+import { mutateUpdateSpread, positionsToBody } from 'lib/spreads/api';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { SpreadUpdateRequest } from 'pages/api/spread/[id]';
@@ -38,13 +38,7 @@ export function useEditSpread(initial: ExistingSpread) {
 				name: spread.name,
 				date: spread.date,
 				notes: spread.notes,
-				positions: spread.positions.map((pos) => ({
-					id: pos.id,
-					name: pos.name ?? '',
-					card: pos.card?.name,
-					reversed: pos.reversed,
-					notes: pos.notes,
-				})),
+				positions: positionsToBody(spread.positions),
 			};
 			return mutateUpdateSpread(initial.id, updatedSpread);
 		},

@@ -3,6 +3,8 @@ import { NextRequest } from 'next/server';
 import { parse, stringify } from 'superjson';
 import { ZodError } from 'zod';
 
+import { Entity, LoadedEntity } from './types';
+
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import type { SuperJSONValue } from 'superjson/dist/types';
 
@@ -154,4 +156,25 @@ export function headersFromRequest(
 
 export function urlToQueryParams(url: string) {
 	return new URLSearchParams(url.split('?')[1]);
+}
+
+export function loadedEntities<E extends Entity>(
+	entities: E[],
+	idOnly?: false,
+): LoadedEntity<E>[];
+export function loadedEntities<E extends Entity>(
+	entities: E[],
+	idOnly: true,
+): number[];
+export function loadedEntities<E extends Entity>(
+	entities: E[],
+	idOnly = false,
+) {
+	const loadedEntities = entities.filter(
+		(e): e is LoadedEntity<E> => e.id !== undefined,
+	);
+	if (!idOnly) {
+		return loadedEntities;
+	}
+	return loadedEntities.map((e) => e.id);
 }

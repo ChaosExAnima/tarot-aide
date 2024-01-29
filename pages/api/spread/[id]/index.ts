@@ -15,6 +15,7 @@ export const positionSchema = z.object({
 	card: z.string().optional().nullable(),
 	reversed: z.boolean().default(false).optional(),
 	notes: z.string().optional().nullable(),
+	order: z.number().optional().default(0),
 });
 export type PositionUpdate = z.infer<typeof positionSchema>;
 
@@ -111,6 +112,7 @@ function bodyToDb(body: PositionUpdate) {
 		card: null,
 		reversed: false,
 		notes: body.notes,
+		order: body.order,
 	};
 	if (!body.card) {
 		return position;
