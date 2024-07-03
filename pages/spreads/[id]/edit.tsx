@@ -28,7 +28,7 @@ import type { SpreadPageProps } from './index';
 import type { MediaType } from 'lib/media';
 
 export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
-	const { spread, set, issues, dirty, disable, save } =
+	const { spread, set, issues, newIssue, dirty, disable, save } =
 		useEditSpread(initial);
 	const deleteMedia = useMutation({
 		mutationFn: (type: MediaType) =>
@@ -40,6 +40,8 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 			mutateUploadSpreadMedia(spread.id, type, media),
 		onSuccess: ({ media }) =>
 			media.type === 'photo' ? set('photo')(media) : set('audio')(media),
+		onError: (_error, { type }) =>
+			newIssue(type, 'There was an error uploading your photo.', true),
 	});
 	return (
 		<Page
@@ -133,6 +135,7 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 						media && uploadMedia.mutate({ media, type: 'photo' })
 					}
 					isDisabled={uploadMedia.isPending}
+					errorMessage={issues('photo')}
 				/>
 			)}
 

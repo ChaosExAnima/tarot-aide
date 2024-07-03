@@ -26,12 +26,24 @@ export function useEditSpread(initial: ExistingSpread) {
 		});
 	const errorFactory = (key: keyof ExistingSpread) =>
 		errors[key]?.join(', ') ?? null;
+	const newErrorFactory = (
+		key: keyof ExistingSpread,
+		message: string,
+		replace = false,
+	) =>
+		setErrors((errors) => ({
+			...errors,
+			[key]: replace ? [message] : (errors[key] ?? []).concat(message),
+		}));
 
 	const router = useRouter();
 	const { isPending, isSuccess, mutate } = useMutation({
 		mutationFn() {
 			if (!spread.name) {
-				setErrors({ name: ['Please provide a name for your spread.'] });
+				newErrorFactory(
+					'name',
+					'Please provide a name for your spread.',
+				);
 				throw new Error();
 			}
 			const updatedSpread: SpreadUpdateRequest = {
@@ -42,7 +54,7 @@ export function useEditSpread(initial: ExistingSpread) {
 			};
 			return mutateUpdateSpread(initial.id, updatedSpread);
 		},
-		async onSuccess() {
+		onSuccess() {
 			router.push(`/spreads/${spread.id}`);
 		},
 		onError(error) {
@@ -69,6 +81,7 @@ export function useEditSpread(initial: ExistingSpread) {
 		dirty,
 		set: changeFactory,
 		issues: errorFactory,
+		newIssue: newErrorFactory,
 		disable: isPending || isSuccess,
 		save: () => mutate(),
 	};
