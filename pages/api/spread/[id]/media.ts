@@ -16,6 +16,12 @@ export interface SpreadMediaUploadResponse extends ResponseBody {
 	media: Media;
 }
 
+export const config = {
+	api: {
+		bodyParser: false,
+	},
+};
+
 const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
 	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
 	const user = await userFromApiRequest(req);
