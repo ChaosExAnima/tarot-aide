@@ -11,7 +11,6 @@ const nextConfig = {
 if (process.env.BASE_PATH) {
 	nextConfig.basePath = process.env.BASE_PATH;
 	nextConfig.assetPrefix = `${process.env.BASE_PATH}/`;
-	console.log('Using basePath of', nextConfig.basePath);
 }
 
 export default nextConfig;

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth as authMiddleware } from 'auth';
 
-export function middleware(req: NextRequest) {
+export default authMiddleware((req: NextRequest) => {
 	// Rewrite /images/ to /api/images/
 	if (req.nextUrl.pathname.startsWith('/images/')) {
 		const url = req.nextUrl.clone();
@@ -11,4 +12,8 @@ export function middleware(req: NextRequest) {
 		// TODO: Actual logging.
 		console.log('request:', req.method, req.nextUrl.pathname);
 	}
-}
+});
+
+export const config = {
+	matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};

@@ -2,20 +2,28 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 model User {
-    id        Int             @id @default(autoincrement())
+    id        String          @id @default(cuid())
     createdAt DateTime        @default(now())
+    updatedAt DateTime        @default(now()) @updatedAt
     name      String?
     email     String          @unique
     admin     Boolean         @default(false)
     spreads   Spread[]
     uploads   Media[]
     refs      CardReference[]
+
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    // Optional for WebAuthn support
+    Authenticator Authenticator[]
 }
 
 model Spread {
     id        Int        @id @default(autoincrement())
     createdAt DateTime   @default(now())
-    userId    Int
+    userId    String
     user      User       @relation(fields: [userId], references: [id])
     name      String
     date      DateTime   @default(now())
@@ -48,7 +56,7 @@ model Media {
     spreadId  Int?
     spead     Spread?  @relation(fields: [spreadId], references: [id], onDelete: SetNull)
     deleted   Boolean  @default(false)
-    userId    Int?
+    userId    String?
     user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
     @@index([spreadId, deleted])
@@ -62,7 +70,7 @@ model CardReference {
     source    String?
     keywords  String?
     reversed  Boolean  @default(false)
-    userId    Int
+    userId    String
     user      User     @relation(fields: [userId], references: [id])
     starred   Boolean  @default(false)
 
@@ -71,6 +79,64 @@ model CardReference {
 }
 
 // TODO: Add deck models to support differently named cards
+
+// Auth.js
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+    credentialID         String  @unique
+    userId               String
+    providerAccountId    String
+    credentialPublicKey  String
+    counter              Int
+    credentialDeviceType String
+    credentialBackedUp   Boolean
+    transports           String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([userId, credentialID])
+}
 
 generator client {
     provider = "prisma-client-js"
