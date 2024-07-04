@@ -9,8 +9,6 @@
 		"start": "next start",
 		"lint": "conc -c auto \"next lint\" tsc",
 		"test": "vitest",
-		"storybook": "storybook dev -p 6006 -s ./public",
-		"build-storybook": "storybook build -s public",
 		"prisma:dev": "dotenv -e .env.local prisma",
 		"docker": "docker context use default && docker compose -f docker/docker-compose.yml -p tarot-aide",
 		"docker:build": "pnpm docker build",
