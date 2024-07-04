@@ -44,7 +44,7 @@ export async function getSpreadById(
 	const spread = await prisma.spread.findFirst({
 		where: { id, userId },
 		include: {
-			positions: true,
+			positions: { orderBy: { order: 'asc' } },
 			media: {
 				where: { deleted: false },
 			},

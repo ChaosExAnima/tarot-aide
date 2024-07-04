@@ -7,6 +7,7 @@ import {
 	ModalBody,
 	useDisclosure,
 	Button,
+	ButtonProps,
 } from '@nextui-org/react';
 
 import ReferencesList from 'components/references/list';
@@ -18,17 +19,18 @@ import type { Nullable } from 'lib/types';
 export default function ReferencesModal({
 	card,
 	reversed = false,
+	...props
 }: {
 	card?: Nullable<GenericCard>;
 	reversed?: boolean;
-}) {
+} & ButtonProps) {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	if (!card) {
 		return null;
 	}
 	return (
 		<>
-			<Button isIconOnly onPress={onOpen}>
+			<Button isIconOnly {...props} onPress={onOpen}>
 				<FontAwesomeIcon icon={faQuestion} />
 			</Button>
 			<Modal

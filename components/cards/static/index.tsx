@@ -6,11 +6,11 @@ import { cardUrl, displayCardFullName } from 'lib/cards/utils';
 import type { OracleCardBaseProps } from '../types';
 
 export default function OracleCardStatic({
-	spread: { card, notes, name: spreadName, reversed },
+	position: { card, notes, name: spreadName, reversed },
 }: OracleCardBaseProps) {
 	return (
 		<Card className="w-full">
-			<CardHeader className="gap-2 flex-nowrap">
+			<CardHeader className="gap-3 flex-nowrap">
 				<div className="flex-grow">
 					{card && (
 						<Link href={cardUrl(card.name, reversed)}>

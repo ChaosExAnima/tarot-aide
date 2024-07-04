@@ -10,13 +10,15 @@ import type { OracleCardBaseProps } from '../types';
 import type { SpreadPosition } from 'lib/spreads/types';
 
 export interface OracleCardEditingProps extends OracleCardBaseProps {
+	spreadId: number;
 	onSave: (spread: SpreadPosition) => void;
+	onDelete?: (spread: SpreadPosition) => void;
 	isCardAllowed?: boolean;
 }
 
 export default function OracleCardEditing(props: OracleCardEditingProps) {
 	const [card, setCard] = useState<null | GenericCard>(
-		props.spread.card ?? null,
+		props.position.card ?? null,
 	);
 	return (
 		<Card className="w-full group">

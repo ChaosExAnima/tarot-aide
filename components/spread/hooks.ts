@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ZodIssue } from 'zod';
 
 import { ApiError } from 'lib/api';
-import { mutateUpdateSpread } from 'lib/spreads/api';
+import { mutateUpdateSpread, positionsToBody } from 'lib/spreads/api';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { SpreadUpdateRequest } from 'pages/api/spread/[id]';
@@ -26,35 +26,35 @@ export function useEditSpread(initial: ExistingSpread) {
 		});
 	const errorFactory = (key: keyof ExistingSpread) =>
 		errors[key]?.join(', ') ?? null;
+	const newErrorFactory = (
+		key: keyof ExistingSpread,
+		message: string,
+		replace = false,
+	) =>
+		setErrors((errors) => ({
+			...errors,
+			[key]: replace ? [message] : (errors[key] ?? []).concat(message),
+		}));
 
 	const router = useRouter();
 	const { isPending, isSuccess, mutate } = useMutation({
 		mutationFn() {
 			if (!spread.name) {
-				setErrors({ name: ['Please provide a name for your spread.'] });
+				newErrorFactory(
+					'name',
+					'Please provide a name for your spread.',
+				);
 				throw new Error();
 			}
 			const updatedSpread: SpreadUpdateRequest = {
 				name: spread.name,
 				date: spread.date,
 				notes: spread.notes,
-				positions: spread.positions.map((pos) => ({
-					id: pos.id,
-					name: pos.name ?? '',
-					card: pos.card?.name,
-					reversed: pos.reversed,
-					notes: pos.notes,
-				})),
+				positions: positionsToBody(spread.positions),
 			};
-			console.log(
-				'updatedSpread',
-				spread.positions,
-				updatedSpread.positions,
-			);
-
 			return mutateUpdateSpread(initial.id, updatedSpread);
 		},
-		async onSuccess() {
+		onSuccess() {
 			router.push(`/spreads/${spread.id}`);
 		},
 		onError(error) {
@@ -81,6 +81,7 @@ export function useEditSpread(initial: ExistingSpread) {
 		dirty,
 		set: changeFactory,
 		issues: errorFactory,
+		newIssue: newErrorFactory,
 		disable: isPending || isSuccess,
 		save: () => mutate(),
 	};

@@ -1,4 +1,4 @@
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faSort, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
@@ -52,6 +52,14 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 						>
 							Edit
 						</CollapsibleButton>
+						<CollapsibleButton
+							as={Link}
+							href={`/spreads/${spread.id}/sort`}
+							color="primary"
+							startContent={<FontAwesomeIcon icon={faSort} />}
+						>
+							Sort
+						</CollapsibleButton>
 						<ConfirmationModal
 							onConfirm={deleteSpread.mutate}
 							header="Delete this spread?"
@@ -74,7 +82,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 			</header>
 			{spread.photo && <Photo photo={spread.photo} />}
 			{spread.positions.map((spread) => (
-				<OracleCardStatic key={spread.id} spread={spread} />
+				<OracleCardStatic key={spread.id} position={spread} />
 			))}
 		</Page>
 	);

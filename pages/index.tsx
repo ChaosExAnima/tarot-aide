@@ -1,6 +1,7 @@
 import { Divider } from '@nextui-org/react';
 
 import ButtonLink from 'components/button-link';
+import NewSpreadButton from 'components/buttons/new-spread';
 import SuitIcon from 'components/icons/suit';
 import Page from 'components/page';
 import { AllSuitsWithMajor } from 'lib/cards/constants';
@@ -21,9 +22,7 @@ export default function Home() {
 				</ButtonLink>
 			))}
 			<Divider />
-			<ButtonLink href="/spreads/new" className="grow">
-				New Spread
-			</ButtonLink>
+			<NewSpreadButton className="grow text-lg" />
 		</Page>
 	);
 }

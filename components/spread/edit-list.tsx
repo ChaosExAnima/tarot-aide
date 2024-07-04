@@ -2,16 +2,16 @@ import CardPicker from 'components/card-picker';
 import OracleCardEditing from 'components/cards/editing';
 import { GenericCard } from 'lib/cards/types';
 
-import type { SpreadPosition } from 'lib/spreads/types';
+import type { ExistingSpread, SpreadPosition } from 'lib/spreads/types';
 
 interface EditSpreadListProps {
-	positions: SpreadPosition[];
+	spread: ExistingSpread;
 	onUpdate: (positions: SpreadPosition[]) => void;
 	isDisabled?: boolean;
 }
 
 export default function EditSpreadList({
-	positions,
+	spread: { id: spreadId, positions },
 	onUpdate,
 	isDisabled,
 }: EditSpreadListProps) {
@@ -23,6 +23,9 @@ export default function EditSpreadList({
 	};
 	const addPosition = (card: GenericCard) => {
 		onUpdate([...positions, { card, id: positions.length * -1 }]);
+	};
+	const deletePosition = (position: SpreadPosition) => {
+		onUpdate(positions.filter((p) => p.id !== position.id));
 	};
 	return (
 		<>
@@ -38,9 +41,11 @@ export default function EditSpreadList({
 			</CardPicker>
 			{positions.map((position) => (
 				<OracleCardEditing
+					spreadId={spreadId}
 					key={position.id}
-					spread={position}
+					position={position}
 					onSave={updatePosition}
+					onDelete={deletePosition}
 				/>
 			))}
 		</>

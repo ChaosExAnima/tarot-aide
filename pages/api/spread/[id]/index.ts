@@ -15,6 +15,7 @@ export const positionSchema = z.object({
 	card: z.string().optional().nullable(),
 	reversed: z.boolean().default(false).optional(),
 	notes: z.string().optional().nullable(),
+	order: z.number().optional().default(0),
 });
 export type PositionUpdate = z.infer<typeof positionSchema>;
 
@@ -43,13 +44,12 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 	}
 	const user = await userFromApiRequest(req);
 	const userId = user.id;
-	let spread = null;
+	let spread = await prisma.spread.findFirstOrThrow({
+		where: { id: spreadId, userId },
+		include: { positions: true, media: true },
+	});
 	switch (req.method) {
 		case 'GET':
-			spread = await prisma.spread.findFirstOrThrow({
-				where: { id: spreadId, userId },
-				include: { positions: true, media: true },
-			});
 			break;
 		case 'DELETE':
 			await prisma.spread.delete({
@@ -63,6 +63,27 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 		case 'PATCH':
 		case 'POST':
 			const body = spreadSchema.parse(req.body);
+			const updatePositionIds =
+				body.positions
+					?.map(({ id }) => id)
+					.filter((id): id is number => !!id && id > 0) ?? [];
+			let positions = undefined;
+			if (body.positions) {
+				positions = {
+					create: body.positions
+						.filter((pos) => !pos.id || pos.id < 0)
+						.map((pos) => ({ ...pos, id: undefined })),
+					update: body.positions
+						.filter((pos) => !!pos.id && pos.id > 0)
+						.map((pos) => ({
+							where: { id: pos.id },
+							data: bodyToDb(pos),
+						})),
+					delete: spread.positions.filter(
+						(pos) => !updatePositionIds.includes(pos.id),
+					),
+				};
+			}
 			spread = await prisma.spread.update({
 				where: {
 					id: Number(spreadId),
@@ -70,17 +91,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
 				},
 				data: {
 					...body,
-					positions: {
-						create: body.positions?.filter(
-							(pos) => !pos.id || pos.id < 0,
-						),
-						update: body.positions
-							?.filter((pos) => !!pos.id)
-							.map((pos) => ({
-								where: { id: pos.id },
-								data: bodyToDb(pos),
-							})),
-					},
+					positions,
 				},
 				include: { positions: true, media: true },
 			});
@@ -101,6 +112,7 @@ function bodyToDb(body: PositionUpdate) {
 		card: null,
 		reversed: false,
 		notes: body.notes,
+		order: body.order,
 	};
 	if (!body.card) {
 		return position;

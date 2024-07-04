@@ -12,11 +12,13 @@ type UploadState = 'initial' | 'camera' | 'image';
 export interface UploadControlsProps {
 	onSelect: (image: Blob | null) => void;
 	isDisabled?: boolean;
+	errorMessage?: string | null;
 }
 
 export default function UploadControls({
 	onSelect,
 	isDisabled = false,
+	errorMessage,
 }: UploadControlsProps) {
 	const fileRef = useRef<HTMLInputElement>(null);
 	const [image, setImage] = useState<string | null>(null);
@@ -87,6 +89,14 @@ export default function UploadControls({
 						className="absolute top-2 right-2 z-20"
 						aria-label="Delete this image"
 					/>
+					{!!errorMessage && (
+						<figcaption className="flex items-center justify-center gap-2 flex-col absolute w-full h-full top-0 left-0 z-10 backdrop-blur-sm text-danger text-lg shadow-md bg-black/60">
+							{errorMessage}
+							<Button color="danger" onClick={resetImage}>
+								Reset
+							</Button>
+						</figcaption>
+					)}
 				</figure>
 			)}
 			<input

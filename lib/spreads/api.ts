@@ -1,6 +1,8 @@
 import { fetchFromApi } from 'lib/api';
 import { MediaType } from 'lib/media';
 
+import { SpreadPosition } from './types';
+
 import type { SpreadCreatedResponse } from 'pages/api/spread';
 import type {
 	SpreadUpdateRequest,
@@ -57,4 +59,17 @@ export async function mutateUploadSpreadMedia(
 			method: 'PUT',
 		},
 	);
+}
+
+export function positionsToBody(
+	positions: SpreadPosition[],
+): SpreadUpdateRequest['positions'] {
+	return positions.map((pos, index) => ({
+		id: pos.id,
+		name: pos.name ?? '',
+		card: pos.card?.name,
+		reversed: pos.reversed,
+		notes: pos.notes,
+		order: index,
+	}));
 }

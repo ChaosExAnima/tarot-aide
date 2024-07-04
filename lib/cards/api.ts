@@ -1,4 +1,5 @@
 import { fetchFromApi } from 'lib/api';
+import { slugify } from 'lib/text';
 
 import type { CardReferencesResponse } from 'pages/api/cards/[slug]/references';
 import type {
@@ -12,9 +13,9 @@ export async function queryCardReferences(
 	limit = 0,
 ) {
 	return fetchFromApi<CardReferencesResponse>(
-		`/cards/${cardName}/references?reversed=${
-			reversed ? '1' : '0'
-		}&limit=${limit}`,
+		`/cards/${slugify(cardName)}/references?reversed=${Number(
+			reversed,
+		)}&limit=${limit}`,
 	);
 }
 

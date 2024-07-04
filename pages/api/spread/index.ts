@@ -16,6 +16,7 @@ const handler = handlerWithError<SpreadCreatedResponse>(
 			data: {
 				name: '',
 				userId: user.id,
+				date: new Date(),
 			},
 		});
 		return {
