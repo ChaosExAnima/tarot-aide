@@ -37,7 +37,7 @@ import {
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
-import { userFromServerContext } from 'lib/users';
+import { redirectToLogin, userFromServerContext } from 'lib/users';
 
 import { CollapsibleButton } from '../../../../components/buttons/collapsible';
 
@@ -282,11 +282,15 @@ export async function getServerSideProps(
 		};
 	}
 
+	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
+
 	let defaultSource = undefined;
 	if (context.resolvedUrl.includes('?')) {
 		const query = urlToQueryParams(context.resolvedUrl);
 		const fromId = Number.parseInt(query.get('from') ?? '');
-		const user = await userFromServerContext(context);
 		if (fromId > 0) {
 			const fromReference = await cardReference(fromId, user.id);
 			defaultSource = fromReference.source;

@@ -22,40 +22,43 @@ export const config = {
 	},
 };
 
-const handler = handlerWithError(['PUT', 'POST', 'DELETE'], async (req) => {
-	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
-	const user = await userFromApiRequest(req);
+const handler = handlerWithError(
+	['PUT', 'POST', 'DELETE'],
+	async (req, res) => {
+		const spreadId = z.coerce.number().positive().int().parse(req.query.id);
+		const user = await userFromApiRequest(req, res);
 
-	if (req.method === 'DELETE') {
-		return handleDelete(spreadId, user.id, req);
-	}
-	const [fields, files] = await parseForm<'type', 'media'>(req);
-	const type = fields.type?.at(0);
-	if (!type || !includes<MediaType>(['photo', 'audio'], type)) {
-		throw new ApiError(400, 'Missing or invalid type');
-	}
-	const media = files.media?.at(0);
-	if (!media) {
-		throw new ApiError(400, 'Missing photo or audio');
-	}
-	// Delete old media, if it exists
-	await deleteMedia(spreadId, type, user.id);
-	let newMedia: Media;
-	if (type === 'photo') {
-		newMedia = await processPhoto(media, spreadId, user.id);
-	} else {
-		throw new ApiError(501, 'Audio not implemented');
-	}
-	return {
-		success: true,
-		message: 'Media uploaded',
-		media: newMedia,
-	} satisfies SpreadMediaUploadResponse;
-});
+		if (req.method === 'DELETE') {
+			return handleDelete(spreadId, user.id, req);
+		}
+		const [fields, files] = await parseForm<'type', 'media'>(req, res);
+		const type = fields.type?.at(0);
+		if (!type || !includes<MediaType>(['photo', 'audio'], type)) {
+			throw new ApiError(400, 'Missing or invalid type');
+		}
+		const media = files.media?.at(0);
+		if (!media) {
+			throw new ApiError(400, 'Missing photo or audio');
+		}
+		// Delete old media, if it exists
+		await deleteMedia(spreadId, type, user.id);
+		let newMedia: Media;
+		if (type === 'photo') {
+			newMedia = await processPhoto(media, spreadId, user.id);
+		} else {
+			throw new ApiError(501, 'Audio not implemented');
+		}
+		return {
+			success: true,
+			message: 'Media uploaded',
+			media: newMedia,
+		} satisfies SpreadMediaUploadResponse;
+	},
+);
 
 async function handleDelete(
 	spreadId: number,
-	userId: number,
+	userId: string,
 	req: NextApiRequest,
 ): Promise<ResponseBody> {
 	const { type } = z

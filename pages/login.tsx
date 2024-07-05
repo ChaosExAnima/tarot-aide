@@ -5,7 +5,7 @@ import Page from 'components/page';
 
 export default function LoginPage() {
 	return (
-		<Page title="Log In" noNav>
+		<Page title="Log In">
 			<p>Log in with:</p>
 			<Button
 				as="a"

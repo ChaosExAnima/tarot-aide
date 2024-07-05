@@ -7,8 +7,8 @@ export interface AvatarResponse extends ResponseBody {
 	url: string;
 }
 
-const handler = handlerWithError<AvatarResponse>(['GET'], async (req) => {
-	const user = await userFromApiRequest(req);
+const handler = handlerWithError<AvatarResponse>(['GET'], async (req, res) => {
+	const user = await userFromApiRequest(req, res);
 	const hash = createHash('sha256')
 		.update(user.email.trim().toLowerCase())
 		.digest('hex');

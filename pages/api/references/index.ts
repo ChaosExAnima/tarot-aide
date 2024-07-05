@@ -23,9 +23,9 @@ export type CardReferenceSchema = z.infer<typeof referenceSchema>;
 
 const handler = handlerWithError<CardReferenceResponse>(
 	['POST'],
-	async (req) => {
+	async (req, res) => {
 		const newReference = referenceSchema.parse(req.body);
-		const user = await userFromApiRequest(req);
+		const user = await userFromApiRequest(req, res);
 		const reference = await prisma.cardReference.create({
 			data: {
 				...newReference,

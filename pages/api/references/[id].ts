@@ -9,9 +9,9 @@ import { CardReferenceResponse, referenceSchema } from './index';
 
 const handler = handlerWithError<CardReferenceResponse>(
 	['GET', 'POST', 'DELETE'],
-	async (req) => {
+	async (req, res) => {
 		const id = z.coerce.number().parse(req.query.id);
-		const user = await userFromApiRequest(req);
+		const user = await userFromApiRequest(req, res);
 		let reference = await cardReference(id, user.id);
 		if (!reference) {
 			throw new ApiError(404, 'Card reference not found');

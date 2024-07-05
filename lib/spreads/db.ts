@@ -19,7 +19,7 @@ import { Audio, Media, MediaType, Photo } from 'lib/media';
 import { ExistingSpread } from './types';
 
 export async function getSpreadsForUser(
-	userId: number,
+	userId: string,
 	skip = 0,
 ): Promise<ExistingSpread[]> {
 	const spreads = await prisma.spread.findMany({
@@ -39,7 +39,7 @@ export async function getSpreadsForUser(
 
 export async function getSpreadById(
 	id: number,
-	userId: number,
+	userId: string,
 ): Promise<ExistingSpread | null> {
 	const spread = await prisma.spread.findFirst({
 		where: { id, userId },

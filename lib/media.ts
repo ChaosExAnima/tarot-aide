@@ -6,7 +6,7 @@ import { z } from 'zod';
 import prisma from './db';
 import { userFromApiRequest } from './users';
 
-import type { NextApiRequest } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 const PHOTO_TYPE = 'photo';
 const AUDIO_TYPE = 'audio';
@@ -98,8 +98,8 @@ export function deleteMedia(spreadId: number, type: MediaType, userId: string) {
 export async function parseForm<
 	FieldKey extends string,
 	FileKey extends string,
->(req: NextApiRequest) {
-	const user = await userFromApiRequest(req);
+>(req: NextApiRequest, res: NextApiResponse) {
+	const user = await userFromApiRequest(req, res);
 	const form = new Formidable({
 		uploadDir: `${process.env.UPLOAD_PATH ?? 'uploads'}/${user.id}`,
 		keepExtensions: true,

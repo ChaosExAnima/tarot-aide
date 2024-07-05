@@ -32,7 +32,7 @@ import { mutateUpdateSpread, positionsToBody } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { LoadedEntity } from 'lib/types';
-import { userFromServerContext } from 'lib/users';
+import { redirectToLogin, userFromServerContext } from 'lib/users';
 
 import type { SpreadPosition } from 'lib/spreads/types';
 import type {
@@ -149,6 +149,9 @@ export async function getServerSideProps(
 		return { notFound: true };
 	}
 	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
 	const spread = await getSpreadById(id, user.id);
 	if (!spread) {
 		return { notFound: true };

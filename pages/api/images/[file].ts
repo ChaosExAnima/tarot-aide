@@ -16,7 +16,7 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
-	const user = await userFromApiRequest(req);
+	const user = await userFromApiRequest(req, res);
 	req.url = req.url?.replace('/images', `/${user.id}`);
 
 	serve(req, res, (err) => {

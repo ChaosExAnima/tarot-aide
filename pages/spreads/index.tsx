@@ -6,7 +6,7 @@ import Page from 'components/page';
 import { getSpreadsForUser } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { displayRelativeDate } from 'lib/text';
-import { userFromServerContext } from 'lib/users';
+import { redirectToLogin, userFromServerContext } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
@@ -40,6 +40,9 @@ export async function getServerSideProps(
 	context: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<SpreadsPageProps>> {
 	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
 	return {
 		props: {
 			spreads: await getSpreadsForUser(user.id),

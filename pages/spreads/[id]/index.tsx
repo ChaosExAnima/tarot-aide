@@ -13,7 +13,7 @@ import Photo from 'components/photo';
 import { mutateDeleteSpread } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
-import { userFromServerContext } from 'lib/users';
+import { redirectToLogin, userFromServerContext } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
@@ -100,6 +100,9 @@ export async function getServerSideProps(
 		return { notFound: true };
 	}
 	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
 	const spread = await getSpreadById(id, user.id);
 	if (!spread) {
 		return { notFound: true };
