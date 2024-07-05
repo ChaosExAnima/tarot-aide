@@ -1,18 +1,10 @@
 import { generateCodeVerifier, generateState } from 'arctic';
 import { serializeCookie } from 'oslo/cookie';
 
+import { handlerWithError } from 'lib/api';
 import { baseAuthUri, google } from 'lib/auth';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse,
-) {
-	if (req.method !== 'GET') {
-		res.status(404).end();
-		return;
-	}
+const handler = handlerWithError(['GET'], async (req, res) => {
 	const state = generateState();
 	const codeVerifier = generateCodeVerifier();
 
@@ -35,4 +27,6 @@ export default async function handler(
 			sameSite: 'lax',
 		}),
 	]).redirect(url.toString());
-}
+});
+
+export default handler;

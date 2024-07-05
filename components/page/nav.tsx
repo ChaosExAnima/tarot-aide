@@ -1,19 +1,15 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-	Avatar,
 	Input,
 	Link,
 	Navbar,
 	NavbarContent,
 	NavbarItem,
 } from '@nextui-org/react';
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
-import { fetchFromApi } from 'lib/api';
-
-import type { AvatarResponse } from 'pages/api/avatar';
+import PageAvatar from './avatar';
 
 interface NavItem {
 	label: string;
@@ -37,11 +33,6 @@ export const NavList: NavItem[] = [
 
 export default function Nav() {
 	const router = useRouter();
-	const { data: avatar } = useQuery({
-		queryKey: ['avatar'],
-		queryFn: () => fetchFromApi<AvatarResponse>('/avatar'),
-		staleTime: Infinity,
-	});
 	return (
 		<Navbar isBordered classNames={{ wrapper: 'px-4' }}>
 			<NavbarContent>
@@ -70,7 +61,7 @@ export default function Nav() {
 					type="search"
 					endContent={<FontAwesomeIcon icon={faSearch} />}
 				/>
-				<Avatar size="sm" src={avatar?.url} />
+				<PageAvatar />
 			</NavbarContent>
 		</Navbar>
 	);
