@@ -1,4 +1,5 @@
 import { File, Formidable } from 'formidable';
+import { mkdir } from 'fs/promises';
 import sizeOf from 'image-size';
 import { promisify } from 'util';
 import { z } from 'zod';
@@ -100,8 +101,10 @@ export async function parseForm<
 	FileKey extends string,
 >(req: NextApiRequest, res: NextApiResponse) {
 	const user = await userFromApiRequest(req, res);
+	const uploadDir = `${process.env.UPLOAD_PATH ?? 'uploads'}/${user.id}`;
+	await mkdir(uploadDir);
 	const form = new Formidable({
-		uploadDir: `${process.env.UPLOAD_PATH ?? 'uploads'}/${user.id}`,
+		uploadDir,
 		keepExtensions: true,
 		allowEmptyFiles: false,
 		maxFiles: 1,
