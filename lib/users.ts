@@ -1,10 +1,59 @@
-import { format } from 'util';
+import { User } from 'lucia';
 
-import { ApiError, headersFromRequest } from './api';
-import prisma from './db';
+import { ApiError } from './api';
+import { lucia } from './auth';
 
-import type { User } from '@prisma/client';
-import type { GetServerSidePropsContext, NextApiRequest } from 'next';
+import type { ServerResponse } from 'http';
+import type {
+	GetServerSidePropsContext,
+	GetServerSidePropsResult,
+	NextApiRequest,
+	NextApiResponse,
+	Redirect,
+} from 'next';
+import type { NextApiRequestCookies } from 'next/dist/server/api-utils';
+
+export function userFromServerContext(context: GetServerSidePropsContext) {
+	return userFromSession(context.req.cookies, context.res);
+}
+
+export function redirectToLogin(): { redirect: Redirect } {
+	return { redirect: { permanent: false, destination: '/login' } };
+}
+
+export async function securedRoute(
+	context: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<Record<string, never>>> {
+	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
+	return {
+		props: {},
+	};
+}
+
+export async function userFromApiRequest(
+	req: NextApiRequest,
+	res: NextApiResponse,
+	loginRequired?: true,
+): Promise<User>;
+export async function userFromApiRequest(
+	req: NextApiRequest,
+	res: NextApiResponse,
+	loginRequired: false,
+): Promise<User | null>;
+export async function userFromApiRequest(
+	req: NextApiRequest,
+	res: NextApiResponse,
+	loginRequired = true,
+) {
+	const user = await userFromSession(req.cookies, res);
+	if (!user && loginRequired) {
+		throw new ApiError(400, 'Unauthorized');
+	}
+	return user;
+}
 
 const allowedEmails = (process.env.ALLOWED_EMAILS ?? '').split(',');
 
@@ -12,59 +61,26 @@ export function emailIsAllowed(email: string) {
 	return allowedEmails.includes(email);
 }
 
-export function userFromServerContext(context: GetServerSidePropsContext) {
-	const headers = headersFromRequest(context.req);
-	return loadUserFromHeaders(headers);
-}
-
-export function userFromApiRequest(req: NextApiRequest) {
-	const headers = headersFromRequest(req);
-	return loadUserFromHeaders(headers);
-}
-
-export function loadUserFromHeaders(headers: Headers) {
-	const email = headers.get('remote-email');
-	const name = headers.get('remote-name');
-	const groups = headers.get('remote-groups');
-	if (!email || !name) {
-		if (
-			process.env.NODE_ENV === 'development' ||
-			process.env.BYPASS_AUTH === '1'
-		) {
-			return findOrCreateUser('admin@localhost', 'Admin', true);
-		}
-		throw new ApiError(
-			400,
-			format(
-				'User headers not found: %o',
-				Object.fromEntries(headers.entries()),
-			),
+async function userFromSession(
+	cookies: NextApiRequestCookies,
+	res: ServerResponse,
+) {
+	const sessionId = cookies[lucia.sessionCookieName];
+	if (!sessionId) {
+		return null;
+	}
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (!session) {
+		res.setHeader(
+			'Set-Cookie',
+			lucia.createBlankSessionCookie().serialize(),
 		);
 	}
-
-	return findOrCreateUser(email, name, groups?.includes('admin'));
-}
-
-export async function findOrCreateUser(
-	email: string,
-	name?: string,
-	admin = false,
-): Promise<User> {
-	const user = await prisma.user.findUnique({
-		where: { email },
-	});
-	if (user) {
-		return user;
+	if (session && session.fresh) {
+		res.setHeader(
+			'Set-Cookie',
+			lucia.createSessionCookie(session.id).serialize(),
+		);
 	}
-	return await createUser(email, name, admin);
-}
-
-export function createUser(
-	email: string,
-	name?: string,
-	admin = false,
-): Promise<User> {
-	return prisma.user.create({
-		data: { email, name, admin },
-	});
+	return user;
 }
