@@ -56,7 +56,7 @@ export const ALLOWED_IMAGE_TYPES = ['jpg', 'png', 'webp'];
 export async function processPhoto(
 	file: File,
 	spreadId: number,
-	userId: number,
+	userId: string,
 ): Promise<Photo> {
 	const image = await asyncSizeOf(file.filepath);
 	if (!image) {
@@ -83,7 +83,7 @@ export async function processPhoto(
 	};
 }
 
-export function deleteMedia(spreadId: number, type: MediaType, userId: number) {
+export function deleteMedia(spreadId: number, type: MediaType, userId: string) {
 	return prisma.media.updateMany({
 		where: {
 			spreadId,

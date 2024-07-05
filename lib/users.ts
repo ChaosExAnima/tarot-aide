@@ -6,6 +6,12 @@ import prisma from './db';
 import type { User } from '@prisma/client';
 import type { GetServerSidePropsContext, NextApiRequest } from 'next';
 
+const allowedEmails = (process.env.ALLOWED_EMAILS ?? '').split(',');
+
+export function emailIsAllowed(email: string) {
+	return allowedEmails.includes(email);
+}
+
 export function userFromServerContext(context: GetServerSidePropsContext) {
 	const headers = headersFromRequest(context.req);
 	return loadUserFromHeaders(headers);

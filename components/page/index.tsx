@@ -10,11 +10,13 @@ import type { PropsWithChildren } from 'react';
 export interface PageProps {
 	title?: string;
 	breadcrumbs?: (BreadcrumbProps | false)[];
+	noNav?: boolean;
 }
 
 export default function Page({
 	title,
 	children,
+	noNav,
 	breadcrumbs,
 }: PropsWithChildren<PageProps>) {
 	let pageTitle = 'Tarot Aide';
@@ -40,7 +42,7 @@ export default function Page({
 				/>
 				<link rel="icon" href="/favicon.ico" key="icon" />
 			</Head>
-			<Nav />
+			{!noNav && <Nav />}
 			<PageBreadcrumbs breadcrumbs={breadcrumbs} />
 			<motion.main
 				initial={{ opacity: 0, scale: 0.9 }}
