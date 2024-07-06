@@ -8,6 +8,7 @@ import {
 	processPhoto,
 	MediaType,
 	Media,
+	ensureUploadPath,
 } from 'lib/media';
 import { includes } from 'lib/types';
 import { userFromApiRequest } from 'lib/users';
@@ -31,7 +32,11 @@ const handler = handlerWithError(
 		if (req.method === 'DELETE') {
 			return handleDelete(spreadId, user.id, req);
 		}
-		const [fields, files] = await parseForm<'type', 'media'>(req, res);
+		const uploadDir = await ensureUploadPath(user.id);
+		const [fields, files] = await parseForm<'type', 'media'>(
+			req,
+			uploadDir,
+		);
 		const type = fields.type?.at(0);
 		if (!type || !includes<MediaType>(['photo', 'audio'], type)) {
 			throw new ApiError(400, 'Missing or invalid type');

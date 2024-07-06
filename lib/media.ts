@@ -1,13 +1,12 @@
 import { File, Formidable } from 'formidable';
-import { mkdir } from 'fs/promises';
+import { mkdir, access, constants as fsConstants } from 'fs/promises';
 import sizeOf from 'image-size';
 import { promisify } from 'util';
 import { z } from 'zod';
 
 import prisma from './db';
-import { userFromApiRequest } from './users';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest } from 'next';
 
 const PHOTO_TYPE = 'photo';
 const AUDIO_TYPE = 'audio';
@@ -98,13 +97,21 @@ export function deleteMedia(spreadId: number, type: MediaType, userId: string) {
 		},
 	});
 }
+
+export async function ensureUploadPath(userId: string): Promise<string> {
+	const uploadDir = `${process.env.UPLOAD_PATH ?? 'uploads'}/${userId}`;
+	try {
+		await access(uploadDir, fsConstants.W_OK);
+	} catch (err) {
+		await mkdir(uploadDir, { recursive: true });
+	}
+	return uploadDir;
+}
+
 export async function parseForm<
 	FieldKey extends string,
 	FileKey extends string,
->(req: NextApiRequest, res: NextApiResponse) {
-	const user = await userFromApiRequest(req, res);
-	const uploadDir = `${process.env.UPLOAD_PATH ?? 'uploads'}/${user.id}`;
-	await mkdir(uploadDir);
+>(req: NextApiRequest, uploadDir: string) {
 	const form = new Formidable({
 		uploadDir,
 		keepExtensions: true,
