@@ -16,7 +16,7 @@
 		"docker:start": "pnpm docker up -d",
 		"docker:push": "pnpm docker push",
 		"docker:logs": "pnpm docker logs",
-		"docker:dev": "docker context use default && docker compose -f docker/docker-compose.dev.yaml -p tarot-aide up -d"
+		"docker:dev": "docker context use default && docker compose -f docker/docker-compose.dev.yml -p tarot-aide up -d"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
