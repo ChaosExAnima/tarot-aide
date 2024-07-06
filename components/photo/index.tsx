@@ -15,7 +15,7 @@ export default function Photo({ photo, ...props }: PhotoProps & ImageProps) {
 	return (
 		<Image
 			as={NextImage}
-			src={`${base}/images/${photo.path}`}
+			src={`${base}/images/${photo.userId}/${photo.path}`}
 			width={photo.width}
 			height={photo.width}
 			alt={props.alt ?? 'Tarot spread'}

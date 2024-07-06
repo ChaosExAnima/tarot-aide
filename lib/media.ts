@@ -15,6 +15,7 @@ export type MediaType = typeof PHOTO_TYPE | typeof AUDIO_TYPE;
 
 interface BaseMedia {
 	path: string;
+	userId: string;
 }
 
 export interface Photo extends BaseMedia {
@@ -79,6 +80,7 @@ export async function processPhoto(
 	return {
 		type: PHOTO_TYPE,
 		path: result.path,
+		userId,
 		width: image.width,
 		height: image.height,
 	};

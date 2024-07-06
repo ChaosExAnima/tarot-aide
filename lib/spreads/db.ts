@@ -97,6 +97,7 @@ function dbToSpreadMedia(
 	return {
 		type,
 		path: found.path,
+		userId: found.userId,
 		width: found.width ?? undefined,
 		height: found.height ?? undefined,
 	};
