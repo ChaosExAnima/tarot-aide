@@ -5,8 +5,9 @@ const nextConfig = {
 	},
 	reactStrictMode: true,
 	images: {
-		remotePatterns: [{ protocol: 'https', hostname: 'picsum.photos' }],
+		unoptimized: true,
 	},
+	output: 'standalone',
 };
 if (process.env.BASE_PATH) {
 	nextConfig.basePath = process.env.BASE_PATH;
