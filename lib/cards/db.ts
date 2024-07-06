@@ -6,7 +6,7 @@ import { isCard } from './utils';
 import type { CardReference } from './types';
 import type { Prisma } from '@prisma/client';
 
-export async function cardReference(id: number, userId: number) {
+export async function cardReference(id: number, userId: string) {
 	const dbReference = await prisma.cardReference.findFirst({
 		where: { id, userId },
 	});
@@ -19,7 +19,7 @@ export async function cardReference(id: number, userId: number) {
 export async function getCardReferences(
 	cardName: string,
 	reversed = false,
-	userId: number,
+	userId: string,
 ) {
 	const dbReferences = await prisma.cardReference.findMany({
 		where: { card: cardName, reversed, userId },
@@ -33,7 +33,7 @@ export async function getCardReferences(
 	return references;
 }
 
-export async function listReferenceSources(userId: number): Promise<string[]> {
+export async function listReferenceSources(userId: string): Promise<string[]> {
 	const dbSources = await prisma.cardReference.findMany({
 		where: { userId, source: { not: null } },
 		select: { source: true },

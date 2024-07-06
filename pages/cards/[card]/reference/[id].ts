@@ -1,6 +1,6 @@
 import { cardReference } from 'lib/cards/db';
 import { getCardFromName } from 'lib/cards/utils';
-import { userFromServerContext } from 'lib/users';
+import { redirectToLogin, userFromServerContext } from 'lib/users';
 
 import { CardReferencePageProps, default as EditCardReference } from './index';
 
@@ -18,6 +18,9 @@ export async function getServerSideProps(
 	const card = getCardFromName(cardName);
 	const refId = Number.parseInt(context.params?.id ?? '');
 	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
 	const reference = await cardReference(refId, user.id);
 	if (!card || !reference) {
 		return {

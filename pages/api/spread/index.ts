@@ -10,8 +10,8 @@ export interface SpreadCreatedResponse extends ResponseBody {
 
 const handler = handlerWithError<SpreadCreatedResponse>(
 	['POST'],
-	async (req) => {
-		const user = await userFromApiRequest(req);
+	async (req, res) => {
+		const user = await userFromApiRequest(req, res);
 		const spread = await prisma.spread.create({
 			data: {
 				name: '',

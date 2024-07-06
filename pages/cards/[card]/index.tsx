@@ -1,5 +1,6 @@
-import { Button, Link } from '@nextui-org/react';
+import { Link } from '@nextui-org/react';
 
+import ButtonLink from 'components/button-link';
 import Page from 'components/page';
 import ReferencesList from 'components/references/list';
 import { MajorSuit } from 'lib/cards/constants';
@@ -10,6 +11,7 @@ import {
 	getCardFromName,
 	isMinorTarotCard,
 } from 'lib/cards/utils';
+import { userFromServerContext } from 'lib/users';
 
 import type { GenericCard } from 'lib/cards/types';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
@@ -21,9 +23,10 @@ export type CardPageContext = {
 export interface CardPageProps {
 	card: GenericCard;
 	reversed: boolean;
+	loggedIn: boolean;
 }
 
-export default function CardPage({ card, reversed }: CardPageProps) {
+export default function CardPage({ card, reversed, loggedIn }: CardPageProps) {
 	const name = displayCardFullName(card);
 	const suit = isMinorTarotCard(card) ? card.suit : MajorSuit;
 	return (
@@ -45,13 +48,19 @@ export default function CardPage({ card, reversed }: CardPageProps) {
 				</Link>
 			</p>
 			<ReferencesList card={card} reversed={reversed} />
-			<Button
-				as={Link}
-				href={cardUrl(card.name, reversed, true)}
-				className="mx-2"
-			>
-				Add a reference
-			</Button>
+			{loggedIn && (
+				<ButtonLink
+					href={cardUrl(card.name, reversed, true)}
+					className="mx-2"
+				>
+					Add a reference
+				</ButtonLink>
+			)}
+			{!loggedIn && (
+				<ButtonLink href="/login" className="mx-2">
+					Log in to add custom references
+				</ButtonLink>
+			)}
 		</Page>
 	);
 }
@@ -61,6 +70,7 @@ export async function getServerSideProps(
 ): Promise<GetServerSidePropsResult<CardPageProps>> {
 	const cardName = context.params?.card?.replaceAll('-', ' ') ?? '';
 	const card = getCardFromName(cardName);
+	const user = await userFromServerContext(context);
 	if (!card) {
 		return {
 			notFound: true,
@@ -70,6 +80,7 @@ export async function getServerSideProps(
 		props: {
 			card,
 			reversed: context.resolvedUrl.includes('/reversed'),
+			loggedIn: !!user,
 		},
 	};
 }

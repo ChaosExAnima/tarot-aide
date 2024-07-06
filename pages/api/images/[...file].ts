@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import serveStatic from 'serve-static';
 
-import { userFromApiRequest } from 'lib/users';
-
 export const config = {
 	api: {
 		externalResolver: true,
@@ -16,8 +14,7 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
-	const user = await userFromApiRequest(req);
-	req.url = req.url?.replace('/images', `/${user.id}`);
+	req.url = req.url?.replace('/images', '');
 
 	serve(req, res, (err) => {
 		if (err) {

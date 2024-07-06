@@ -1,17 +1,24 @@
-version: '3'
+include:
+  - path:
+      - docker-compose.dev.yml
+
 services:
   tarot:
+    env_file: .env.local
+    platform: linux/amd64
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: chaosexanima/tarot-aide
+    # image: chaosexanima/tarot-aide
+    ports:
+      - 3001:3000
     environment:
       # BASE_PATH: /tarot
-      DATABASE_URL: file:/db/tarot.db
       UPLOAD_PATH: /uploads
     volumes:
-      - ../dev.db:/db/tarot.db
       - ../uploads:/uploads
+    depends_on:
+      - mysql
 
   proxy:
     image: nginx:alpine
@@ -19,5 +26,6 @@ services:
       - 3000:3000
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../uploads:/uploads
     depends_on:
       - tarot

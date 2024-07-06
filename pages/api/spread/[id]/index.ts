@@ -37,12 +37,12 @@ export interface SpreadUpdateResponseBody extends ResponseBody {
 	spread?: ExistingSpread;
 }
 
-const handler = handlerWithError<SpreadUpdateResponseBody>(async (req) => {
+const handler = handlerWithError<SpreadUpdateResponseBody>(async (req, res) => {
 	const spreadId = z.coerce.number().positive().int().parse(req.query.id);
 	if (!spreadId) {
 		throw new ApiError(400, 'Missing spread ID');
 	}
-	const user = await userFromApiRequest(req);
+	const user = await userFromApiRequest(req, res);
 	const userId = user.id;
 	let spread = await prisma.spread.findFirstOrThrow({
 		where: { id: spreadId, userId },

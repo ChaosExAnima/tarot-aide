@@ -1,10 +1,10 @@
 import { File, Formidable } from 'formidable';
+import { mkdir, access, constants as fsConstants } from 'fs/promises';
 import sizeOf from 'image-size';
 import { promisify } from 'util';
 import { z } from 'zod';
 
 import prisma from './db';
-import { userFromApiRequest } from './users';
 
 import type { NextApiRequest } from 'next';
 
@@ -14,6 +14,7 @@ export type MediaType = typeof PHOTO_TYPE | typeof AUDIO_TYPE;
 
 interface BaseMedia {
 	path: string;
+	userId: string;
 }
 
 export interface Photo extends BaseMedia {
@@ -56,7 +57,7 @@ export const ALLOWED_IMAGE_TYPES = ['jpg', 'png', 'webp'];
 export async function processPhoto(
 	file: File,
 	spreadId: number,
-	userId: number,
+	userId: string,
 ): Promise<Photo> {
 	const image = await asyncSizeOf(file.filepath);
 	if (!image) {
@@ -78,12 +79,13 @@ export async function processPhoto(
 	return {
 		type: PHOTO_TYPE,
 		path: result.path,
+		userId,
 		width: image.width,
 		height: image.height,
 	};
 }
 
-export function deleteMedia(spreadId: number, type: MediaType, userId: number) {
+export function deleteMedia(spreadId: number, type: MediaType, userId: string) {
 	return prisma.media.updateMany({
 		where: {
 			spreadId,
@@ -95,13 +97,23 @@ export function deleteMedia(spreadId: number, type: MediaType, userId: number) {
 		},
 	});
 }
+
+export async function ensureUploadPath(userId: string): Promise<string> {
+	const uploadDir = `${process.env.UPLOAD_PATH ?? 'uploads'}/${userId}`;
+	try {
+		await access(uploadDir, fsConstants.W_OK);
+	} catch (err) {
+		await mkdir(uploadDir, { recursive: true });
+	}
+	return uploadDir;
+}
+
 export async function parseForm<
 	FieldKey extends string,
 	FileKey extends string,
->(req: NextApiRequest) {
-	const user = await userFromApiRequest(req);
+>(req: NextApiRequest, uploadDir: string) {
 	const form = new Formidable({
-		uploadDir: `${process.env.UPLOAD_PATH ?? 'uploads'}/${user.id}`,
+		uploadDir,
 		keepExtensions: true,
 		allowEmptyFiles: false,
 		maxFiles: 1,
