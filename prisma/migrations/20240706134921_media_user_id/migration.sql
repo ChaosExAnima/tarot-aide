@@ -5,8 +5,19 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NULL,
     `email` VARCHAR(191) NOT NULL,
     `admin` BOOLEAN NOT NULL DEFAULT false,
+    `googleId` VARCHAR(191) NULL,
 
     UNIQUE INDEX `User_email_key`(`email`),
+    UNIQUE INDEX `User_googleId_key`(`googleId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Session` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `expiresAt` DATETIME(3) NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -47,7 +58,7 @@ CREATE TABLE `Media` (
     `height` INTEGER NULL,
     `spreadId` INTEGER NULL,
     `deleted` BOOLEAN NOT NULL DEFAULT false,
-    `userId` VARCHAR(191) NULL,
+    `userId` VARCHAR(191) NOT NULL,
 
     INDEX `Media_spreadId_deleted_idx`(`spreadId`, `deleted`),
     PRIMARY KEY (`path`)
@@ -71,6 +82,9 @@ CREATE TABLE `CardReference` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
+ALTER TABLE `Session` ADD CONSTRAINT `Session_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Spread` ADD CONSTRAINT `Spread_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -80,7 +94,7 @@ ALTER TABLE `Position` ADD CONSTRAINT `Position_spreadId_fkey` FOREIGN KEY (`spr
 ALTER TABLE `Media` ADD CONSTRAINT `Media_spreadId_fkey` FOREIGN KEY (`spreadId`) REFERENCES `Spread`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Media` ADD CONSTRAINT `Media_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Media` ADD CONSTRAINT `Media_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `CardReference` ADD CONSTRAINT `CardReference_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

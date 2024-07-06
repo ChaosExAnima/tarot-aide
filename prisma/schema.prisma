@@ -66,8 +66,8 @@ model Media {
     spreadId  Int?
     spead     Spread?  @relation(fields: [spreadId], references: [id], onDelete: SetNull)
     deleted   Boolean  @default(false)
-    userId    String?
-    user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@index([spreadId, deleted])
 }
