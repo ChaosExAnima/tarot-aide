@@ -37,7 +37,7 @@ model Spread {
     user      User       @relation(fields: [userId], references: [id])
     name      String
     date      DateTime   @default(now())
-    notes     String?
+    notes     String?    @db.Text
     template  Boolean    @default(false)
     positions Position[]
     media     Media[]
@@ -54,7 +54,7 @@ model Position {
     card     String?
     reversed Boolean @default(false)
     suit     String?
-    notes    String?
+    notes    String? @db.Text
 }
 
 model Media {
@@ -76,7 +76,7 @@ model CardReference {
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
     card      String
-    text      String
+    text      String   @db.Text
     source    String?
     keywords  String?
     reversed  Boolean  @default(false)
