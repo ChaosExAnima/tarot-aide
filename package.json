@@ -9,11 +9,13 @@
 		"start": "next start",
 		"lint": "conc -c auto \"next lint\" tsc",
 		"test": "vitest",
+		"prisma": "prisma",
 		"prisma:dev": "dotenv -e .env.local prisma",
 		"docker": "docker context use default && docker compose -f docker/docker-compose.yml -p tarot-aide",
 		"docker:build": "pnpm docker build",
 		"docker:start": "pnpm docker up -d",
 		"docker:push": "pnpm docker push",
+		"docker:logs": "pnpm docker logs",
 		"docker:dev": "docker context use default && docker compose -f docker/docker-compose.dev.yaml -p tarot-aide up -d"
 	},
 	"prisma": {
@@ -82,7 +84,7 @@
 		"typescript": "5.5.3",
 		"vitest": "^1.6.0"
 	},
-	"packageManager": "pnpm@8.13.1",
+	"packageManager": "pnpm@9.4.0",
 	"peerDependenciesMeta": {
 		"webpack": {
 			"optional": true
