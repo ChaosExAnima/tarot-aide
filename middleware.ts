@@ -8,6 +8,13 @@ function handleImages(req: NextRequest) {
 }
 
 export async function middleware(req: NextRequest) {
+	if (process.env.NODE_ENV === 'production') {
+		console.log(
+			'Request:',
+			req.nextUrl.pathname,
+			req.nextUrl.searchParams.toString(),
+		);
+	}
 	// Rewrite /images/ to /api/images/
 	if (req.method === 'GET' && req.nextUrl.pathname.startsWith('/images/')) {
 		return handleImages(req);
@@ -17,14 +24,19 @@ export async function middleware(req: NextRequest) {
 		const originHeader = req.headers.get('Origin');
 		// NOTE: You may need to use `X-Forwarded-Host` instead
 		const hostHeader = req.headers.get('Host');
+		const forwardedHeader = req.headers.get('X-Forwarded-Host');
 		if (
 			!originHeader ||
 			!hostHeader ||
-			!verifyRequestOrigin(originHeader, [hostHeader])
+			!forwardedHeader ||
+			!verifyRequestOrigin(originHeader, [hostHeader, forwardedHeader])
 		) {
-			return new NextResponse(null, {
-				status: 403,
-			});
+			console.warn(
+				'CSRF failure:',
+				originHeader,
+				hostHeader,
+				forwardedHeader,
+			);
 		}
 	}
 	return NextResponse.next();
