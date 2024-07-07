@@ -34,13 +34,9 @@ export async function mutateDeleteSpreadMedia(
 	spreadId: number,
 	type: MediaType,
 ) {
-	return fetchFromApi(
-		`/spread/${spreadId}/media`,
-		{ type },
-		{
-			method: 'DELETE',
-		},
-	);
+	return fetchFromApi(`/spread/${spreadId}/media?type=${type}`, undefined, {
+		method: 'DELETE',
+	});
 }
 
 export async function mutateUploadSpreadMedia(
