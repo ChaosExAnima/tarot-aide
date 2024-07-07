@@ -8,7 +8,10 @@ export const config = {
 	},
 };
 
-const serve = serveStatic('uploads', { index: false, fallthrough: false });
+const serve = serveStatic(process.env.UPLOAD_PATH ?? 'uploads', {
+	index: false,
+	fallthrough: false,
+});
 
 export default async function handler(
 	req: NextApiRequest,
