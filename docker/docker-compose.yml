@@ -9,11 +9,10 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    # image: chaosexanima/tarot-aide
+    image: chaosexanima/tarot-aide
     ports:
       - 3001:3000
     environment:
-      # BASE_PATH: /tarot
       UPLOAD_PATH: /uploads
     volumes:
       - ../uploads:/uploads
