@@ -4,11 +4,12 @@ import { z } from 'zod';
 import { ApiError, ResponseBody, handlerWithError } from 'lib/api';
 import {
 	parseForm,
-	deleteMedia,
+	deleteSpreadMedia,
 	processPhoto,
 	MediaType,
 	Media,
 	ensureUploadPath,
+	deleteMedia,
 } from 'lib/media';
 import { includes } from 'lib/types';
 import { userFromApiRequest } from 'lib/users';
@@ -32,11 +33,18 @@ const handler = handlerWithError(
 		if (req.method === 'DELETE') {
 			return handleDelete(spreadId, user.id, req);
 		}
-		const uploadDir = await ensureUploadPath(user.id);
-		const [fields, files] = await parseForm<'type', 'media'>(
-			req,
-			uploadDir,
-		);
+		return handleCreate(spreadId, user.id, req);
+	},
+);
+
+async function handleCreate(
+	spreadId: number,
+	userId: string,
+	req: NextApiRequest,
+): Promise<SpreadMediaUploadResponse> {
+	const uploadDir = await ensureUploadPath(userId);
+	const [fields, files] = await parseForm<'type', 'media'>(req, uploadDir);
+	try {
 		const type = fields.type?.at(0);
 		if (!type || !includes<MediaType>(['photo', 'audio'], type)) {
 			throw new ApiError(400, 'Missing or invalid type');
@@ -46,10 +54,10 @@ const handler = handlerWithError(
 			throw new ApiError(400, 'Missing photo or audio');
 		}
 		// Delete old media, if it exists
-		await deleteMedia(spreadId, type, user.id);
+		await deleteSpreadMedia(spreadId, type, userId);
 		let newMedia: Media;
 		if (type === 'photo') {
-			newMedia = await processPhoto(media, spreadId, user.id);
+			newMedia = await processPhoto(media, spreadId, userId);
 		} else {
 			throw new ApiError(501, 'Audio not implemented');
 		}
@@ -58,8 +66,14 @@ const handler = handlerWithError(
 			message: 'Media uploaded',
 			media: newMedia,
 		} satisfies SpreadMediaUploadResponse;
-	},
-);
+	} catch (err) {
+		const media = files.media?.at(0);
+		if (media) {
+			await deleteMedia(media);
+		}
+		throw err;
+	}
+}
 
 async function handleDelete(
 	spreadId: number,
@@ -74,11 +88,8 @@ async function handleDelete(
 					includes<MediaType>(['photo', 'audio'], type),
 				),
 		})
-		.parse(req.body);
-	if (!type) {
-		throw new ApiError(400, 'Missing or invalid type');
-	}
-	const results = await deleteMedia(spreadId, type, userId);
+		.parse(req.query);
+	const results = await deleteSpreadMedia(spreadId, type, userId);
 	return {
 		success: true,
 		message: `Deleted ${results.count} media`,

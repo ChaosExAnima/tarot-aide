@@ -45,6 +45,9 @@ export async function fetchFromApi<
 			method: 'POST',
 			body: stringify(data),
 			...(options ?? {}),
+			headers: {
+				'Content-Type': 'application/json',
+			},
 		};
 	}
 	const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
