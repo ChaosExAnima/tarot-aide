@@ -1,6 +1,7 @@
 import { File, Formidable } from 'formidable';
 import * as fs from 'fs/promises';
 import sizeOf from 'image-size';
+import sharp from 'sharp';
 import { promisify } from 'util';
 import { z } from 'zod';
 
@@ -21,6 +22,7 @@ export interface Photo extends BaseMedia {
 	type: typeof PHOTO_TYPE;
 	width?: number;
 	height?: number;
+	blurImage?: string;
 }
 
 export interface Audio extends BaseMedia {
@@ -66,6 +68,7 @@ export async function processPhoto(
 	if (!image.type || !ALLOWED_IMAGE_TYPES.includes(image.type)) {
 		throw new Error('Invalid image type');
 	}
+	const blurImage = await sharp(file.filepath).resize(10, 10).toBuffer();
 	const result = await prisma.media.create({
 		data: {
 			spreadId: spreadId,
@@ -74,6 +77,7 @@ export async function processPhoto(
 			width: image.width,
 			height: image.height,
 			userId: userId,
+			blurImage,
 		},
 	});
 	return {

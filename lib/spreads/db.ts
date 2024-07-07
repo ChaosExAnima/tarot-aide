@@ -14,7 +14,7 @@ import {
 	isSuit,
 } from 'lib/cards/utils';
 import prisma from 'lib/db';
-import { Audio, Media, MediaType, Photo } from 'lib/media';
+import { Audio, isPhoto, Media, MediaType, Photo } from 'lib/media';
 
 import { ExistingSpread } from './types';
 
@@ -94,13 +94,17 @@ function dbToSpreadMedia(
 	if (!found) {
 		return null;
 	}
-	return {
+	const foundMedia = {
 		type,
 		path: found.path,
 		userId: found.userId,
 		width: found.width ?? undefined,
 		height: found.height ?? undefined,
 	};
+	if (isPhoto(foundMedia) && found.blurImage) {
+		foundMedia.blurImage = `data:image/jpeg;base64,${found.blurImage.toString('base64')}`;
+	}
+	return foundMedia;
 }
 
 function cardFromPosition(position: Position): GenericOrTarotCard | null {
