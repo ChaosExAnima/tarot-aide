@@ -1,5 +1,5 @@
 import { File, Formidable } from 'formidable';
-import { mkdir, access, constants as fsConstants } from 'fs/promises';
+import * as fs from 'fs/promises';
 import sizeOf from 'image-size';
 import { promisify } from 'util';
 import { z } from 'zod';
@@ -85,7 +85,15 @@ export async function processPhoto(
 	};
 }
 
-export function deleteMedia(spreadId: number, type: MediaType, userId: string) {
+export function deleteMedia(media: File) {
+	return fs.rm(media.filepath);
+}
+
+export function deleteSpreadMedia(
+	spreadId: number,
+	type: MediaType,
+	userId: string,
+) {
 	return prisma.media.updateMany({
 		where: {
 			spreadId,
@@ -101,9 +109,9 @@ export function deleteMedia(spreadId: number, type: MediaType, userId: string) {
 export async function ensureUploadPath(userId: string): Promise<string> {
 	const uploadDir = `${process.env.UPLOAD_PATH ?? 'uploads'}/${userId}`;
 	try {
-		await access(uploadDir, fsConstants.W_OK);
+		await fs.access(uploadDir, fs.constants.W_OK);
 	} catch (err) {
-		await mkdir(uploadDir, { recursive: true });
+		await fs.mkdir(uploadDir, { recursive: true });
 	}
 	return uploadDir;
 }
