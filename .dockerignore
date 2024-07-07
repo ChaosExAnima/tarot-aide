@@ -1,4 +1,5 @@
 docker
+!docker/entrypoint.sh
 node_modules
 README.md
 .next
