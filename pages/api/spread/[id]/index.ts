@@ -20,7 +20,7 @@ export const positionSchema = z.object({
 export type PositionUpdate = z.infer<typeof positionSchema>;
 
 export const spreadSchema = z.object({
-	name: z.string().optional(),
+	name: z.string(),
 	date: z
 		.date()
 		.refine((date) => date <= new Date(), {

@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http';
 import { NextRequest } from 'next/server';
-import { parse, stringify } from 'superjson';
+import { deserialize, parse, stringify } from 'superjson';
 import { ZodError } from 'zod';
 
 import { Entity, LoadedEntity } from './types';
@@ -90,6 +90,8 @@ export function handlerWithError<Body extends ResponseBody>(
 	return async (req, res) => {
 		if (req.body && typeof req.body === 'string') {
 			req.body = parse(req.body);
+		} else if (req.body && typeof req.body === 'object') {
+			req.body = deserialize(req.body);
 		}
 		const realHandler = handler ?? (handlerOrMethods as ApiHandler<Body>);
 		const methods = Array.isArray(handlerOrMethods) ? handlerOrMethods : [];
