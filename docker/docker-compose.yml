@@ -18,13 +18,3 @@ services:
       - ../uploads:/uploads
     depends_on:
       - mysql
-
-  proxy:
-    image: nginx:alpine
-    ports:
-      - 3000:3000
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ../uploads:/uploads
-    depends_on:
-      - tarot
