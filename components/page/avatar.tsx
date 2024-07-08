@@ -21,6 +21,7 @@ export default function PageAvatar() {
 		queryKey: ['avatar'],
 		queryFn: () => fetchFromApi<AvatarResponse>('/avatar'),
 		staleTime: Infinity,
+		retry: false,
 	});
 	const handler = () => {
 		if (avatar) {
