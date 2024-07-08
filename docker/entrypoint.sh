@@ -17,6 +17,6 @@ getSecrets() {
 
 getSecrets
 
-npx prisma db push
+npx prisma db push --skip-generate
 
 node server.js
