@@ -10,10 +10,10 @@ import type { SuperJSONValue } from 'superjson/dist/types';
 
 export interface ResponseBody {
 	message?: string;
-	success: boolean;
+	success: true;
 }
 
-export interface ErrorResponseBody extends ResponseBody {
+export interface ErrorResponseBody {
 	message: string;
 	success: false;
 	details?: unknown;
@@ -21,6 +21,7 @@ export interface ErrorResponseBody extends ResponseBody {
 
 export type ResponseWithError<Body extends ResponseBody> =
 	| Body
+	| ResponseBody
 	| ErrorResponseBody;
 
 export function isResponseBody(input: unknown): input is ResponseBody {
@@ -68,12 +69,12 @@ export async function fetchFromApi<
 
 export type ApiHandler<Body extends ResponseBody> = (
 	req: NextApiRequest,
-	res: NextApiResponse<ResponseWithError<Body | ResponseBody>>,
-) => Promise<void | Body>;
+	res: NextApiResponse<ResponseWithError<Body>>,
+) => Promise<void | ResponseWithError<Body>>;
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 type HandlerResponse<Body extends ResponseBody> = NextApiHandler<
-	ResponseWithError<Body | ResponseBody>
+	ResponseWithError<Body>
 >;
 
 export function handlerWithError<Body extends ResponseBody>(
