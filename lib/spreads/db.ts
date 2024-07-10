@@ -16,7 +16,7 @@ import {
 import prisma from 'lib/db';
 import { Audio, isPhoto, Media, MediaType, Photo } from 'lib/media';
 
-import { ExistingSpread } from './types';
+import { Deck, ExistingSpread } from './types';
 
 export async function getSpreadsForUser(
 	userId: string,
@@ -29,6 +29,7 @@ export async function getSpreadsForUser(
 			media: {
 				where: { deleted: false },
 			},
+			deck: true,
 		},
 		orderBy: { date: 'desc' },
 		take: 10,
@@ -44,6 +45,7 @@ export async function getSpreadById(
 	const spread = await prisma.spread.findFirst({
 		where: { id, userId },
 		include: {
+			deck: true,
 			positions: { orderBy: { order: 'asc' } },
 			media: {
 				where: { deleted: false },
@@ -58,7 +60,7 @@ export async function getSpreadById(
 
 export function dbToExistingSpread(
 	spread: Prisma.SpreadGetPayload<{
-		include: { positions: true; media: true };
+		include: { positions: true; media: true; deck: true };
 	}>,
 ): ExistingSpread {
 	return {
@@ -75,6 +77,7 @@ export function dbToExistingSpread(
 		photo: dbToSpreadMedia(spread.media, 'photo'),
 		audio: dbToSpreadMedia(spread.media, 'audio'),
 		notes: spread.notes,
+		deck: spread.deck,
 	};
 }
 
@@ -130,4 +133,27 @@ function cardFromPosition(position: Position): GenericOrTarotCard | null {
 		} satisfies MinorTarotCard;
 	}
 	return { name: position.card } satisfies GenericCard;
+}
+
+export async function decksForUser(userId: string, skip = 0): Promise<Deck[]> {
+	const decks = await prisma.deck.findMany({
+		where: {
+			userId,
+		},
+		include: {
+			_count: {
+				select: { spread: true },
+			},
+		},
+		orderBy: {
+			name: 'asc',
+		},
+		take: 10,
+		skip,
+	});
+	return decks.map((deck) => ({
+		id: deck.id,
+		name: deck.name,
+		spreads: deck._count.spread,
+	}));
 }

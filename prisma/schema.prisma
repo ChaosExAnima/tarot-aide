@@ -21,6 +21,7 @@ model User {
     refs      CardReference[]
     sessions  Session[]
     googleId  String?         @unique
+    Deck      Deck[]
 }
 
 model Session {
@@ -41,6 +42,8 @@ model Spread {
     template  Boolean    @default(false)
     positions Position[]
     media     Media[]
+    deck      Deck?      @relation(fields: [deckId], references: [id])
+    deckId    String?
 
     @@index([userId, template])
 }
@@ -64,7 +67,7 @@ model Media {
     width     Int?
     height    Int?
     spreadId  Int?
-    spead     Spread?  @relation(fields: [spreadId], references: [id], onDelete: SetNull)
+    spread    Spread?  @relation(fields: [spreadId], references: [id], onDelete: SetNull)
     deleted   Boolean  @default(false)
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -89,4 +92,10 @@ model CardReference {
     @@index([userId, source])
 }
 
-// TODO: Add deck models to support differently named cards
+model Deck {
+    id     String   @id @default(cuid())
+    name   String
+    spread Spread[]
+    user   User     @relation(fields: [userId], references: [id])
+    userId String
+}

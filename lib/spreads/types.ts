@@ -29,6 +29,7 @@ export function isFilledPosition(
 export interface GenericSpread {
 	name: string;
 	positions: BaseSpreadPosition[];
+	deck?: Nullable<Deck>;
 }
 
 export interface PatternSpread extends GenericSpread {
@@ -43,4 +44,10 @@ export interface ExistingSpread extends GenericSpread {
 	notes?: Nullable<string>;
 	photo?: Nullable<Photo>;
 	audio?: Nullable<Audio>;
+}
+
+export interface Deck {
+	id: string;
+	name: string;
+	spreads?: number;
 }
