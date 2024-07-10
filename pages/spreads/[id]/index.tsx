@@ -1,4 +1,9 @@
-import { faEdit, faSort, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCalendar,
+	faEdit,
+	faSort,
+	faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
@@ -13,6 +18,7 @@ import Photo from 'components/photo';
 import { mutateDeleteSpread } from 'lib/spreads/api';
 import { getSpreadById } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
+import { displayDate } from 'lib/text';
 import { redirectToLogin, userFromServerContext } from 'lib/users';
 
 import type { ExistingSpread } from 'lib/spreads/types';
@@ -38,8 +44,8 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 				},
 			]}
 		>
-			<header className="flex flex-col">
-				<div className="flex flex-nowrap gap-4 items-center mb-4">
+			<header className="flex flex-col gap-4">
+				<div className="flex flex-nowrap gap-4 items-center">
 					<h1 className="grow font-bold text-2xl">
 						{displaySpreadName(spread)}
 					</h1>
@@ -71,11 +77,32 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 						</ConfirmationModal>
 					</ButtonGroup>
 				</div>
+				<div className="flex gap-4 text-content4-foreground text-sm">
+					<time dateTime={spread.date.toISOString()}>
+						<FontAwesomeIcon icon={faCalendar} />
+						&nbsp;
+						{displayDate(spread.date)}
+					</time>
+					{spread.deck && (
+						<span>
+							Deck:&nbsp;
+							<Link
+								href={`/decks/${spread.deck.id}`}
+								className="hover:text-content1-foreground transition-colors"
+							>
+								{spread.deck.name}
+							</Link>
+						</span>
+					)}
+				</div>
 				{spread.notes
 					?.split('\n')
 					.filter(Boolean)
 					.map((line) => (
-						<p key={line} className="text-content4 text-sm">
+						<p
+							key={line}
+							className="text-content2-foreground text-sm"
+						>
 							{line.trim()}
 						</p>
 					))}
@@ -88,7 +115,7 @@ export default function SpreadPage({ spread }: SpreadPageProps) {
 	);
 }
 
-type SpreadPageContext = {
+export type SpreadPageContext = {
 	id: string;
 };
 

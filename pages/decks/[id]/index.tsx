@@ -2,19 +2,22 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonGroup } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import ButtonLink from 'components/button-link';
 import { CollapsibleButton } from 'components/buttons/collapsible';
 import ConfirmationModal from 'components/confirmation-modal';
 import Page from 'components/page';
 import { mutateDeleteDeck } from 'lib/spreads/api';
 import { deckById, spreadsByDeck } from 'lib/spreads/db';
+import { displaySpreadName } from 'lib/spreads/utils';
+import { displayRelativeDate } from 'lib/text';
 import { userFromServerContext } from 'lib/users';
 
 import type { Deck, ExistingSpread } from 'lib/spreads/types';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
 interface DeckPageProps {
 	deck: Deck;
@@ -30,7 +33,13 @@ export default function DeckPage({ deck, spreads }: DeckPageProps) {
 		},
 	});
 	return (
-		<Page title="Deck">
+		<Page
+			title="Deck"
+			breadcrumbs={[
+				{ label: 'Decks', href: '/decks' },
+				{ label: deck.name, href: `/decks/${deck.id}` },
+			]}
+		>
 			<header className="flex flex-nowrap gap-4 items-center mb-4">
 				<h1 className="text-6xl font-bold grow">{deck.name}</h1>
 				<ButtonGroup>
@@ -54,11 +63,22 @@ export default function DeckPage({ deck, spreads }: DeckPageProps) {
 				</ButtonGroup>
 			</header>
 			{spreads.length > 0 && (
-				<ul>
+				<>
+					<p className="text-lg">Spreads that use this deck:</p>
 					{spreads.map((spread) => (
-						<li key={spread.id}>{spread.name}</li>
+						<ButtonLink
+							href={`/spreads/${spread.id}`}
+							key={spread.id}
+							color="secondary"
+							className="text-slate-900"
+						>
+							{displaySpreadName(spread)}
+							<span className="opacity-60 font-normal">
+								{displayRelativeDate(spread.date)}
+							</span>
+						</ButtonLink>
 					))}
-				</ul>
+				</>
 			)}
 			{spreads.length === 0 && (
 				<p className="text-lg">No spreads use this deck yet</p>

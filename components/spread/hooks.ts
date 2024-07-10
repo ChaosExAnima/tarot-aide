@@ -51,6 +51,7 @@ export function useEditSpread(initial: ExistingSpread) {
 				date: spread.date,
 				notes: spread.notes,
 				positions: positionsToBody(spread.positions),
+				deckId: spread.deck?.id,
 			};
 			return mutateUpdateSpread(initial.id, updatedSpread);
 		},

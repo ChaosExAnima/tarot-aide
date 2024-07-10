@@ -5,7 +5,13 @@ import {
 	faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input, Textarea, ButtonGroup } from '@nextui-org/react';
+import {
+	Input,
+	Textarea,
+	ButtonGroup,
+	Select,
+	SelectItem,
+} from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 
@@ -21,13 +27,24 @@ import {
 	mutateDeleteSpreadMedia,
 	mutateUploadSpreadMedia,
 } from 'lib/spreads/api';
+import { decksForUser, getSpreadById } from 'lib/spreads/db';
 import { displaySpreadName } from 'lib/spreads/utils';
 import { displayDate } from 'lib/text';
+import { redirectToLogin, userFromServerContext } from 'lib/users';
 
-import type { SpreadPageProps } from './index';
+import type { SpreadPageContext, SpreadPageProps } from './index';
 import type { MediaType } from 'lib/media';
+import type { Deck } from 'lib/spreads/types';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 
-export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
+interface SpreadEditPageProps extends SpreadPageProps {
+	decks: Deck[];
+}
+
+export default function SpreadEditPage({
+	spread: initial,
+	decks,
+}: SpreadEditPageProps) {
 	const { spread, set, issues, newIssue, dirty, disable, save } =
 		useEditSpread(initial);
 	const deleteMedia = useMutation({
@@ -81,10 +98,35 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 						isIconOnly={false}
 						isDisabled={disable}
 						color={!!issues('date') ? 'danger' : 'default'}
+						className="min-w-32"
 					>
 						<FontAwesomeIcon icon={faCalendar} />
 						{displayDate(spread.date)}
 					</DatePicker>
+					<Select
+						className="max-h-10 w-auto min-w-40"
+						label="Deck"
+						size="sm"
+						selectedKeys={[spread.deck?.id ?? '']}
+						classNames={{
+							trigger: 'max-h-10 min-h-10',
+						}}
+						onSelectionChange={(keys) => {
+							if (keys === 'all') {
+								return set('deck')(null);
+							}
+							const selectedKey = Array.from(keys.values()).at(0);
+							const deck = decks.find(
+								(deck) => selectedKey === deck.id,
+							);
+							set('deck')(deck ?? null);
+						}}
+						items={decks}
+					>
+						{decks.map((deck) => (
+							<SelectItem key={deck.id}>{deck.name}</SelectItem>
+						))}
+					</Select>
 					<ButtonGroup
 						isDisabled={disable}
 						className="grow justify-end"
@@ -143,4 +185,26 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 	);
 }
 
-export { getServerSideProps } from './index';
+export async function getServerSideProps(
+	context: GetServerSidePropsContext<SpreadPageContext>,
+): Promise<GetServerSidePropsResult<SpreadEditPageProps>> {
+	const id = Number(context.params?.id);
+	if (!id || isNaN(id)) {
+		return { notFound: true };
+	}
+	const user = await userFromServerContext(context);
+	if (!user) {
+		return redirectToLogin();
+	}
+	const spread = await getSpreadById(id, user.id);
+	if (!spread) {
+		return { notFound: true };
+	}
+
+	return {
+		props: {
+			spread,
+			decks: await decksForUser(user.id),
+		},
+	};
+}

@@ -4,16 +4,16 @@ import { handlerWithError, ResponseBody } from 'lib/api';
 import prisma from 'lib/db';
 import { userFromApiRequest } from 'lib/users';
 
-export interface DeckCreatedResponse extends ResponseBody {
+export interface DeckEditResponse extends ResponseBody {
 	id: string;
 }
 
 const bodySchema = z.object({
 	name: z.string().min(1),
 });
-export type DeckCreateRequest = z.infer<typeof bodySchema>;
+export type DeckEditRequest = z.infer<typeof bodySchema>;
 
-const handler = handlerWithError<DeckCreatedResponse>(
+const handler = handlerWithError<DeckEditResponse>(
 	['POST'],
 	async (req, res) => {
 		const user = await userFromApiRequest(req, res);
