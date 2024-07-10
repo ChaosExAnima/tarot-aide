@@ -46,7 +46,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req, res) => {
 	const userId = user.id;
 	let spread = await prisma.spread.findFirstOrThrow({
 		where: { id: spreadId, userId },
-		include: { positions: true, media: true },
+		include: { positions: true, media: true, deck: true },
 	});
 	switch (req.method) {
 		case 'GET':
@@ -93,7 +93,7 @@ const handler = handlerWithError<SpreadUpdateResponseBody>(async (req, res) => {
 					...body,
 					positions,
 				},
-				include: { positions: true, media: true },
+				include: { positions: true, media: true, deck: true },
 			});
 			break;
 		default:

@@ -64,7 +64,7 @@ export async function spreadsByDeck(
 ): Promise<ExistingSpread[]> {
 	const spreads = await prisma.spread.findMany({
 		where: { deckId, userId },
-		orderBy: { name: 'asc' },
+		orderBy: { date: 'desc' },
 		include: {
 			deck: true,
 			positions: { orderBy: { order: 'asc' } },
