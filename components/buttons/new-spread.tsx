@@ -26,7 +26,7 @@ export default function NewSpreadButton({
 			onPress={() => mutate()}
 			isLoading={isPending || isSuccess}
 			color={color}
-			className={`font-bold ${className}`}
+			className={`font-bold text-large ${className}`}
 		>
 			New Spread
 		</Button>

@@ -29,6 +29,7 @@ export const NavList: NavItem[] = [
 		exact: true,
 	},
 	{ label: 'Spreads', path: '/spreads' },
+	{ label: 'Decks', path: '/decks' },
 ];
 
 export default function Nav() {

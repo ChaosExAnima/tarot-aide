@@ -21,7 +21,6 @@ export interface ErrorResponseBody {
 
 export type ResponseWithError<Body extends ResponseBody> =
 	| Body
-	| ResponseBody
 	| ErrorResponseBody;
 
 export function isResponseBody(input: unknown): input is ResponseBody {
@@ -74,7 +73,7 @@ export type ApiHandler<Body extends ResponseBody> = (
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 type HandlerResponse<Body extends ResponseBody> = NextApiHandler<
-	ResponseWithError<Body>
+	ResponseWithError<Body | ResponseBody>
 >;
 
 export function handlerWithError<Body extends ResponseBody>(

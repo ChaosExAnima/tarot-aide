@@ -38,8 +38,7 @@ export default function SpreadEditPage({ spread: initial }: SpreadPageProps) {
 	const uploadMedia = useMutation({
 		mutationFn: ({ type, media }: { type: MediaType; media: Blob }) =>
 			mutateUploadSpreadMedia(spread.id, type, media),
-		onSuccess: ({ media }) =>
-			media.type === 'photo' ? set('photo')(media) : set('audio')(media),
+		onSuccess: ({ media }) => set(media.type)(media),
 		onError: (_error, { type }) =>
 			newIssue(type, 'There was an error uploading your photo.', true),
 	});

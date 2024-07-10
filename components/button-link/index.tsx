@@ -1,6 +1,6 @@
 import { Button, ButtonProps, Link } from '@nextui-org/react';
 
-export default function ButtonLink({ className, ...props }: ButtonProps) {
+export default function ButtonLink({ className = '', ...props }: ButtonProps) {
 	return (
 		<Button
 			as={Link}

@@ -3,6 +3,7 @@ import { MediaType } from 'lib/media';
 
 import { SpreadPosition } from './types';
 
+import type { NewDeckResponse } from 'pages/api/decks';
 import type { SpreadCreatedResponse } from 'pages/api/spread';
 import type {
 	SpreadUpdateRequest,
@@ -55,6 +56,10 @@ export async function mutateUploadSpreadMedia(
 			method: 'PUT',
 		},
 	);
+}
+
+export function mutateCreateDeck(name: string) {
+	return fetchFromApi<NewDeckResponse>('/decks', { name });
 }
 
 export function positionsToBody(
