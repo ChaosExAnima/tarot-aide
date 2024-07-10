@@ -49,5 +49,4 @@ export interface ExistingSpread extends GenericSpread {
 export interface Deck {
 	id: string;
 	name: string;
-	spreads?: number;
 }

@@ -58,6 +58,24 @@ export async function getSpreadById(
 	return dbToExistingSpread(spread);
 }
 
+export async function spreadsByDeck(
+	deckId: string,
+	userId: string,
+): Promise<ExistingSpread[]> {
+	const spreads = await prisma.spread.findMany({
+		where: { deckId, userId },
+		orderBy: { name: 'asc' },
+		include: {
+			deck: true,
+			positions: { orderBy: { order: 'asc' } },
+			media: {
+				where: { deleted: false },
+			},
+		},
+	});
+	return spreads.map(dbToExistingSpread);
+}
+
 export function dbToExistingSpread(
 	spread: Prisma.SpreadGetPayload<{
 		include: { positions: true; media: true; deck: true };
@@ -154,6 +172,19 @@ export async function decksForUser(userId: string, skip = 0): Promise<Deck[]> {
 	return decks.map((deck) => ({
 		id: deck.id,
 		name: deck.name,
-		spreads: deck._count.spread,
 	}));
+}
+
+export async function deckById(
+	id: string,
+	userId: string,
+): Promise<Deck | null> {
+	const deck = await prisma.deck.findUnique({ where: { id, userId } });
+	if (!deck) {
+		return null;
+	}
+	return {
+		id,
+		name: deck.name,
+	};
 }
