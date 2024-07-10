@@ -109,21 +109,23 @@ export function handlerWithError<Body extends ResponseBody>(
 				res.status(200).json(response);
 			}
 		} catch (err) {
-			console.error(`Error in route ${req.url}:`, err);
 			const body: ErrorResponseBody = {
 				success: false,
 				message: 'Unknown error',
 			};
 			let status = 500;
-			if (err instanceof Error) {
-				body.message = err.message;
-			}
 			if (err instanceof ApiError) {
 				status = err.statusCode;
+				body.message = err.message;
 			} else if (err instanceof ZodError) {
 				status = 400;
 				body.message = 'Validation failed';
 				body.details = err.issues;
+			}
+			if (status >= 500) {
+				console.error(`Error ${status} in route ${req.url}:`, err);
+			} else {
+				console.warn(`Error ${status} in route ${req.url}`);
 			}
 			res.status(status).json(body);
 		}
