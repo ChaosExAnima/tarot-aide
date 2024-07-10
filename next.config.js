@@ -2,6 +2,7 @@
 const nextConfig = {
 	experimental: {
 		swcPlugins: [['next-superjson-plugin', { excluded: [] }]],
+		instrumentationHook: true,
 	},
 	reactStrictMode: true,
 	images: {

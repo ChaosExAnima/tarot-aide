@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http';
 import { NextRequest } from 'next/server';
-import { parse, stringify } from 'superjson';
+import { deserialize, parse, stringify } from 'superjson';
 import { ZodError } from 'zod';
 
 import { Entity, LoadedEntity } from './types';
@@ -10,10 +10,10 @@ import type { SuperJSONValue } from 'superjson/dist/types';
 
 export interface ResponseBody {
 	message?: string;
-	success: boolean;
+	success: true;
 }
 
-export interface ErrorResponseBody extends ResponseBody {
+export interface ErrorResponseBody {
 	message: string;
 	success: false;
 	details?: unknown;
@@ -21,6 +21,7 @@ export interface ErrorResponseBody extends ResponseBody {
 
 export type ResponseWithError<Body extends ResponseBody> =
 	| Body
+	| ResponseBody
 	| ErrorResponseBody;
 
 export function isResponseBody(input: unknown): input is ResponseBody {
@@ -68,12 +69,12 @@ export async function fetchFromApi<
 
 export type ApiHandler<Body extends ResponseBody> = (
 	req: NextApiRequest,
-	res: NextApiResponse<ResponseWithError<Body | ResponseBody>>,
-) => Promise<void | Body>;
+	res: NextApiResponse<ResponseWithError<Body>>,
+) => Promise<void | ResponseWithError<Body>>;
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 type HandlerResponse<Body extends ResponseBody> = NextApiHandler<
-	ResponseWithError<Body | ResponseBody>
+	ResponseWithError<Body>
 >;
 
 export function handlerWithError<Body extends ResponseBody>(
@@ -90,6 +91,8 @@ export function handlerWithError<Body extends ResponseBody>(
 	return async (req, res) => {
 		if (req.body && typeof req.body === 'string') {
 			req.body = parse(req.body);
+		} else if (req.body && typeof req.body === 'object') {
+			req.body = deserialize(req.body);
 		}
 		const realHandler = handler ?? (handlerOrMethods as ApiHandler<Body>);
 		const methods = Array.isArray(handlerOrMethods) ? handlerOrMethods : [];
@@ -107,21 +110,23 @@ export function handlerWithError<Body extends ResponseBody>(
 				res.status(200).json(response);
 			}
 		} catch (err) {
-			console.error(`Error in route ${req.url}:`, err);
 			const body: ErrorResponseBody = {
 				success: false,
 				message: 'Unknown error',
 			};
 			let status = 500;
-			if (err instanceof Error) {
-				body.message = err.message;
-			}
 			if (err instanceof ApiError) {
 				status = err.statusCode;
+				body.message = err.message;
 			} else if (err instanceof ZodError) {
 				status = 400;
 				body.message = 'Validation failed';
 				body.details = err.issues;
+			}
+			if (status >= 500) {
+				console.error(`Error ${status} in route ${req.url}:`, err);
+			} else {
+				console.warn(`Error ${status} in route ${req.url}`);
 			}
 			res.status(status).json(body);
 		}

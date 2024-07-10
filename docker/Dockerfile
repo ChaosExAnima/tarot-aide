@@ -25,12 +25,13 @@ COPY --from=builder /app/public ./public
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN mkdir .next && chown nextjs:nodejs .next
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/prisma prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma prisma/schema.prisma
+
+COPY --chown=nextjs:nodejs docker/entrypoint.sh /entrypoint.sh
 
 RUN mkdir /uploads && chown -R nextjs:nodejs /uploads
 VOLUME /uploads
@@ -44,4 +45,4 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 ENV UPLOADS_PATH /uploads
 
-CMD node server.js
+CMD /entrypoint.sh
