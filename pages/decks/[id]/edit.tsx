@@ -5,11 +5,11 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import ButtonLink from 'components/button-link';
+import useFieldErrors from 'components/hooks/use-field-errors';
 import Page from 'components/page';
 import { mutateUpdateDeck } from 'lib/spreads/api';
 import { deckById } from 'lib/spreads/db';
 import { Deck } from 'lib/spreads/types';
-import { ErrorMap, errorToErrorMap } from 'lib/types';
 import { userFromServerContext } from 'lib/users';
 
 interface PageDeckEdit {
@@ -19,16 +19,14 @@ interface PageDeckEdit {
 export default function PageDeckNew({ deck }: PageDeckEdit) {
 	const [name, setName] = useState(deck.name);
 	const [notes, setNotes] = useState(deck.notes ?? '');
-	const [errMesssages, setErrMessages] = useState<ErrorMap<Deck>>({});
+	const { handleError, fieldError } = useFieldErrors<Deck>();
 	const router = useRouter();
 	const { mutate } = useMutation({
 		mutationFn: () => mutateUpdateDeck(deck.id, name, notes),
 		onSuccess(res) {
 			router.push(`/decks/${res.id}`);
 		},
-		onError(err) {
-			setErrMessages(errorToErrorMap(err));
-		},
+		onError: handleError,
 	});
 	return (
 		<Page
@@ -44,16 +42,13 @@ export default function PageDeckNew({ deck }: PageDeckEdit) {
 				label="Deck name"
 				value={name}
 				onValueChange={setName}
-				name="name"
-				isInvalid={!!errMesssages.name}
-				errorMessage={errMesssages.name?.join(',')}
+				{...fieldError('name')}
 			/>
 			<Textarea
 				label="Notes"
 				value={notes}
 				onValueChange={setNotes}
-				isInvalid={!!errMesssages.notes}
-				errorMessage={errMesssages.notes?.join(',')}
+				{...fieldError('notes')}
 			/>
 			<ButtonLink color="danger" href={`/decks/${deck.id}`}>
 				Cancel

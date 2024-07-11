@@ -1,7 +1,3 @@
-import { ZodIssue } from 'zod';
-
-import { ApiError } from './api';
-
 export type Nullable<T> = T | null;
 
 export function includes<T>(array: readonly T[], item: unknown): item is T {
@@ -35,24 +31,4 @@ export type LoadedRecursively<T> = T extends Entity
 		: T;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyObject = Record<string, any>;
-
-export type ErrorMap<Fields extends AnyObject> = {
-	[k in keyof Fields]?: string[];
-};
-
-export function errorToErrorMap<Fields extends AnyObject>(
-	error: unknown,
-): ErrorMap<Fields> {
-	if (error instanceof ApiError && Array.isArray(error.response?.details)) {
-		const issues: ZodIssue[] = error.response.details;
-		const newErrors: ErrorMap<Fields> = {};
-		for (const issue of issues) {
-			for (const path of issue.path) {
-				(newErrors[path as keyof Fields] ??= []).push(issue.message);
-			}
-		}
-		return newErrors;
-	}
-	return {};
-}
+export type AnyObject = Record<string, any>;
