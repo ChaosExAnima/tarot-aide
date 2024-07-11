@@ -98,4 +98,5 @@ model Deck {
     spread Spread[]
     user   User     @relation(fields: [userId], references: [id])
     userId String
+    notes  String?  @db.Text
 }

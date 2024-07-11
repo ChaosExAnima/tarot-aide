@@ -1,10 +1,9 @@
 import { fetchFromApi } from 'lib/api';
 import { MediaType } from 'lib/media';
-import { DeckEditRequest, DeckEditResponse } from 'pages/api/decks/[id]';
 
 import { SpreadPosition } from './types';
 
-import type { DeckCreateRequest, DeckCreatedResponse } from 'pages/api/decks';
+import type { DeckEditRequest, DeckEditResponse } from 'pages/api/decks';
 import type { SpreadCreatedResponse } from 'pages/api/spread';
 import type {
 	SpreadUpdateRequest,
@@ -60,14 +59,20 @@ export async function mutateUploadSpreadMedia(
 }
 
 export function mutateCreateDeck(name: string) {
-	return fetchFromApi<DeckCreatedResponse, DeckCreateRequest>('/decks', {
+	return fetchFromApi<DeckEditResponse, DeckEditRequest>('/decks', {
 		name,
 	});
 }
 
-export function mutateUpdateDeck(id: string, name: string) {
-	return fetchFromApi<DeckEditResponse, DeckEditRequest>(`/decks/${id}`, {
+export function mutateUpdateDeck(
+	id: string | null,
+	name: string,
+	notes?: string,
+) {
+	const path = id ? `/decks/${id}` : '/decks';
+	return fetchFromApi<DeckEditResponse, DeckEditRequest>(path, {
 		name,
+		notes,
 	});
 }
 

@@ -1,16 +1,15 @@
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Textarea } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { ZodIssue } from 'zod';
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
-import { ApiError } from 'lib/api';
 import { mutateUpdateDeck } from 'lib/spreads/api';
 import { deckById } from 'lib/spreads/db';
 import { Deck } from 'lib/spreads/types';
+import { ErrorMap, errorToErrorMap } from 'lib/types';
 import { userFromServerContext } from 'lib/users';
 
 interface PageDeckEdit {
@@ -19,21 +18,16 @@ interface PageDeckEdit {
 
 export default function PageDeckNew({ deck }: PageDeckEdit) {
 	const [name, setName] = useState(deck.name);
-	const [errMesssages, setErrMessages] = useState<string[]>([]);
+	const [notes, setNotes] = useState(deck.notes ?? '');
+	const [errMesssages, setErrMessages] = useState<ErrorMap<Deck>>({});
 	const router = useRouter();
 	const { mutate } = useMutation({
-		mutationFn: () => mutateUpdateDeck(deck.id, name),
+		mutationFn: () => mutateUpdateDeck(deck.id, name, notes),
 		onSuccess(res) {
 			router.push(`/decks/${res.id}`);
 		},
 		onError(err) {
-			if (
-				err instanceof ApiError &&
-				Array.isArray(err.response?.details)
-			) {
-				const issues: ZodIssue[] = err.response.details;
-				setErrMessages(issues.map(({ message }) => message));
-			}
+			setErrMessages(errorToErrorMap(err));
 		},
 	});
 	return (
@@ -51,8 +45,15 @@ export default function PageDeckNew({ deck }: PageDeckEdit) {
 				value={name}
 				onValueChange={setName}
 				name="name"
-				isInvalid={errMesssages.length > 0}
-				errorMessage={errMesssages.join(',')}
+				isInvalid={!!errMesssages.name}
+				errorMessage={errMesssages.name?.join(',')}
+			/>
+			<Textarea
+				label="Notes"
+				value={notes}
+				onValueChange={setNotes}
+				isInvalid={!!errMesssages.notes}
+				errorMessage={errMesssages.notes?.join(',')}
 			/>
 			<ButtonLink color="danger" href={`/decks/${deck.id}`}>
 				Cancel

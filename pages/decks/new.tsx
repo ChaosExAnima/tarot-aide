@@ -1,31 +1,26 @@
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Textarea } from '@nextui-org/react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { ZodIssue } from 'zod';
 
 import ButtonLink from 'components/button-link';
 import Page from 'components/page';
-import { ApiError } from 'lib/api';
-import { mutateCreateDeck } from 'lib/spreads/api';
+import { mutateUpdateDeck } from 'lib/spreads/api';
+import { Deck } from 'lib/spreads/types';
+import { ErrorMap, errorToErrorMap } from 'lib/types';
 
 export default function PageDeckNew() {
 	const [name, setName] = useState('');
-	const [errMesssages, setErrMessages] = useState<string[]>([]);
+	const [notes, setNotes] = useState('');
+	const [errMesssages, setErrMessages] = useState<ErrorMap<Deck>>({});
 	const router = useRouter();
 	const { mutate } = useMutation({
-		mutationFn: () => mutateCreateDeck(name),
+		mutationFn: () => mutateUpdateDeck(null, name, notes),
 		onSuccess(res) {
 			router.push(`/decks/${res.id}`);
 		},
 		onError(err) {
-			if (
-				err instanceof ApiError &&
-				Array.isArray(err.response?.details)
-			) {
-				const issues: ZodIssue[] = err.response.details;
-				setErrMessages(issues.map(({ message }) => message));
-			}
+			setErrMessages(errorToErrorMap(err));
 		},
 	});
 	return (
@@ -42,8 +37,15 @@ export default function PageDeckNew() {
 				value={name}
 				onValueChange={setName}
 				name="name"
-				isInvalid={errMesssages.length > 0}
-				errorMessage={errMesssages.join(',')}
+				isInvalid={!!errMesssages.name}
+				errorMessage={errMesssages.name?.join(',')}
+			/>
+			<Textarea
+				label="Notes"
+				value={notes}
+				onValueChange={setNotes}
+				isInvalid={!!errMesssages.notes}
+				errorMessage={errMesssages.notes?.join(',')}
 			/>
 			<ButtonLink color="danger" href="/decks">
 				Cancel

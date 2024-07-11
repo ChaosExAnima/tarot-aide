@@ -8,18 +8,19 @@ export interface DeckEditResponse extends ResponseBody {
 	id: string;
 }
 
-const bodySchema = z.object({
+export const deckBodySchema = z.object({
 	name: z.string().min(1),
+	notes: z.string().optional(),
 });
-export type DeckEditRequest = z.infer<typeof bodySchema>;
+export type DeckEditRequest = z.infer<typeof deckBodySchema>;
 
 const handler = handlerWithError<DeckEditResponse>(
 	['POST'],
 	async (req, res) => {
 		const user = await userFromApiRequest(req, res);
-		const { name } = bodySchema.parse(req.body);
+		const { name, notes } = deckBodySchema.parse(req.body);
 		const deck = await prisma.deck.create({
-			data: { name, userId: user.id },
+			data: { name, notes, userId: user.id },
 		});
 		return {
 			success: true,

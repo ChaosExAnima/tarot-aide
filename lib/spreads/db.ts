@@ -95,7 +95,7 @@ export function dbToExistingSpread(
 		photo: dbToSpreadMedia(spread.media, 'photo'),
 		audio: dbToSpreadMedia(spread.media, 'audio'),
 		notes: spread.notes,
-		deck: spread.deck,
+		deck: spread.deck ? dbToDeck(spread.deck) : null,
 	};
 }
 
@@ -155,17 +155,8 @@ function cardFromPosition(position: Position): GenericOrTarotCard | null {
 
 export async function decksForUser(userId: string, skip = 0): Promise<Deck[]> {
 	const decks = await prisma.deck.findMany({
-		where: {
-			userId,
-		},
-		include: {
-			_count: {
-				select: { spread: true },
-			},
-		},
-		orderBy: {
-			name: 'asc',
-		},
+		where: { userId },
+		orderBy: { name: 'asc' },
 		take: 10,
 		skip,
 	});
@@ -183,8 +174,13 @@ export async function deckById(
 	if (!deck) {
 		return null;
 	}
+	return dbToDeck(deck);
+}
+
+function dbToDeck(deck: Prisma.DeckUncheckedCreateInput): Deck {
 	return {
-		id,
+		id: deck.id!,
 		name: deck.name,
+		notes: deck.notes ?? undefined,
 	};
 }

@@ -1,17 +1,10 @@
 import { z } from 'zod';
 
-import { handlerWithError, ResponseBody } from 'lib/api';
+import { handlerWithError } from 'lib/api';
 import prisma from 'lib/db';
 import { userFromApiRequest } from 'lib/users';
 
-export interface DeckEditResponse extends ResponseBody {
-	id: string;
-}
-
-const bodySchema = z.object({
-	name: z.string().min(1),
-});
-export type DeckEditRequest = z.infer<typeof bodySchema>;
+import { deckBodySchema, DeckEditResponse } from './index';
 
 const handler = handlerWithError<DeckEditResponse>(
 	['POST', 'PUT', 'DELETE'],
@@ -23,10 +16,10 @@ const handler = handlerWithError<DeckEditResponse>(
 				where: { id, userId: user.id },
 			});
 		} else {
-			const { name } = bodySchema.parse(req.body);
+			const { name, notes } = deckBodySchema.parse(req.body);
 			await prisma.deck.update({
 				where: { id, userId: user.id },
-				data: { name },
+				data: { name, notes },
 			});
 		}
 		return {

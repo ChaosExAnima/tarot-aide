@@ -62,6 +62,7 @@ export default function DeckPage({ deck, spreads }: DeckPageProps) {
 					</ConfirmationModal>
 				</ButtonGroup>
 			</header>
+			{deck.notes && <p>{deck.notes}</p>}
 			{spreads.length > 0 && (
 				<>
 					<p className="text-lg">Spreads that use this deck:</p>
